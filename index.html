@@ -356,6 +356,47 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
 /* v15: قائمة الأسعار */
 .plgh{margin:14px 0 4px;font-size:14.5px;color:var(--pri)}.ptbl tr.plold td{opacity:.55}.ptbl .plact{white-space:nowrap;text-align:left}.ptbl .plact button{padding:4px 7px;margin-inline-start:3px}
 .ptbl td .good{color:var(--ok);font-weight:700}.ptbl td .bad{color:var(--bad);font-weight:700}
+
+/* ===== v16: تصميم هادئ وبسيط ===== */
+:root{--r:12px}
+body{line-height:1.65}
+header{padding:12px 20px}
+:root:not([data-head=pri]) header{background:var(--surface);color:var(--txt);border-bottom:1px solid var(--bd)}
+header:after{display:none!important}
+header h1{font-size:1.15rem;font-weight:800;color:inherit}
+.sidebar{background:var(--surface);color:var(--txt);box-shadow:none;border-inline-start:1px solid var(--bd)}
+.sb-brand{color:var(--txt);font-weight:800}
+.sb-g{color:var(--mut)}
+.sb-i{color:var(--txt);padding:12px;font-size:1rem;border-radius:10px}
+.sb-i:hover{background:var(--surface2)}
+.sb-i.on{background:var(--pri-soft);color:var(--pri);font-weight:800}
+.sb-i.tool{color:var(--mut)}
+.sb-add{background:var(--pri);color:var(--on-pri);padding:13px;font-size:1rem}
+.card{box-shadow:none!important;border:1px solid var(--bd);border-radius:14px;padding:22px;margin-bottom:18px}
+.card h2{font-size:1.1rem;margin:0 0 14px}
+.stat:before,.stat:after{display:none!important}
+.stat,.kpi{box-shadow:none!important;border:1px solid var(--bd);border-radius:14px}
+input,select,textarea{min-height:46px;font-size:16px;border-radius:10px;padding:10px 12px}
+textarea{min-height:90px}
+label{font-size:.92rem;margin-bottom:5px;display:block;color:var(--mut)}
+.grid{gap:16px}
+button{min-height:44px;border-radius:10px;font-size:.98rem;padding:9px 16px}
+table{font-size:.95rem}
+th{background:var(--surface2)!important;color:var(--mut)!important;font-weight:700;font-size:.85rem;padding:12px 10px;border-bottom:1px solid var(--bd)}
+td{padding:12px 10px}
+tr:hover td{background:var(--surface2)}
+.pill,.tg,.badge{border-radius:99px}
+.wrap{max-width:1180px}
+#tabBookings{display:flex;flex-direction:column}
+#tabBookings>.card:nth-of-type(2){order:-1}
+.newbk{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.newbk h2{margin:0}
+.newbk button{background:var(--pri);color:var(--on-pri);font-weight:800}
+.cfopts{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 12px}.cfo{display:flex;align-items:center;gap:6px;color:var(--txt);margin:0}.cfo input{min-height:0;width:18px;height:18px}
+.cfprev{background:#fff;color:#1a1f2b;border:1px solid var(--bd);border-radius:10px;max-height:62vh;overflow:auto;padding:8px}
+@media(max-width:700px){.card{padding:16px}header{padding:10px 12px}button{min-height:48px}}
+#sbBtn{color:var(--txt)!important;background:var(--surface2)!important;border:1px solid var(--bd)!important;min-width:44px;font-size:1.25rem;padding:6px 12px}
+.sb-add,.sb-i,.sb-brand,.sb-nav{flex-shrink:0}.sb-add{min-height:48px;line-height:1.3}
 </style>
 </head>
 <body>
@@ -3490,7 +3531,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-17 · 19';
+var APP_VERSION = '2026-11-17 · 20';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3707,6 +3748,85 @@ function accPricesHtml(){
     return '<h4 class="plgh">' + esc(g.title) + ' <span class="c-sub">(' + g.items.length + ')</span></h4><div class="tbl"><table class="ptbl noSort"><thead><tr><th>الرحلة</th><th>التاريخ</th><th>الدرجة</th><th>التصنيف</th><th>بيع</th><th>شراء</th><th>الربح</th><th>الشركة</th><th></th></tr></thead><tbody>' + g.items.map(plRowHtml).join('') + '</tbody></table></div>'; }).join('') : '<div class="empty">لا نتائج مطابقة للفلاتر.</div>') + '</div>';
   return '<p class="hint">سجّل الأسعار المعتادة (للتذكرة الواحدة) وحدّد نوع الرحلة وتاريخها وتصنيفها. عند إدخال الوجهة في الحجز أو عرض السعر يظهر السعر الأنسب (حسب ذهاب/عودة والتاريخ) لتطبّقه بضغطة.</p>' + form + bar + body;
 }
+
+/* v16: ملف العميل A4 */
+const CF_CSS = `.cf{max-width:190mm;margin:0 auto;padding:4mm}
+.cf-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:2px solid #1a1f2b;padding-bottom:8px}
+.cf-hd .o{display:flex;align-items:center;gap:10px}.cf-hd img{height:42px}.cf-hd .on{font-size:17px;font-weight:800}.cf-hd .os{font-size:11px;color:#556}
+.cf-hd .t{text-align:left;font-size:11px;color:#556}.cf-hd .t b{display:block;font-size:15px;color:#1a1f2b}
+.cf-nm{margin:12px 0 2px;font-size:22px;font-weight:800}.cf-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.cf-tags span{border:1px solid #b9c0cc;border-radius:99px;padding:0 9px;font-size:11px;color:#334}
+.cf-sec{margin-top:12px;break-inside:avoid}.cf-sec h3{margin:0 0 5px;font-size:13px;border-bottom:1px solid #cfd5df;padding-bottom:3px}
+.cf-g{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}.cf-r{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dotted #d6dbe4}
+.cf-r span{color:#667}.cf-r b{font-weight:700;text-align:left}.cf .ltr{direction:ltr;unicode-bidi:embed}
+.cf-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cf-sum div{border:1px solid #cfd5df;border-radius:6px;padding:6px;text-align:center}.cf-sum b{display:block;font-size:16px}.cf-sum small{color:#667;font-size:10.5px}
+.cf table{table-layout:auto;width:100%!important;min-width:0!important;border-collapse:collapse;font-size:11.5px}
+.cf th{background:#eef1f6;text-align:right;padding:5px;border:1px solid #cfd5df}
+.cf td{padding:5px;border:1px solid #cfd5df}
+.cf th:after,.cf th:before{content:none!important}.cf th,.cf td{min-width:0!important;overflow-wrap:normal;white-space:normal;word-break:break-word;font-size:11px;padding:4px!important}.cf tr:hover td{background:none}
+.cf tr.cx td{color:#889;text-decoration:line-through}
+.cf-note{border:1px solid #cfd5df;border-radius:6px;padding:7px 9px;white-space:pre-wrap}
+.cf-sg{display:flex;gap:30px;margin-top:34px}.cf-sg div{flex:1;border-top:1px solid #1a1f2b;padding-top:4px;text-align:center;font-size:11px;color:#556}
+.cf-ft{margin-top:16px;border-top:1px solid #cfd5df;padding-top:5px;display:flex;justify-content:space-between;font-size:10.5px;color:#778}
+
+.cf th{-webkit-print-color-adjust:exact;print-color-adjust:exact}`;
+const CF_BASE = `*{box-sizing:border-box}body{margin:0;background:#fff;color:#1a1f2b;font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:12.5px;line-height:1.6}
+@page{size:A4;margin:12mm}`;
+var CF_OPT = {bk: true, acc: true, notes: true, sign: true};
+function cfRow(l, v, ltr){ return (v === '' || v == null) ? '' : `<div class="cf-r"><span>${l}</span><b${ltr ? ' class="ltr"' : ''}>${v}</b></div>`; }
+function cfHtml(key, opt){
+  opt = opt || CF_OPT; const p = idcPerson(key); if (!p) return '<p>لا توجد بيانات</p>';
+  const D = idcData(p), cl = D.cl, c = D.c, l = D.l, o = office(), cur = esc(o.currency || '');
+  const kind = p.kind === 'booked' ? 'عميل حاجز' : p.kind === 'lead' ? 'عميل مرجّح (لم يحجز)' : 'طلب من صفحة الاستفسار';
+  const bd = cl.birthday, age = idcAge(bd);
+  const phones = D.phones.map(x => cfRow(esc(x.label), `<span class="ltr">${esc(x.num)}</span>`)).join('');
+  const personal = cfRow('الجنس', D.g === 'm' ? 'ذكر' : D.g === 'f' ? 'أنثى' : '') + cfRow('تاريخ الميلاد', bd ? fmtP(bd) + (age !== '' ? ' (' + age + ' سنة)' : '') : '') + cfRow('رقم الهوية / الجواز', c && c.idNo ? esc(c.idNo) : '', true) + cfRow('انتهاء الجواز', cl.passportExpiry ? fmtP(cl.passportExpiry) : '') + cfRow('شركة الطيران المفضلة', esc(cl.prefAirline || '')) + cfRow('المقعد المفضل', esc(cl.prefSeat || '')) + cfRow('الوجبة المفضلة', esc(cl.prefMeal || ''));
+  let sum = '', hist = '';
+  if (c && opt.bk) {
+    sum = `<div class="cf-sec"><h3>ملخص النشاط</h3><div class="cf-sum"><div><b>${c.trips}</b><small>حجز</small></div><div><b>${c.tickets}</b><small>تذكرة</small></div>${opt.acc ? `<div><b>${money(c.spent)}</b><small>المدفوع ${cur}</small></div><div><b>${c.remaining > 0 ? money(c.remaining) : '0'}</b><small>المتبقي ${cur}</small></div>` : `<div><b>${c.firstDate ? fmtP(c.firstDate) : '—'}</b><small>أول حجز</small></div><div><b>${c.nextTrip ? fmtP(c.nextTrip) : '—'}</b><small>الرحلة القادمة</small></div>`}</div></div>`;
+    const rows = c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate)));
+    hist = `<div class="cf-sec"><h3>سجل الحجوزات (${rows.length})</h3><table><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>الطيران</th><th>PNR</th><th>تذاكر</th>${opt.acc ? '<th>السعر</th><th>المدفوع</th><th>المتبقي</th>' : ''}<th>الحالة</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.status === 'cancelled' ? 'cx' : ''}"><td>${esc(apCode(r.origin))} ‏←‏ ${esc(apCode(r.destination))}</td><td>${fmtP(r.travelDate)}</td><td>${r.returnDate ? fmtP(r.returnDate) : '—'}</td><td>${esc(r.airline || '—')}</td><td class="ltr">${esc(r.pnr || '—')}</td><td>${r.tickets || 1}</td>${opt.acc ? `<td>${money(r.price)}</td><td>${money(r.paid)}</td><td>${money(Math.max(0, (+r.price || 0) - (+r.discount || 0) - (+r.paid || 0)))}</td>` : ''}<td>${STATUS[r.status] || esc(r.status || '')}</td></tr>`).join('')}</tbody></table></div>`;
+  } else if (l && opt.bk) {
+    hist = `<div class="cf-sec"><h3>تفاصيل الاستفسار</h3><div class="cf-g">${cfRow('المسار', esc(routeTxt(l.orig, l.dest)))}${cfRow('تاريخ السفر', l.travel ? fmtP(l.travel) : '')}${cfRow('تاريخ العودة', l.returnDate ? fmtP(l.returnDate) : '')}${cfRow('عدد الركاب', l.pax ? esc(l.pax) : '')}</div></div>`;
+  }
+  const comp = cl.companions ? `<div class="cf-sec"><h3>المرافقون / العائلة</h3><div class="cf-note">${esc(cl.companions)}</div></div>` : '';
+  const notes = opt.notes && cl.notes ? `<div class="cf-sec"><h3>ملاحظات</h3><div class="cf-note">${esc(cl.notes)}</div></div>` : '';
+  return `<div class="cf"><div class="cf-hd"><div class="o">${settings.logo ? `<img src="${settings.logo}" alt="">` : ''}<div><div class="on">${esc(o.name || 'مكتب الطيران')}</div><div class="os">${[o.phone, o.address].filter(Boolean).map(esc).join(' — ')}</div></div></div><div class="t"><b>ملف عميل</b>${fmtP(todayStr())}</div></div>
+  <div class="cf-nm">${esc(D.name)}</div><div class="cf-tags"><span>${kind}</span>${c && c.tier ? `<span>${esc(TIER_LABEL[c.tier])}</span>` : ''}</div>
+  <div class="cf-sec"><h3>بيانات التواصل والبيانات الشخصية</h3><div class="cf-g"><div>${phones}</div><div>${personal}</div></div></div>${sum}${hist}${comp}${notes}
+  ${opt.sign ? '<div class="cf-sg"><div>توقيع العميل</div><div>توقيع المسؤول</div></div>' : ''}
+  <div class="cf-ft"><span>${esc(o.name || '')}</span><span>صدر بتاريخ ${fmtP(todayStr())}</span></div></div>`;
+}
+var cfKey = null;
+function cfOpen(key){
+  cfKey = key || idcKey; let m = $('cfm');
+  if (!m) { m = document.createElement('div'); m.id = 'cfm'; m.className = 'modal'; m.style.cssText = 'display:none;z-index:70'; m.onclick = e => { if (e.target === m) cfClose(); };
+    m.innerHTML = '<div class="mbox wide" style="padding:14px"><h2 style="margin-top:0">📄 ملف العميل (A4)</h2><div id="cfOpts" class="cfopts"></div><div id="cfPrev" class="cfprev"></div><div class="actions" style="margin-top:12px"><button onclick="cfPrint()">🖨 طباعة / حفظ PDF</button><button class="sec" onclick="cfClose()">إغلاق</button></div></div>'; document.body.appendChild(m); }
+  cfRender(); m.style.display = 'flex';
+}
+function cfRender(){
+  const L = {bk: 'الحجوزات', acc: 'الحسابات (السعر/المدفوع/المتبقي)', notes: 'الملاحظات', sign: 'خانة التوقيع'};
+  $('cfOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${CF_OPT[k] ? 'checked' : ''} onchange="CF_OPT['${k}']=this.checked;cfRender()"> ${L[k]}</label>`).join('');
+  $('cfPrev').innerHTML = `<style>${CF_CSS}</style>` + cfHtml(cfKey, CF_OPT);
+}
+function cfClose(){ const m = $('cfm'); if (m) m.style.display = 'none'; }
+function cfPrint(){
+  let f = $('cfFrame'); if (f) f.remove(); f = document.createElement('iframe'); f.id = 'cfFrame'; f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(f);
+  const d = f.contentWindow.document; d.open(); d.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ملف عميل</title><style>${CF_BASE}${CF_CSS}</style></head><body>${cfHtml(cfKey, CF_OPT)}</body></html>`); d.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { alert('تعذر الطباعة'); } }, 300);
+}
+var _idcOpen16 = idcOpen;
+idcOpen = function(key){
+  _idcOpen16(key); const a = document.querySelector('#idmBody .actions');
+  if (a && !a.querySelector('.cfbtn')) { const b = document.createElement('button'); b.className = 'cfbtn'; b.textContent = '📄 ملف العميل A4'; b.onclick = () => cfOpen(key); a.insertBefore(b, a.firstChild); }
+};
+(function(){
+  const h = [...document.querySelectorAll('#tabBookings h2')].find(x => x.textContent.trim().indexOf('سجل ال') === 0); if (!h || h.parentNode.classList.contains('newbk')) return;
+  const w = document.createElement('div'); w.className = 'newbk noprint'; h.parentNode.insertBefore(w, h); w.appendChild(h);
+  const b = document.createElement('button'); b.type = 'button'; b.id = 'newBkBtn'; b.textContent = '➕ حجز جديد';
+  b.onclick = () => { const f = $('f'); f.scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(() => { try { $('name').focus({preventScroll: true}); } catch (e) {} }, 350); };
+  w.appendChild(b);
+})();
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
