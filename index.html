@@ -8,7 +8,7 @@
 <script>(function(){try{var t=JSON.parse(localStorage.getItem("office_theme")||"null")||{p:"sky",m:"auto"},d=t.m==="dark"||(t.m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),r=document.documentElement;r.dataset.theme=t.p;r.dataset.mode=d?"dark":"light"}catch(e){}})()</script>
 <title>نظام مكتب الطيران</title>
 <style>
-  /* ===== المظهر: ألوان قابلة للتبديل (⚙ الإعدادات ← المظهر) ===== */
+  /* ===== المظهر: ألوان قابلة للتبديل (⚙ الإعدادات ‏←‏ المظهر) ===== */
   :root{--pri:#0e7490;--ok:#15803d;--warn:#b45309;--bad:#c2303a;
     --bg:#eceff3;--surface:#fff;--surface2:#f5f7fa;--input:#fff;--txt:#17212e;--mut:#5f6c7e;--bd:#dce2ea;--ink:#14213d;
     --shadow:0 1px 2px rgba(20,33,61,.06),0 6px 18px rgba(20,33,61,.06);--r:14px}
@@ -340,6 +340,22 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
 .bnav{display:none!important}body{padding-bottom:16px!important}.sidebar{padding-bottom:30px}
 
 .sb-ver{margin:14px 10px 6px;padding:8px;text-align:center;font-size:11.5px;opacity:.65;cursor:pointer;border-top:1px solid rgba(255,255,255,.12)}
+
+/* v14: أرقام الهاتف بزر (+) + نموذج منظم */
+.phrow{display:flex;gap:6px;align-items:center;margin-top:6px}.phrow input{flex:1;min-width:0;margin:0}.phrow .phl{flex:1.2}
+.phplus,.phdel{flex:0 0 auto;width:38px;height:38px;padding:0!important;border-radius:10px;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.phplus{background:var(--pri-soft);color:var(--pri);border:1px solid var(--pri)}.phplus:hover{background:var(--pri);color:#fff}
+.phdel{background:transparent;color:var(--bad);border:1px solid var(--bd)}.phdel:hover{background:var(--bad);color:#fff}
+.phx{margin:0}.phbox{grid-column:1/-1}.phn.ro{background:var(--surface-2,#f3f5f9);color:var(--mut)}
+@media(min-width:760px){.phbox{grid-column:span 2}}
+.sgrp .fsec{margin:14px 0 6px}.sgrp .fsec:first-of-type{margin-top:4px}
+.grid.g3{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.optrow{display:flex;gap:8px;align-items:center;color:var(--txt)}.optrow input{width:auto}
+#lm .sgrp,#acm .sgrp{margin-bottom:12px}
+
+/* v15: قائمة الأسعار */
+.plgh{margin:14px 0 4px;font-size:14.5px;color:var(--pri)}.ptbl tr.plold td{opacity:.55}.ptbl .plact{white-space:nowrap;text-align:left}.ptbl .plact button{padding:4px 7px;margin-inline-start:3px}
+.ptbl td .good{color:var(--ok);font-weight:700}.ptbl td .bad{color:var(--bad);font-weight:700}
 </style>
 </head>
 <body>
@@ -399,7 +415,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     <div class="toolbar noprint">
       <input id="pq" placeholder="بحث بالاسم أو الهاتف أو الوجهة...">
       <select id="pType"><option value="">الكل</option><option value="booked">✅ حجزوا</option><option value="prospect">🔎 لم يحجزوا بعد (مرجّحون وطلبات)</option><option value="lead">مرجّحون فقط</option><option value="inq">طلبات جديدة من الصفحة</option><option value="client">📝 مسجّلون فقط (بدون حجز)</option><option value="debt">💰 عليهم متبقي</option><option value="vip">🎁 مؤهلون لعرض</option></select>
-      <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ← ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option><option value="kind">حسب النوع</option></select>
+      <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option><option value="kind">حسب النوع</option></select>
       <button class="sec" onclick="peopleCSV()">تصدير Excel</button>
     </div>
     <div class="tbl"><table class="rec"><thead><tr><th data-pk="name">العميل</th><th data-pk="kind">الحالة</th><th data-pk="trips">التفاصيل</th><th data-pk="debt">المتبقي</th><th data-pk="recent">آخر نشاط</th><th class="noprint">إجراءات</th></tr></thead><tbody id="ppRows"></tbody></table></div>
@@ -419,8 +435,8 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
         </div>
         <div class="full fsec">👤 بيانات العميل</div>
 <div><label>اسم العميل *</label><input id="name" required></div>
-        <div><label>رقم الهاتف *</label><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right"></div>
-        <div><label>أرقام أخرى للعميل (اختياري)</label><textarea id="phones" rows="2" dir="ltr" style="text-align:right" placeholder="رقم في كل سطر + ملاحظة، مثل: 01012345678 زوجته"></textarea></div>
+        <div class="phbox"><label>رقم الهاتف *</label><div class="phrow"><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر للعميل" onclick="phxAdd('phones')">＋</button></div><div class="phx" id="phones_ui"></div></div>
+        <textarea id="phones" hidden></textarea>
         <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="gender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select><div id="genderHint" class="c-sub" style="margin-top:4px"></div></div>
         <div class="full" id="dupBox" style="display:none"></div>
         <div class="full" id="dupBk" style="display:none"></div>
@@ -476,7 +492,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
         <option value="cancelled">ملغي</option>
       </select>
       <select id="fGroup" title="طريقة العرض"><option value="cust">👤 حسب العميل (بيانات كل عميل في مكان واحد)</option><option value="flat">📋 كل الحجوزات في جدول</option></select>
-      <select id="fSort" title="ترتيب العملاء"><option value="near">ترتيب: الأقرب سفرًا</option><option value="debt">الأكثر متبقيًا</option><option value="trips">الأكثر حجوزات</option><option value="recent">الأحدث نشاطًا</option><option value="name">الاسم (أ ← ي)</option></select>
+      <select id="fSort" title="ترتيب العملاء"><option value="near">ترتيب: الأقرب سفرًا</option><option value="debt">الأكثر متبقيًا</option><option value="trips">الأكثر حجوزات</option><option value="recent">الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option></select>
       <select id="fView">
         <option value="">كل الحجوزات</option>
         <option value="upcoming">السفر القادم فقط</option>
@@ -491,7 +507,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     <div class="tbl" id="flatBox">
       <table class="rec">
         <thead><tr>
-          <th data-k="name">العميل ⇅</th><th data-k="origin">الرحلة (من ← إلى) ⇅</th>
+          <th data-k="name">العميل ⇅</th><th data-k="origin">الرحلة (من ‏←‏ إلى) ⇅</th>
           <th data-k="travelDate">تاريخ السفر ⇅</th><th data-k="bookingDate">تاريخ الحجز ⇅</th>
           <th data-k="airline">الطيران / PNR ⇅</th><th data-k="remaining">المبلغ ⇅</th><th data-k="status">الحالة ⇅</th>
           <th class="noprint">إجراءات</th>
@@ -545,13 +561,13 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     <div class="ld-pills noprint" id="ldKpis"></div>
     <div class="toolbar noprint">
       <input id="lq" placeholder="بحث بالاسم أو الرقم أو الوجهة أو الملاحظات...">
-      <select id="lSort"><option value="follow">ترتيب: موعد المتابعة (المتأخر أولًا)</option><option value="inquiry">الأحدث استفسارًا</option><option value="travel">الأقرب سفرًا</option><option value="name">الاسم (أ ← ي)</option><option value="price">الأعلى سعرًا معروضًا</option><option value="status">حسب الحالة</option></select>
+      <select id="lSort"><option value="follow">ترتيب: موعد المتابعة (المتأخر أولًا)</option><option value="inquiry">الأحدث استفسارًا</option><option value="travel">الأقرب سفرًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="price">الأعلى سعرًا معروضًا</option><option value="status">حسب الحالة</option></select>
       <button type="button" class="sec sm revbtn noprint" data-rev="l" onclick="sortFlip('l')" title="عكس الترتيب">⇅ عكس الترتيب</button>
       <select id="lfStatus" hidden><option value="">كل الحالات</option><option value="open">مفتوحة</option><option value="late">متأخرة</option><option value="new">جديد</option><option value="contacted">تمت المتابعة</option><option value="noanswer">لم يرد</option><option value="lost">لم يكمل</option><option value="converted">تحول لحجز</option></select>
       <button class="sec" onclick="ldClear()">مسح الفلاتر</button>
     </div>
     <div id="ldBox"></div>
-    <div class="tbl" id="ldTbl" style="display:none"><table class="rec"><thead><tr><th data-lk="name" onclick="ldHead('name')">العميل</th><th>الرحلة (من ← إلى)</th><th data-lk="travel" onclick="ldHead('travel')">سفر متوقع</th><th data-lk="inquiry" onclick="ldHead('inquiry')">تاريخ الاستفسار</th><th data-lk="follow" onclick="ldHead('follow')">موعد المتابعة</th><th data-lk="price" onclick="ldHead('price')">العرض</th><th data-lk="status" onclick="ldHead('status')">الحالة</th><th class="noprint">إجراءات</th></tr></thead><tbody id="lrows"></tbody></table></div>
+    <div class="tbl" id="ldTbl" style="display:none"><table class="rec"><thead><tr><th data-lk="name" onclick="ldHead('name')">العميل</th><th>الرحلة (من ‏←‏ إلى)</th><th data-lk="travel" onclick="ldHead('travel')">سفر متوقع</th><th data-lk="inquiry" onclick="ldHead('inquiry')">تاريخ الاستفسار</th><th data-lk="follow" onclick="ldHead('follow')">موعد المتابعة</th><th data-lk="price" onclick="ldHead('price')">العرض</th><th data-lk="status" onclick="ldHead('status')">الحالة</th><th class="noprint">إجراءات</th></tr></thead><tbody id="lrows"></tbody></table></div>
     <div id="ldMore" class="noprint" style="text-align:center;margin-top:10px"></div>
   </div>
 </div>
@@ -559,21 +575,23 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
 
 <div id="lm" class="modal" style="display:none" onclick="if(event.target===this)lmClose()"><div class="mbox wide"><h2 id="leadFormTitle">تسجيل عميل مرجح (سأل عن رحلة ولم يحجز)</h2><form id="lf" autocomplete="off">
       <input type="hidden" id="lid">
-      <div class="grid">
+      <div class="sgrp"><h3>👤 بيانات العميل</h3><div class="grid">
         <div><label>اسم العميل *</label><input id="lname" required></div>
         <div><label>رقم الهاتف *</label><input id="lphone" required inputmode="tel" dir="ltr" style="text-align:right"></div>
         <div><label>الجنس</label><select id="lgender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select></div>
+      </div></div>
+      <div class="sgrp"><h3>✈️ الرحلة المطلوبة</h3>
+        <div class="seg" id="lTrip" style="margin-bottom:10px"><button type="button" data-t="one" class="on" onclick="ltripSet('one')">ذهاب فقط →</button><button type="button" data-t="round" onclick="ltripSet('round')">ذهاب وعودة ⇄</button></div>
+        <div class="grid">
         <div><label>مطار الإقلاع</label><input id="lorig" list="airports"></div>
         <div><label>مطار الهبوط</label><input id="ldest" list="airports"></div>
-        <div><label>تاريخ السفر المتوقع</label><input type="date" id="ltravel"></div>
+        <div><label>تاريخ السفر المتوقع</label><input type="date" id="ltravel" onchange="if($('lreturn'))$('lreturn').min=this.value"></div>
+        <div id="lreturnBox" style="display:none"><label>تاريخ العودة</label><input type="date" id="lreturn"></div>
+        <div><label>عدد الركاب</label><input type="number" id="lpax" min="1" value="1"></div>
+      </div></div>
+      <div class="sgrp"><h3>⏰ المتابعة</h3><div class="grid">
         <div><label>تاريخ الاستفسار</label><input type="date" id="linquiry"></div>
         <div><label>موعد المتابعة</label><input type="date" id="lfollow"></div>
-        <div><label>عدد الركاب</label><input type="number" id="lpax" min="1" value="1"></div>
-        <div><label>السعر المعروض (الإجمالي)</label><input type="number" id="lquotePrice" min="0" step="any"></div>
-        <div class="full" id="lpriceHint" style="display:none"></div>
-        <div><label>شركة الطيران المقترحة</label><input id="lquoteAirline" list="airlines" placeholder="اختر من القائمة أو اكتب"></div>
-        <div><label>العرض ساري حتى</label><input type="date" id="lquoteUntil"></div>
-        <div class="full"><label>تفاصيل العرض (توقيت، أمتعة، توقف...)</label><input id="lquoteInfo"></div>
         <div><label>الحالة</label>
           <select id="lstatus">
             <option value="new">جديد</option>
@@ -582,8 +600,15 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
             <option value="lost">لم يكمل</option>
             <option value="converted">تحول لحجز</option>
           </select></div>
-        <div class="full"><label>ملاحظات</label><textarea id="lnotes"></textarea></div>
-      </div>
+      </div></div>
+      <div class="sgrp"><h3>💰 عرض السعر</h3><div class="grid">
+        <div><label>السعر المعروض (الإجمالي)</label><input type="number" id="lquotePrice" min="0" step="any"></div>
+        <div><label>شركة الطيران المقترحة</label><input id="lquoteAirline" list="airlines" placeholder="اختر من القائمة أو اكتب"></div>
+        <div><label>العرض ساري حتى</label><input type="date" id="lquoteUntil"></div>
+        <div class="full" id="lpriceHint" style="display:none"></div>
+        <div class="full"><label>تفاصيل العرض (توقيت، أمتعة، توقف...)</label><input id="lquoteInfo"></div>
+      </div></div>
+      <div class="sgrp"><h3>📝 ملاحظات</h3><div class="grid"><div class="full"><textarea id="lnotes" rows="2"></textarea></div></div></div>
       <div class="actions"><button type="submit">حفظ</button><button type="button" class="sec" onclick="lmClose()">إلغاء</button><button type="button" id="lcancel" style="display:none"></button></div>
     </form></div></div>
 
@@ -599,8 +624,8 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
       <div class="c-sub" id="acHint"></div></div>
     <div class="sgrp"><h3>البيانات الأساسية</h3><div class="grid">
       <div><label>اسم العميل *</label><input id="acName" required oninput="acSuggest()"></div>
-      <div><label>رقم الهاتف / واتساب *</label><input id="acPhone" required inputmode="tel" dir="ltr" style="text-align:right"></div>
-      <div><label>أرقام أخرى (رقم في كل سطر + ملاحظة)</label><textarea id="acPhones" rows="2" dir="ltr" style="text-align:right" placeholder="01012345678 زوجته"></textarea></div>
+      <div class="phbox"><label>رقم الهاتف / واتساب *</label><div class="phrow"><input id="acPhone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر" onclick="phxAdd('acPhones')">＋</button></div><div class="phx" id="acPhones_ui"></div></div>
+      <textarea id="acPhones" hidden></textarea>
       <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="acGender" onchange="acGenderTouched=true"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select></div>
       <div><label>رقم الهوية / الجواز</label><input id="acId" dir="ltr" style="text-align:right"></div>
       <div><label>تاريخ الميلاد</label><input type="date" id="acBirth"></div>
@@ -608,7 +633,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     </div></div>
     <div class="sgrp" id="acLeadBox" style="display:none"><h3>بيانات الاستفسار</h3><div class="grid">
       <div><label>مطار الإقلاع</label><input id="acOrig" list="airports"></div><div><label>مطار الهبوط</label><input id="acDest" list="airports"></div>
-      <div><label>تاريخ السفر المتوقع</label><input type="date" id="acTravel"></div><div><label>موعد المتابعة</label><input type="date" id="acFollow"></div>
+      <div><label>نوع الرحلة</label><select id="acTrip" onchange="acTripSet()"><option value="one">ذهاب فقط</option><option value="round">ذهاب وعودة</option></select></div><div><label>تاريخ السفر المتوقع</label><input type="date" id="acTravel"></div><div id="acReturnBox" style="display:none"><label>تاريخ العودة</label><input type="date" id="acReturn"></div><div><label>موعد المتابعة</label><input type="date" id="acFollow"></div>
       <div><label>عدد الركاب</label><input type="number" id="acPax" min="1" value="1"></div>
       <div class="full"><label>ملاحظات الاستفسار</label><input id="acLNote"></div></div></div>
     <div class="sgrp"><h3>تفضيلات وملاحظات (اختياري)</h3><div class="grid">
@@ -794,7 +819,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     ['qty','qty'],['price','price'],['discount','discount'],['paid','paid'],['refBy','ref_by'],['notes','notes'],['returnDate','return_date'],['cost','cost'],['supplier','supplier']];
   const LEAD_FIELDS = [['id','id'],['name','name'],['phone','phone'],['orig','orig'],['dest','dest'],['travel','travel'],
     ['inquiry','inquiry'],['follow','follow'],['status','status'],['notes','notes'],['pax','pax'],['quotePrice','quote_price'],
-    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender']];
+    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date']];
   const CLIENT_FIELDS = [['id','id'],['birthday','birthday'],['passportExpiry','passport_expiry'],['prefAirline','pref_airline'],['prefSeat','pref_seat'],
     ['prefMeal','pref_meal'],['companions','companions'],['notes','notes'],['optout','optout'],['gender','gender'],['phones','phones'],['name','name'],['phone','phone'],['added','added'],['idNo','id_no']];
   const TASK_FIELDS = [['id','id'],['at','at']];
@@ -962,7 +987,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
     } catch(e) {
       if (!sess) return;
       g('gSub').textContent = 'تعذر تحميل البيانات';
-      msg(e.message + (/table|schema|relation|column/i.test(e.message) ? '\n\nيبدو أنك لم تنفّذ ملف upgrade.sql (أو setup.sql) بعد في Supabase ← SQL Editor (راجع README).' : ''), false);
+      msg(e.message + (/table|schema|relation|column/i.test(e.message) ? '\n\nيبدو أنك لم تنفّذ ملف upgrade.sql (أو setup.sql) بعد في Supabase ‏←‏ SQL Editor (راجع README).' : ''), false);
       g('gRetry').style.display = '';
       return;
     }
@@ -985,7 +1010,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
       const why = /invalid login credentials/i.test(m) ? 'البريد أو كلمة المرور غير صحيحة (أو الحساب غير موجود في هذا المشروع).'
         : /api key|apikey|forbidden|unauthorized|jwt/i.test(m) ? 'المفتاح في config.js غير صحيح أو ناقص (انسخ Publishable key كاملًا).'
         : /failed to fetch|networkerror|load failed/i.test(m) ? 'تعذر الوصول إلى الرابط. تأكد من الإنترنت ومن Project URL في config.js.'
-        : /not confirmed/i.test(m) ? 'الحساب غير مؤكَّد: في Supabase ← Authentication ← Users افتح الحساب وأكّده، أو أعد إنشاءه مع Auto Confirm User.' : '';
+        : /not confirmed/i.test(m) ? 'الحساب غير مؤكَّد: في Supabase ‏←‏ Authentication ‏←‏ Users افتح الحساب وأكّده، أو أعد إنشاءه مع Auto Confirm User.' : '';
       msg('تعذر الدخول' + (why ? ': ' + why : '') + '\n\n[رد الخادم: ' + m + ']\n[المشروع: ' + host + ']');
     }
   };
@@ -1247,7 +1272,7 @@ $('lf').addEventListener('submit', e => {
     name: $('lname').value.trim(), phone: toLat($('lphone').value.trim()), orig: $('lorig').value.trim(), dest: $('ldest').value.trim(),
     travel: $('ltravel').value, inquiry: $('linquiry').value || todayStr(), follow: $('lfollow').value,
     status: $('lstatus').value, notes: $('lnotes').value.trim(),
-    pax: Math.max(1, Math.round(+$('lpax').value || 1)), quotePrice: +$('lquotePrice').value || 0, quoteAirline: $('lquoteAirline').value.trim(), quoteUntil: $('lquoteUntil').value, quoteInfo: $('lquoteInfo').value.trim(), gender: $('lgender').value
+    pax: Math.max(1, Math.round(+$('lpax').value || 1)), quotePrice: +$('lquotePrice').value || 0, quoteAirline: $('lquoteAirline').value.trim(), quoteUntil: $('lquoteUntil').value, quoteInfo: $('lquoteInfo').value.trim(), gender: $('lgender').value, returnDate: (lTripType === 'round' ? $('lreturn').value : '')
   };
   { const old = leads.find(x => x.id === rec.id); rec.refBy = (old && old.refBy) || ''; }
   { const dm = !rec.id || !leads.some(x => x.id === rec.id) ? leadDup(rec) : ''; if (dm && !confirm('⚠ ' + dm + '\nهل تريد الحفظ رغم ذلك؟')) return; }
@@ -1487,12 +1512,12 @@ function patchClient(key, patch){
 
 /* ---------- قوالب الرسائل ---------- */
 const TPL = {
-  confirm:   {label:'تأكيد الحجز', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزكم، وهذه تفاصيل الرحلة:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو مراجعة البيانات والتأكد من مطابقة الأسماء لجواز السفر، وسنوافيكم بالتذكرة فور إصدارها.\n\nنتمنى لكم رحلة موفقة.\n{signature}'},
-  remind:    {label:'تذكير قبل السفر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلتكم {when}:\n\n✈️ {origin} ← {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو مراعاة التالي:\n• التأكد من سريان جواز السفر وصلاحية التأشيرة (إن لزمت).\n• الحضور إلى المطار قبل الإقلاع بثلاث ساعات.\n• إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكم رحلة سعيدة.\n{signature}'},
+  confirm:   {label:'تأكيد الحجز', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزكم، وهذه تفاصيل الرحلة:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو مراجعة البيانات والتأكد من مطابقة الأسماء لجواز السفر، وسنوافيكم بالتذكرة فور إصدارها.\n\nنتمنى لكم رحلة موفقة.\n{signature}'},
+  remind:    {label:'تذكير قبل السفر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلتكم {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو مراعاة التالي:\n• التأكد من سريان جواز السفر وصلاحية التأشيرة (إن لزمت).\n• الحضور إلى المطار قبل الإقلاع بثلاث ساعات.\n• إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكم رحلة سعيدة.\n{signature}'},
   bonvoyage: {label:'رحلة سعيدة', text:'السيد/ة {name}،\n\nيتمنى لكم فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجتم إلى أي مساعدة أثناء السفر فنحن على تواصل معكم.\n\n{signature}'},
-  return:    {label:'تذكير رحلة العودة', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلة العودة:\n\n✈️ {dest} ← {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو الحضور إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكم عودة آمنة.\n{signature}'},
+  return:    {label:'تذكير رحلة العودة', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلة العودة:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو الحضور إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكم عودة آمنة.\n{signature}'},
   feedback:  {label:'بعد العودة (تقييم وإحالة)', text:'السيد/ة {name}، الحمد لله على سلامتكم 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكم، ويهمنا رأيكم في خدمتنا: هل كانت تجربتكم كما توقعتم؟ وهل لديكم أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتكم خدمتنا فيسعدنا أن نخدم أهلكم وأصدقاءكم أيضًا؛ يكفي أن يذكروا كودكم الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولكم عند حجزهم: {refReward}.\n\nشاكرين ثقتكم.\n{signature}'},
-  payment:   {label:'تذكير بالمتبقي على الحجز', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنفيدكم بأن المتبقي على حجز الرحلة {origin} ← {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو التكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكم.\n{signature}'},
+  payment:   {label:'تذكير بالمتبقي على الحجز', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنفيدكم بأن المتبقي على حجز الرحلة {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو التكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكم.\n{signature}'},
   balance:   {label:'تذكير بإجمالي المتبقي على العميل', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nبمراجعة حسابكم لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو التكرم بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتكم.\n\nشاكرين تعاونكم.\n{signature}'},
   passport:  {label:'تنبيه جواز السفر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنلفت انتباهكم إلى أن جواز سفركم ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل تجديده قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتكم لأي استفسار.\n{signature}'},
   birthday:  {label:'تهنئة عيد ميلاد', text:'السيد/ة {name}،\n\nكل عام وأنتم بخير 🎂\nيتقدم لكم فريق {office} بأطيب التهاني بمناسبة عيد ميلادكم، ويسعده أن يقدّم لكم هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية يُرجى التواصل معنا.\n{signature}'},
@@ -1500,9 +1525,9 @@ const TPL = {
   offer:     {label:'عرض الولاء', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتكم وحجوزاتكم المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لكم عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض يُرجى التواصل معنا عند حجزكم القادم.\n\nشاكرين لكم ثقتكم.\n{signature}'},
   giftmsg:   {label:'تهنئة بمستوى الولاء', text:'السيد/ة {name}، مبارك 🎉\n\nيسعدنا إبلاغكم بوصولكم إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتكم:\n🎁 {gift}\n\nيُرجى التواصل معنا لاستلامها، وشكرًا لثقتكم.\n{signature}'},
   referral:  {label:'دعوة الإحالة', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلكم وأصدقاءكم، ولكم عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودكم الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لكم ثقتكم.\n{signature}'},
-  leadfollow:{label:'متابعة عميل مرجّح', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركم عن رحلة {origin} ← {dest}، هل ما زلتم مهتمين بالحجز؟ يسعدنا أن نوفر لكم أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكم.\n{signature}'},
-  inqreply:  {label:'رد على طلب من صفحة العملاء', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكم معنا، وقد استلمنا طلبكم:\n✈️ {origin} ← {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكم بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكم الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}'},
-  quote:     {label:'عرض سعر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسرّنا تقديم عرض السعر التالي:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى الرد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'}
+  leadfollow:{label:'متابعة عميل مرجّح', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركم عن رحلة {origin} ‏←‏ {dest}، هل ما زلتم مهتمين بالحجز؟ يسعدنا أن نوفر لكم أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكم.\n{signature}'},
+  inqreply:  {label:'رد على طلب من صفحة العملاء', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكم معنا، وقد استلمنا طلبكم:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكم بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكم الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}'},
+  quote:     {label:'عرض سعر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسرّنا تقديم عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى الرد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'}
 };
 const tplText = k => tplObj(k);
 const fillTpl = (text, v) => fillTplG(text, v);
@@ -1555,13 +1580,13 @@ function daysToBirthday(bd){
 function buildTasks(){
   const done = doneIds(), T = [], today = todayStr(), cmap = new Map(custAll.map(c => [c.key, c]));
   const push = (group, it) => { it.group = group; T.push(it); };
-  inquiries.forEach(q => push('inq', {title: q.name, sub: (q.origin || '—') + ' ← ' + (q.destination || '—') + (q.travel ? ' · ' + fmtP(q.travel) : '') + ' · ' + (q.pax || 1) + ' راكب',
+  inquiries.forEach(q => push('inq', {title: q.name, sub: (q.origin || '—') + ' ‏←‏ ' + (q.destination || '—') + (q.travel ? ' · ' + fmtP(q.travel) : '') + ' · ' + (q.pax || 1) + ' راكب',
     sub2: (q.refCode ? '🔗 كود إحالة: ' + q.refCode + ' ' : '') + (q.notes ? '📝 ' + q.notes : ''), phone: q.phone, chip: ['c-info', fmtP(String(q.at).slice(0, 10))],
     wa: {phone: q.phone, text: () => fillTpl(tplText('inqreply'), Object.assign(baseVars(), {name: q.name, gender: q.gender || '', origin: q.origin, dest: q.destination, pax: q.pax || 1}))},
     x: [{label:'➕ تحويل لمرجّح', fn: () => inqToLead(q.id)}, {label:'حذف', cls:'del', fn: () => inqDelete(q.id)}]}));
   data.forEach(r => {
     if (r.status === 'cancelled') return;
-    const d = daysUntil(r.travelDate), key = ckey(r), cl = CM.get(key), route = (r.origin || '—') + ' ← ' + (r.destination || '—');
+    const d = daysUntil(r.travelDate), key = ckey(r), cl = CM.get(key), route = (r.origin || '—') + ' ‏←‏ ' + (r.destination || '—');
     if (d >= 0 && d <= 3 && !done.has('remind:' + r.id)) push('travel', {title: r.name, key, sub: route + ' · ' + fmtP(r.travelDate), chip: [d === 0 ? 'c-bad' : 'c-warn', whenText(r.travelDate)], doneId: 'remind:' + r.id,
       wa: {phone: r.phone, text: () => fillTpl(tplText('remind'), bookingVars(r))}});
     if (r.returnDate) { const dr = daysUntil(r.returnDate);
@@ -1577,7 +1602,7 @@ function buildTasks(){
         wa: {phone: r.phone, text: () => fillTpl(tplText('passport'), bookingVars(r))}});
   });
   leads.filter(isLate).forEach(l => { const id = 'lead:' + l.id + ':' + l.follow; if (done.has(id)) return;
-    push('lead', {title: l.name, sub: (l.orig || '—') + ' ← ' + (l.dest || '—') + (l.travel ? ' · ' + fmtP(l.travel) : ''), chip: ['c-bad', 'متابعة ' + fmtP(l.follow)], doneId: id,
+    push('lead', {title: l.name, sub: (l.orig || '—') + ' ‏←‏ ' + (l.dest || '—') + (l.travel ? ' · ' + fmtP(l.travel) : ''), chip: ['c-bad', 'متابعة ' + fmtP(l.follow)], doneId: id,
       wa: {phone: l.phone, text: () => fillTpl(tplText('leadfollow'), leadVars(l))},
       x: [{label:'🧾 عرض سعر', fn: () => openQuote(l.id)}, {label:'فتح', fn: () => { showTab('l'); editLead(l.id); }}]}); });
   custAll.forEach(c => {
@@ -1664,18 +1689,29 @@ function renderProfile(){
       <div><b>${c.lastAct ? fmtP(c.lastAct) : '—'}</b>آخر نشاط</div><div><b>${c.firstDate ? fmtP(c.firstDate) : '—'}</b>أول حجز</div></div>
     ${nextTier ? `<div class="c-sub">باقي <b>${nextTier}</b> تذكرة للمستوى التالي</div>` : ''}
     <div class="sgrp"><h3>📎 مستندات العميل</h3><p class="hint" style="margin:0 0 8px">صورة الجواز أو البطاقة أو إيصالات الدفع، تُحفظ بأمان في حسابك السحابي.</p><button class="sm" onclick="openTickets(docCid(pKey))">📂 فتح المستندات <span class="tc" data-cid="${esc(docCid(c.key))}"></span></button></div>
-    <div class="sgrp"><h3>بيانات العميل</h3><div class="grid">
-      <div><label>تاريخ الميلاد</label><input type="date" id="pfBirthday" value="${esc(cl.birthday || '')}"></div>
-      <div><label>انتهاء جواز السفر</label><input type="date" id="pfPassport" value="${esc(cl.passportExpiry || '')}"></div>
-      <div><label>الجنس</label><select id="pfGender"><option value="">— غير محدد —</option><option value="m"${cl.gender === 'm' ? ' selected' : ''}>♂ ذكر</option><option value="f"${cl.gender === 'f' ? ' selected' : ''}>♀ أنثى</option></select></div>
-      <div><label>شركة الطيران المفضلة</label><input id="pfAirline" list="airlines" value="${esc(cl.prefAirline || '')}"></div>
-      <div><label>المقعد المفضل</label><input id="pfSeat" value="${esc(cl.prefSeat || '')}" placeholder="نافذة / ممر"></div>
-      <div><label>الوجبة</label><input id="pfMeal" value="${esc(cl.prefMeal || '')}"></div>
-      <div class="full"><label>📞 أرقام إضافية للعميل (رقم في كل سطر، ويمكن كتابة ملاحظة بعده مثل: 01012345678 زوجته)</label><textarea id="pfPhones" rows="2" dir="ltr" style="text-align:right">${esc(cl.phones || '')}</textarea></div>
-      <div class="full"><label>المرافقون / أفراد العائلة</label><textarea id="pfComp" placeholder="الاسم - صلة القرابة - رقم الجواز...">${esc(cl.companions || '')}</textarea></div>
-      <div class="full"><label>ملاحظات عن العميل</label><textarea id="pfNotes">${esc(cl.notes || '')}</textarea></div>
-      <div class="full"><label style="display:flex;gap:8px;align-items:center;color:var(--txt)"><input type="checkbox" id="pfOpt" style="width:auto" ${cl.optout ? 'checked' : ''}> 🚫 عدم الإزعاج (لا تُرسل له رسائل تسويقية أو حملات)</label></div>
-    </div><div class="actions"><button onclick="saveProfile()">حفظ بيانات العميل</button></div></div>
+    <div class="sgrp"><h3>✏️ تعديل بيانات العميل</h3>
+      <div class="fsec">📞 أرقام الهاتف</div>
+      <div class="phbox"><div class="phrow"><input class="phn ro" value="${esc(c.phone)}" readonly dir="ltr"><span class="chip c-info">الأساسي</span><button type="button" class="phplus" title="إضافة رقم آخر" onclick="phxAdd('pfPhones')">＋</button></div>
+        <div class="phx" id="pfPhones_ui"></div><textarea id="pfPhones" hidden>${esc(cl.phones || '')}</textarea></div>
+      <div class="fsec">👤 البيانات الشخصية</div>
+      <div class="grid g3">
+        <div><label>الجنس</label><select id="pfGender"><option value="">— غير محدد —</option><option value="m"${cl.gender === 'm' ? ' selected' : ''}>♂ ذكر</option><option value="f"${cl.gender === 'f' ? ' selected' : ''}>♀ أنثى</option></select></div>
+        <div><label>تاريخ الميلاد</label><input type="date" id="pfBirthday" value="${esc(cl.birthday || '')}"></div>
+        <div><label>انتهاء جواز السفر</label><input type="date" id="pfPassport" value="${esc(cl.passportExpiry || '')}"></div>
+      </div>
+      <div class="fsec">⭐ التفضيلات</div>
+      <div class="grid g3">
+        <div><label>شركة الطيران المفضلة</label><input id="pfAirline" list="airlines" value="${esc(cl.prefAirline || '')}"></div>
+        <div><label>المقعد المفضل</label><input id="pfSeat" value="${esc(cl.prefSeat || '')}" placeholder="نافذة / ممر"></div>
+        <div><label>الوجبة</label><input id="pfMeal" value="${esc(cl.prefMeal || '')}"></div>
+      </div>
+      <div class="fsec">📝 المرافقون والملاحظات</div>
+      <div class="grid">
+        <div class="full"><label>المرافقون / أفراد العائلة</label><textarea id="pfComp" rows="2" placeholder="الاسم - صلة القرابة - رقم الجواز...">${esc(cl.companions || '')}</textarea></div>
+        <div class="full"><label>ملاحظات عن العميل</label><textarea id="pfNotes" rows="2">${esc(cl.notes || '')}</textarea></div>
+        <div class="full"><label class="optrow"><input type="checkbox" id="pfOpt" ${cl.optout ? 'checked' : ''}> 🚫 عدم الإزعاج (لا تُرسل له رسائل تسويقية أو حملات)</label></div>
+      </div>
+      <div class="actions"><button onclick="saveProfile()">💾 حفظ بيانات العميل</button></div></div>
     <div class="sgrp"><h3>🔗 الإحالات</h3>
       <div>كود الإحالة: <b class="code" dir="ltr">${esc(c.code)}</b> <button class="sec sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(c.code)}')">نسخ</button>
         <button class="sm" onclick="profileInvite()">💬 إرسال دعوة الإحالة</button></div>
@@ -1687,7 +1723,7 @@ function renderProfile(){
       <div class="grid" style="margin-top:8px"><div class="full"><input id="pfGift" placeholder="نص الهدية (مثال: خصم 10%)" value="${esc(tierGift(c.tier) || '')}"></div></div>
       <div class="actions"><button class="sec sm" onclick="giveGift(pKey,'',$('pfGift').value.trim())">➕ تسجيل هدية ممنوحة</button></div></div>
     <div class="sgrp"><h3>سجل الحجوزات (${hist.length})</h3><div class="tbl"><table class="rec"><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>التذاكر</th><th>السعر</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>
-      ${hist.map(r => `<tr class="${r.status === 'cancelled' ? 'cancelled' : ''}"><td>${esc(r.origin)} ← ${esc(r.destination)}</td><td>${fmtD(r.travelDate)}</td><td>${r.returnDate ? fmtD(r.returnDate) : '—'}</td><td>${r.qty || 1}</td><td>${money(r.price)}</td><td>${money(r.paid)}</td><td>${r.status !== 'cancelled' && remaining(r) > 0 ? `<span class="chip c-bad">${money(remaining(r))}</span>` : '—'}</td><td><span class="badge b-${r.status}">${STATUS[r.status]}</span></td></tr>`).join('')}
+      ${hist.map(r => `<tr class="${r.status === 'cancelled' ? 'cancelled' : ''}"><td>${esc(r.origin)} ‏←‏ ${esc(r.destination)}</td><td>${fmtD(r.travelDate)}</td><td>${r.returnDate ? fmtD(r.returnDate) : '—'}</td><td>${r.qty || 1}</td><td>${money(r.price)}</td><td>${money(r.paid)}</td><td>${r.status !== 'cancelled' && remaining(r) > 0 ? `<span class="chip c-bad">${money(remaining(r))}</span>` : '—'}</td><td><span class="badge b-${r.status}">${STATUS[r.status]}</span></td></tr>`).join('')}
     </tbody></table></div></div>
     <div class="actions"><button class="sec" onclick="closeProfile()">إغلاق</button></div>`;
 }
@@ -1768,7 +1804,7 @@ function quoteInner(l){
     <div class="qh"><div>${settings.logo ? `<img src="${settings.logo}" alt="">` : `<div class="on">${esc(o.name || 'مكتب الطيران')}</div>`}</div><div style="text-align:left"><h1>عرض سعر</h1><div style="font-size:13px;color:#6b7488">رقم: ${esc(String(l.id).slice(-6))} · ${fmtP(todayStr())}</div></div></div>
     <div>${honorific(gKnown(l.gender) ? l.gender : (genderByPhone(l.phone) || guessGender(l.name)))}: <b>${esc(l.name)}</b></div>
     <table>
-      <tr><td>الرحلة</td><td>${esc(l.orig || '—')} ← ${esc(l.dest || '—')}</td></tr>
+      <tr><td>الرحلة</td><td>${esc(l.orig || '—')} ‏←‏ ${esc(l.dest || '—')}</td></tr>
       <tr><td>تاريخ السفر</td><td>${l.travel ? fmtP(l.travel) : 'يُحدد لاحقًا'}</td></tr>
       <tr><td>عدد الركاب</td><td>${pax}</td></tr>
       ${l.quoteAirline ? `<tr><td>شركة الطيران</td><td>${esc(l.quoteAirline)}</td></tr>` : ''}
@@ -1922,7 +1958,7 @@ function themeSwatches(){
 
 /* ---------- عرض الحجوزات حسب العميل (كل بيانات العميل في بطاقة واحدة) ---------- */
 let grpItems = [], grpLimit = 40, grpMore = new Set();
-const GSORT = {near:'الأقرب سفرًا', debt:'الأكثر متبقيًا', trips:'الأكثر حجوزات', recent:'الأحدث نشاطًا', name:'الاسم (أ ← ي)'};
+const GSORT = {near:'الأقرب سفرًا', debt:'الأكثر متبقيًا', trips:'الأكثر حجوزات', recent:'الأحدث نشاطًا', name:'الاسم (أ ‏←‏ ي)'};
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch(e) { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} };
 let grpMode = lsGet('office_grp_mode', 'open'), grpExc = new Set((() => { try { return JSON.parse(lsGet('office_grp_exc', '[]')) || []; } catch(e) { return []; } })());
@@ -1980,8 +2016,8 @@ function renderGrouped(){
   const shown = grpItems.slice(0, grpLimit);
   $('grpBox').innerHTML = shown.length ? shown.map((x, i) => { const c = x.c, cl = c.client || {}, open = grpIsOpen(x.k), all = grpMore.has(x.k), vis = all ? x.bks : x.bks.slice(0, 4);
     const nr = x.nextR, lr = x.lastR;
-    const nextLine = nr ? `<span class="nx">✈️ القادمة</span> <b dir="ltr">${esc(apCode(nr.origin))} ← ${esc(apCode(nr.destination))}</b> · ${fmtD(nr.travelDate)} ${daysUntil(nr.travelDate) <= 3 ? `<span class="chip c-warn">${daysUntil(nr.travelDate) === 0 ? 'اليوم' : 'بعد ' + daysUntil(nr.travelDate) + ' يوم'}</span>` : ''}`
-      : lr ? `<span class="nx">آخر رحلة</span> <b dir="ltr">${esc(apCode(lr.origin))} ← ${esc(apCode(lr.destination))}</b> · ${fmtD(lr.travelDate)}` : '';
+    const nextLine = nr ? `<span class="nx">✈️ القادمة</span> <b>${esc(apCode(nr.origin))} ‏←‏ ${esc(apCode(nr.destination))}</b> · ${fmtD(nr.travelDate)} ${daysUntil(nr.travelDate) <= 3 ? `<span class="chip c-warn">${daysUntil(nr.travelDate) === 0 ? 'اليوم' : 'بعد ' + daysUntil(nr.travelDate) + ' يوم'}</span>` : ''}`
+      : lr ? `<span class="nx">آخر رحلة</span> <b>${esc(apCode(lr.origin))} ‏←‏ ${esc(apCode(lr.destination))}</b> · ${fmtD(lr.travelDate)}` : '';
     return `<div class="cust ${open ? '' : 'closed'} ${c.remaining > 0 ? 'has-debt' : ''} ${nr && daysUntil(nr.travelDate) <= 3 ? 'is-soon' : ''}" id="cust-${i}">
       <div class="cust-h">
         <button type="button" class="chev noprint" onclick="grpToggle(${i})" aria-label="إظهار / إخفاء الرحلات" title="إظهار / إخفاء الرحلات">▾</button>
@@ -2042,7 +2078,7 @@ function buildPeople(){
   clients.forEach(cl => { if (seen.has(cl.id) || !(cl.name || cl.phone)) return; const p = {kind:'client', key:cl.id, name:cl.name || cl.phone, phone:cl.phone || '', client:cl, act:cl.added || '', remaining:0}; out.push(p); seen.set(cl.id, p); });
   return out;
 }
-const routeTxt = (o, d) => (o ? apCode(o) : '—') + ' ← ' + (d ? apCode(d) : '—');
+const routeTxt = (o, d) => (o ? apCode(o) : '—') + ' ‏←‏ ' + (d ? apCode(d) : '—');
 function peopleText(p){
   return [p.name, p.phone, p.c && p.c.client ? p.c.client.phones : '', p.c ? p.c.bk.map(r => r.origin + ' ' + r.destination).join(' ') : '', p.lead ? (p.lead.orig || '') + ' ' + (p.lead.dest || '') : '', p.inq ? (p.inq.origin || '') + ' ' + (p.inq.destination || '') : ''].join(' ').toLowerCase();
 }
@@ -2177,7 +2213,7 @@ function renderPay(){
   const showSup = !!(sup || hasCost(r) || outs.length);
   $('payBody').innerHTML = `
     <div class="set-h"><h2 style="margin:0">💵 دفعات: ${esc(r.name)}</h2><button class="sec sm" onclick="closePay()" aria-label="إغلاق">✕</button></div>
-    <div class="c-sub" style="margin-bottom:10px">${esc(r.origin)} ← ${esc(r.destination)} · ${fmtD(r.travelDate)}</div>
+    <div class="c-sub" style="margin-bottom:10px">${esc(r.origin)} ‏←‏ ${esc(r.destination)} · ${fmtD(r.travelDate)}</div>
     <div class="pstats"><div><b>${money(netPrice(r))}</b>إجمالي الحجز</div><div><b>${money(r.paid)}</b>المدفوع</div>
       <div class="${rem > 0 ? 'bad' : 'good'}"><b>${money(rem)}</b>${rem > 0 ? 'المتبقي على العميل' : 'مسدد ✓'}</div></div>
     <div class="sgrp"><h3>من العميل</h3>
@@ -2231,7 +2267,7 @@ function receiptInfo(pid){
 }
 function receiptText(pid){
   const i = receiptInfo(pid); if (!i) return ''; const o = office(), c = cur3();
-  return `🧾 إيصال استلام رقم ${i.no}\n${o.name || ''}\n\nاستلمنا من ${honorific(clientGender(ckey(i.r)) || guessGender(i.r.name))} ${i.r.name} مبلغ ${moneyP(i.p.amount)} ${c} (${i.p.method}) بتاريخ ${fmtP(i.p.at)}.\n\nعن حجز: ${i.r.origin} ← ${i.r.destination}\n📅 تاريخ السفر: ${fmtP(i.r.travelDate)}\n💳 إجمالي الحجز: ${moneyP(netPrice(i.r))} ${c}\n✅ إجمالي المدفوع حتى الآن: ${moneyP(i.upto)} ${c}\n` + (i.left > 0 ? `💰 المتبقي: ${moneyP(i.left)} ${c}` : '✅ تم سداد المبلغ بالكامل') + `\n\nشكرًا لثقتكم.${o.phone ? '\n📞 ' + o.phone : ''}`;
+  return `🧾 إيصال استلام رقم ${i.no}\n${o.name || ''}\n\nاستلمنا من ${honorific(clientGender(ckey(i.r)) || guessGender(i.r.name))} ${i.r.name} مبلغ ${moneyP(i.p.amount)} ${c} (${i.p.method}) بتاريخ ${fmtP(i.p.at)}.\n\nعن حجز: ${i.r.origin} ‏←‏ ${i.r.destination}\n📅 تاريخ السفر: ${fmtP(i.r.travelDate)}\n💳 إجمالي الحجز: ${moneyP(netPrice(i.r))} ${c}\n✅ إجمالي المدفوع حتى الآن: ${moneyP(i.upto)} ${c}\n` + (i.left > 0 ? `💰 المتبقي: ${moneyP(i.left)} ${c}` : '✅ تم سداد المبلغ بالكامل') + `\n\nشكرًا لثقتكم.${o.phone ? '\n📞 ' + o.phone : ''}`;
 }
 function receiptWA(pid){ const i = receiptInfo(pid); if (!i) return; xmOpen('إيصال إلى ' + i.r.name, i.r.phone, [{label: 'إيصال استلام', text: receiptText(pid)}], 0); }
 function receiptPrint(pid){
@@ -2241,7 +2277,7 @@ function receiptPrint(pid){
     ${settings.logo ? `<img class="l" src="${settings.logo}"><br>` : ''}<h1>${esc(o.name || 'إيصال استلام')}</h1><div class="m">${esc(o.address || '')} ${o.phone ? '· ' + esc(o.phone) : ''}</div>
     <h2 style="margin:18px 0 0">إيصال استلام رقم ${i.no}</h2><div class="m">التاريخ: ${fmtP(i.p.at)}</div>
     <table><tr><td>استلمنا من ${honorific(clientGender(ckey(i.r)) || guessGender(i.r.name))}</td><td>${esc(i.r.name)}</td></tr><tr><td>المبلغ</td><td class="big">${money(i.p.amount)} ${c}</td></tr><tr><td>طريقة الدفع</td><td>${esc(i.p.method)}</td></tr>
-    <tr><td>عن حجز</td><td>${esc(i.r.origin)} ← ${esc(i.r.destination)}</td></tr><tr><td>تاريخ السفر</td><td>${fmtP(i.r.travelDate)}</td></tr>
+    <tr><td>عن حجز</td><td>${esc(i.r.origin)} ‏←‏ ${esc(i.r.destination)}</td></tr><tr><td>تاريخ السفر</td><td>${fmtP(i.r.travelDate)}</td></tr>
     <tr><td>إجمالي الحجز</td><td>${money(netPrice(i.r))} ${c}</td></tr><tr><td>إجمالي المدفوع حتى الآن</td><td>${money(i.upto)} ${c}</td></tr><tr><td>المتبقي</td><td>${i.left > 0 ? money(i.left) + ' ' + c : 'مسدد بالكامل ✓'}</td></tr></table>
     ${i.p.note ? `<p class="m">ملاحظة: ${esc(i.p.note)}</p>` : ''}<div class="sig"><span>توقيع المستلم: ____________</span><span>${esc(o.name || '')}</span></div></body></html>`);
   w.document.close(); setTimeout(() => { w.focus(); w.print(); }, 300);
@@ -2390,7 +2426,7 @@ function accPricesHtml(){
       <div><label>سعر البيع للتذكرة</label><input type="number" id="plPrice" min="0" step="any" value="${e.price || ''}"></div><div><label>سعر الشراء المعتاد (اختياري)</label><input type="number" id="plCost" min="0" step="any" value="${e.cost || ''}"></div>
       <div><label>شركة الطيران</label><input id="plAir" list="airlines" value="${esc(e.airline || '')}"></div><div><label>ملاحظة</label><input id="plNote" value="${esc(e.note || '')}"></div></div>
       <div class="actions"><button onclick="plSave()">${plEdit >= 0 ? 'حفظ التعديل' : '＋ إضافة'}</button>${plEdit >= 0 ? '<button class="sec" onclick="plEdit=-1;renderAcc()">إلغاء</button>' : ''}</div></div>
-    ${PL().length ? `<table class="ptbl"><thead><tr><th>الوجهة</th><th>بيع</th><th>شراء</th><th>الشركة</th><th></th></tr></thead><tbody>${PL().map((x, i) => `<tr><td>${x.origin ? esc(x.origin) + ' ← ' : ''}${esc(x.dest)}</td><td><b>${money(x.price)}</b></td><td>${x.cost ? money(x.cost) : '—'}</td><td>${esc(x.airline)}</td><td class="acts"><button class="sec sm" onclick="plLoad(${i})">تعديل</button><button class="del sm" onclick="plDel(${i})">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">لا توجد أسعار مسجلة.</div>'}`;
+    ${PL().length ? `<table class="ptbl"><thead><tr><th>الوجهة</th><th>بيع</th><th>شراء</th><th>الشركة</th><th></th></tr></thead><tbody>${PL().map((x, i) => `<tr><td>${x.origin ? esc(x.origin) + ' ‏←‏ ' : ''}${esc(x.dest)}</td><td><b>${money(x.price)}</b></td><td>${x.cost ? money(x.cost) : '—'}</td><td>${esc(x.airline)}</td><td class="acts"><button class="sec sm" onclick="plLoad(${i})">تعديل</button><button class="del sm" onclick="plDel(${i})">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">لا توجد أسعار مسجلة.</div>'}`;
 }
 
 /* ---------- سلة المحذوفات ---------- */
@@ -2477,7 +2513,7 @@ function gsRun(){
   const sec = (t, items) => items.length ? `<div class="gs-h">${t}</div>` + items.join('') : '';
   const it = (js, main, sub) => `<button type="button" class="gs-i" onclick="${js}"><b>${main}</b><span class="c-sub">${sub}</span></button>`;
   const html = sec('👥 العملاء', cs.map(c => it(`gsGo('c','${esc(c.key)}')`, esc(c.name), `<span dir="ltr">${esc(c.phone)}</span> · ${c.trips} حجز`)))
-    + sec('✈️ الحجوزات', bs.map(b => it(`gsGo('b','${b.id}')`, esc(b.name) + (b.pnr ? ` <span dir="ltr" class="pnr">${esc(b.pnr)}</span>` : ''), `${esc(b.origin)} ← ${esc(b.destination)} · ${fmtP(b.travelDate)}`)))
+    + sec('✈️ الحجوزات', bs.map(b => it(`gsGo('b','${b.id}')`, esc(b.name) + (b.pnr ? ` <span dir="ltr" class="pnr">${esc(b.pnr)}</span>` : ''), `${esc(b.origin)} ‏←‏ ${esc(b.destination)} · ${fmtP(b.travelDate)}`)))
     + sec('🔎 المرجّحون', ls.map(l => it(`gsGo('l','${l.id}')`, esc(l.name), `${esc(l.dest || '')} · <span dir="ltr">${esc(l.phone)}</span>`)))
     + sec('🌐 طلبات الصفحة', qs.map(i => it(`gsGo('q','${esc(i.id)}')`, esc(i.name), `${esc(i.destination || '')} · <span dir="ltr">${esc(i.phone)}</span>`)))
     + sec('🏢 المكاتب', ss.map(s => it(`gsGo('s','${s.id}')`, esc(s.name), s.phone ? `<span dir="ltr">${esc(s.phone)}</span>` : '')));
@@ -2621,12 +2657,12 @@ function helpOpen(){
       <details open><summary>✈️ تسجيل حجز جديد</summary><p>من «الحجوزات» (أو زر ＋ في الجوال): اكتب الاسم والهاتف والمطارين وتاريخ السفر. للعميل السابق اكتب اسمه في أول خانة وسيُملأ الباقي. بيانات الهوية والجواز والميلاد داخل «بيانات إضافية».</p></details>
       <details><summary>💼 معرفة ربحي</summary><p>في قسم «حسابك» اكتب سعر الشراء من المكتب. تظهر عمولتك تلقائيًا في الحجز وفي «الحسابات والأرباح». يمكنك كتابة العمولة لتحسب سعر البيع.</p></details>
       <details><summary>💵 الدفعات والمتبقي</summary><p>زر «💵 دفعات» في أي حجز: سجّل دفعة من العميل أو للمكتب، واطبع إيصالًا أو أرسله بواتساب. المتبقي يتحدث تلقائيًا.</p></details>
-      <details><summary>🏢 المكاتب الموردة</summary><p>من «الحسابات» ← «المكاتب الموردة»: ترى كم اشتريت من كل مكتب وكم عليك له، وتُرسل له كشف حساب.</p></details>
+      <details><summary>🏢 المكاتب الموردة</summary><p>من «الحسابات» ‏←‏ «المكاتب الموردة»: ترى كم اشتريت من كل مكتب وكم عليك له، وتُرسل له كشف حساب.</p></details>
       <details><summary>🔍 البحث</summary><p>المربع العلوي يبحث في كل شيء: الاسم أو الهاتف أو PNR أو الوجهة. على الكمبيوتر اضغط <kbd>/</kbd> للوصول إليه.</p></details>
-      <details><summary>🗑 حذفت بالخطأ؟</summary><p>المحذوف يذهب إلى «الحسابات» ← «سلة المحذوفات» ويبقى 30 يومًا، يمكنك استرجاعه.</p></details>
-      <details><summary>💬 الرسائل الجاهزة</summary><p>أزرار واتساب تفتح رسالة جاهزة باسم العميل، وتضغط أنت «إرسال». عدّل صيغ الرسائل من ⚙ الإعدادات ← الرسائل الجاهزة.</p></details>
+      <details><summary>🗑 حذفت بالخطأ؟</summary><p>المحذوف يذهب إلى «الحسابات» ‏←‏ «سلة المحذوفات» ويبقى 30 يومًا، يمكنك استرجاعه.</p></details>
+      <details><summary>💬 الرسائل الجاهزة</summary><p>أزرار واتساب تفتح رسالة جاهزة باسم العميل، وتضغط أنت «إرسال». عدّل صيغ الرسائل من ⚙ الإعدادات ‏←‏ الرسائل الجاهزة.</p></details>
       <details><summary>🎨 تغيير المظهر</summary><p>زر 🎨 في الأعلى: اختر ثيمًا جاهزًا أو خصّص اللون والخط والحجم والوضع الداكن. يُحفظ على هذا الجهاز.</p></details>
-      <details><summary>💾 النسخ الاحتياطي</summary><p>من ☰ المزيد ← «نسخة احتياطية» مرة كل أسبوع، واحفظ الملف خارج الجوال (بريدك مثلًا).</p></details>
+      <details><summary>💾 النسخ الاحتياطي</summary><p>من ☰ المزيد ‏←‏ «نسخة احتياطية» مرة كل أسبوع، واحفظ الملف خارج الجوال (بريدك مثلًا).</p></details>
       <details><summary>⌨ اختصارات الكمبيوتر</summary><p><kbd>N</kbd> حجز جديد · <kbd>/</kbd> بحث · <kbd>Esc</kbd> إغلاق النوافذ · <kbd>?</kbd> هذا الدليل</p></details>
     </div>`;
   $('helpm').style.display = 'flex';
@@ -2637,8 +2673,8 @@ function helpClose(){ $('helpm').style.display = 'none'; }
 { const f = window.renderTasks; window.renderTasks = function(){
   f.apply(this, arguments); const box = $('tasksBox'); if (!box) return; let html = '';
   if (!data.length && !leads.length) html += `<div class="card welcome"><h2>👋 أهلًا بك! ابدأ في 3 خطوات</h2><ol>
-      <li><b>اسم مكتبك:</b> ⚙ الإعدادات ← بيانات المكتب (يظهر في الرسائل والإيصالات).</li>
-      <li><b>مكاتبك الموردة:</b> الحسابات ← المكاتب الموردة، لتتبع ما تشتريه منها.</li>
+      <li><b>اسم مكتبك:</b> ⚙ الإعدادات ‏←‏ بيانات المكتب (يظهر في الرسائل والإيصالات).</li>
+      <li><b>مكاتبك الموردة:</b> الحسابات ‏←‏ المكاتب الموردة، لتتبع ما تشتريه منها.</li>
       <li><b>أول حجز:</b> اضغط الزر أدناه.</li></ol><div class="actions"><button onclick="newBooking()">＋ تسجيل أول حجز</button><button class="sec" onclick="openSettings()">⚙ الإعدادات</button><button class="sec" onclick="helpOpen()">❓ دليل سريع</button></div></div>`;
   else { const last = +lsGet('office_last_backup', 0), days = last ? Math.floor((Date.now() - last) / 86400000) : null;
     if (days === null || days >= 14) html += `<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">💾 ${days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : 'مضى ' + days + ' يومًا على آخر نسخة احتياطية.'} <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>`; }
@@ -2669,12 +2705,12 @@ function genderOfVars(v){ if (v && gKnown(v.gender)) return v.gender; return gue
 
 /* ---------- نصوص القوالب: نسخة للذكر ونسخة للأنثى ---------- */
 const TPLM = {
-  confirm: 'السيد {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزك، وهذه تفاصيل رحلتك:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو أن تراجع البيانات وتتأكد من مطابقة الأسماء لجواز السفر، وسنوافيك بالتذكرة فور إصدارها.\n\nنتمنى لك رحلة موفقة.\n{signature}',
-  remind: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلتك {when}:\n\n✈️ {origin} ← {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منك مراعاة التالي:\n• تأكد من سريان جواز سفرك وصلاحية التأشيرة (إن لزمت).\n• احضر إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَ إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لك رحلة سعيدة.\n{signature}',
+  confirm: 'السيد {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزك، وهذه تفاصيل رحلتك:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو أن تراجع البيانات وتتأكد من مطابقة الأسماء لجواز السفر، وسنوافيك بالتذكرة فور إصدارها.\n\nنتمنى لك رحلة موفقة.\n{signature}',
+  remind: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلتك {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منك مراعاة التالي:\n• تأكد من سريان جواز سفرك وصلاحية التأشيرة (إن لزمت).\n• احضر إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَ إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لك رحلة سعيدة.\n{signature}',
   bonvoyage: 'السيد {name}،\n\nيتمنى لك فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجت إلى أي مساعدة أثناء سفرك فنحن على تواصل معك.\n\n{signature}',
-  return: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلة عودتك:\n\n✈️ {dest} ← {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضر إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لك عودة آمنة.\n{signature}',
+  return: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلة عودتك:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضر إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لك عودة آمنة.\n{signature}',
   feedback: 'السيد {name}، الحمد لله على سلامتك 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتك، ويهمنا رأيك في خدمتنا: هل كانت تجربتك كما توقعت؟ وهل لديك أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتك خدمتنا فيسعدنا أن نخدم أهلك وأصدقاءك أيضًا؛ يكفي أن يذكروا كودك الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولك عند حجزهم: {refReward}.\n\nشاكرين لك ثقتك.\n{signature}',
-  payment: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأن المتبقي على حجز رحلتك {origin} ← {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونك.\n{signature}',
+  payment: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأن المتبقي على حجز رحلتك {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونك.\n{signature}',
   balance: 'السيد {name}، تحية طيبة من {office}،\n\nبمراجعة حسابك لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو أن تتكرم بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتك.\n\nشاكرين تعاونك.\n{signature}',
   passport: 'السيد {name}، تحية طيبة من {office}،\n\nنلفت انتباهك إلى أن جواز سفرك ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل أن تجدده قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتك لأي استفسار.\n{signature}',
   birthday: 'السيد {name}،\n\nكل عام وأنت بخير 🎂\nيتقدم لك فريق {office} بأطيب التهاني بمناسبة عيد ميلادك، ويسعده أن يقدّم لك هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية تفضّل بالتواصل معنا.\n{signature}',
@@ -2682,17 +2718,17 @@ const TPLM = {
   offer: 'السيد {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتك وحجوزاتك المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لك عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض تفضّل بالتواصل معنا عند حجزك القادم.\n\nشاكرين لك ثقتك.\n{signature}',
   giftmsg: 'السيد {name}، مبارك لك 🎉\n\nيسعدنا إبلاغك بوصولك إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتك:\n🎁 {gift}\n\nتفضّل بالتواصل معنا لاستلامها، وشكرًا لثقتك.\n{signature}',
   referral: 'السيد {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلك وأصدقاءك، ولك عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودك الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لك ثقتك.\n{signature}',
-  leadfollow: 'السيد {name}، تحية طيبة من {office}،\n\nبخصوص استفسارك عن رحلة {origin} ← {dest}، هل ما زلت مهتمًا بالحجز؟ يسعدنا أن نوفر لك أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردك.\n{signature}',
-  inqreply: 'السيد {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلك معنا، وقد استلمنا طلبك:\n✈️ {origin} ← {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيك بأفضل الأسعار المتاحة في أقرب وقت، ويمكنك الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
-  quote: 'السيد {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لك عرض السعر التالي:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن ترد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
+  leadfollow: 'السيد {name}، تحية طيبة من {office}،\n\nبخصوص استفسارك عن رحلة {origin} ‏←‏ {dest}، هل ما زلت مهتمًا بالحجز؟ يسعدنا أن نوفر لك أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردك.\n{signature}',
+  inqreply: 'السيد {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلك معنا، وقد استلمنا طلبك:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيك بأفضل الأسعار المتاحة في أقرب وقت، ويمكنك الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
+  quote: 'السيد {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لك عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن ترد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
 };
 const TPLF = {
-  confirm: 'السيدة {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزكِ، وهذه تفاصيل رحلتكِ:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو أن تراجعي البيانات وتتأكدي من مطابقة الأسماء لجواز السفر، وسنوافيكِ بالتذكرة فور إصدارها.\n\nنتمنى لكِ رحلة موفقة.\n{signature}',
-  remind: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلتكِ {when}:\n\n✈️ {origin} ← {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منكِ مراعاة التالي:\n• تأكدي من سريان جواز سفركِ وصلاحية التأشيرة (إن لزمت).\n• احضري إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَي إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكِ رحلة سعيدة.\n{signature}',
+  confirm: 'السيدة {name}، تحية طيبة من {office}،\n\nيسعدنا تأكيد حجزكِ، وهذه تفاصيل رحلتكِ:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}{returnLine}\n🏢 شركة الطيران: {airline}\n🔖 رقم الحجز (PNR): {pnr}\n👥 عدد المسافرين: {qty}\n💳 إجمالي الحجز: {price} {currency}{payLine}\n\nنرجو أن تراجعي البيانات وتتأكدي من مطابقة الأسماء لجواز السفر، وسنوافيكِ بالتذكرة فور إصدارها.\n\nنتمنى لكِ رحلة موفقة.\n{signature}',
+  remind: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلتكِ {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منكِ مراعاة التالي:\n• تأكدي من سريان جواز سفركِ وصلاحية التأشيرة (إن لزمت).\n• احضري إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَي إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكِ رحلة سعيدة.\n{signature}',
   bonvoyage: 'السيدة {name}،\n\nيتمنى لكِ فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجتِ إلى أي مساعدة أثناء سفركِ فنحن على تواصل معكِ.\n\n{signature}',
-  return: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلة عودتكِ:\n\n✈️ {dest} ← {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضري إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكِ عودة آمنة.\n{signature}',
+  return: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلة عودتكِ:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضري إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكِ عودة آمنة.\n{signature}',
   feedback: 'السيدة {name}، الحمد لله على سلامتكِ 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكِ، ويهمنا رأيكِ في خدمتنا: هل كانت تجربتكِ كما توقعتِ؟ وهل لديكِ أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتكِ خدمتنا فيسعدنا أن نخدم أهلكِ وصديقاتكِ وأصدقاءكِ أيضًا؛ يكفي أن يذكروا كودكِ الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولكِ عند حجزهم: {refReward}.\n\nشاكرين لكِ ثقتكِ.\n{signature}',
-  payment: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأن المتبقي على حجز رحلتكِ {origin} ← {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرمي بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكِ.\n{signature}',
+  payment: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأن المتبقي على حجز رحلتكِ {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرمي بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكِ.\n{signature}',
   balance: 'السيدة {name}، تحية طيبة من {office}،\n\nبمراجعة حسابكِ لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو أن تتكرمي بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتكِ.\n\nشاكرين تعاونكِ.\n{signature}',
   passport: 'السيدة {name}، تحية طيبة من {office}،\n\nنلفت انتباهكِ إلى أن جواز سفركِ ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل أن تجدديه قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتكِ لأي استفسار.\n{signature}',
   birthday: 'السيدة {name}،\n\nكل عام وأنتِ بخير 🎂\nيتقدم لكِ فريق {office} بأطيب التهاني بمناسبة عيد ميلادكِ، ويسعده أن يقدّم لكِ هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية تفضّلي بالتواصل معنا.\n{signature}',
@@ -2700,9 +2736,9 @@ const TPLF = {
   offer: 'السيدة {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتكِ وحجوزاتكِ المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لكِ عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض تفضّلي بالتواصل معنا عند حجزكِ القادم.\n\nشاكرين لكِ ثقتكِ.\n{signature}',
   giftmsg: 'السيدة {name}، مبارك لكِ 🎉\n\nيسعدنا إبلاغكِ بوصولكِ إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتكِ:\n🎁 {gift}\n\nتفضّلي بالتواصل معنا لاستلامها، وشكرًا لثقتكِ.\n{signature}',
   referral: 'السيدة {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلكِ وصديقاتكِ وأصدقاءكِ، ولكِ عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودكِ الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لكِ ثقتكِ.\n{signature}',
-  leadfollow: 'السيدة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركِ عن رحلة {origin} ← {dest}، هل ما زلتِ مهتمةً بالحجز؟ يسعدنا أن نوفر لكِ أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكِ.\n{signature}',
-  inqreply: 'السيدة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكِ معنا، وقد استلمنا طلبكِ:\n✈️ {origin} ← {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكِ بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكِ الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
-  quote: 'السيدة {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لكِ عرض السعر التالي:\n\n✈️ المسار: {origin} ← {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن تردّي على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
+  leadfollow: 'السيدة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركِ عن رحلة {origin} ‏←‏ {dest}، هل ما زلتِ مهتمةً بالحجز؟ يسعدنا أن نوفر لكِ أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكِ.\n{signature}',
+  inqreply: 'السيدة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكِ معنا، وقد استلمنا طلبكِ:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكِ بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكِ الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
+  quote: 'السيدة {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لكِ عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن تردّي على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
 };
 Object.keys(TPLM).forEach(k => { TPL[k].text = TPLM[k]; });
 
@@ -2909,11 +2945,11 @@ function idcHtml(key, forPrint){
     stats = `<div class="sec full"><h4>📊 ملخص النشاط</h4><div class="stats"><div class="st"><b>${c.trips}</b><small>حجز</small></div><div class="st"><b>${c.tickets}</b><small>تذكرة</small></div><div class="st"><b>${money(c.spent)}</b><small>إجمالي المدفوع ${cur}</small></div><div class="st ${c.remaining > 0 ? 'bad' : 'good'}"><b>${c.remaining > 0 ? money(c.remaining) : '✓'}</b><small>${c.remaining > 0 ? 'المتبقي عليه ' + cur : 'لا متبقي'}</small></div></div>
       <div style="margin-top:8px">${idcRow('أول حجز', c.firstDate ? fmtP(c.firstDate) : '')}${idcRow('آخر سفر', c.last ? fmtP(c.last) : '')}${idcRow('الرحلة القادمة', c.nextTrip ? fmtP(c.nextTrip) + ' (بعد ' + daysUntil(c.nextTrip) + ' يوم)' : '')}${idcRow('أكثر الوجهات', tops)}</div></div>`;
     const rows = c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate)));
-    hist = `<div class="sec full"><h4>✈️ سجل الحجوزات (${rows.length})</h4><div style="overflow-x:auto"><table><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>الطيران</th><th>PNR</th><th>تذاكر</th><th>السعر</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.status === 'cancelled' ? 'cx' : ''}"><td>${esc(apCode(r.origin))} ← ${esc(apCode(r.destination))}</td><td>${fmtP(r.travelDate)}</td><td>${r.returnDate ? fmtP(r.returnDate) : '—'}</td><td>${esc(r.airline || '—')}</td><td class="ltr">${esc(r.pnr || '—')}</td><td>${r.qty || 1}</td><td>${money(netPrice(r))}</td><td>${money(r.paid)}</td><td>${r.status === 'cancelled' ? '—' : money(remaining(r))}</td><td>${STATUS[r.status] || esc(r.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    hist = `<div class="sec full"><h4>✈️ سجل الحجوزات (${rows.length})</h4><div style="overflow-x:auto"><table><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>الطيران</th><th>PNR</th><th>تذاكر</th><th>السعر</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.status === 'cancelled' ? 'cx' : ''}"><td>${esc(apCode(r.origin))} ‏←‏ ${esc(apCode(r.destination))}</td><td>${fmtP(r.travelDate)}</td><td>${r.returnDate ? fmtP(r.returnDate) : '—'}</td><td>${esc(r.airline || '—')}</td><td class="ltr">${esc(r.pnr || '—')}</td><td>${r.qty || 1}</td><td>${money(netPrice(r))}</td><td>${money(r.paid)}</td><td>${r.status === 'cancelled' ? '—' : money(remaining(r))}</td><td>${STATUS[r.status] || esc(r.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
   } else stats = `<div class="sec full"><h4>📊 ملخص النشاط</h4><div class="empty">لم يحجز بعد — لا توجد حجوزات مسجلة.</div></div>`;
   let enq = '';
-  if (l) enq += `<div class="sec ${q ? '' : 'full'}"><h4>🔎 المرجّح / الاستفسار</h4>${idcRow('الحالة', LSTATUS[l.status] || esc(l.status))}${idcRow('المسار', esc(routeTxt(l.orig, l.dest)), true)}${idcRow('تاريخ السفر', l.travel ? fmtP(l.travel) : '')}${idcRow('عدد الركاب', l.pax ? esc(l.pax) : '')}${idcRow('تاريخ الاستفسار', l.inquiry ? fmtP(l.inquiry) : '')}${idcRow('موعد المتابعة', l.follow ? fmtP(l.follow) + (isLate(l) ? ' <span class="tg bad">متأخرة</span>' : '') : '')}${l.quotePrice ? idcRow('عرض السعر', money(l.quotePrice) + ' ' + cur + (l.quoteAirline ? ' — ' + esc(l.quoteAirline) : '') + (l.quoteUntil ? ' حتى ' + fmtP(l.quoteUntil) : '')) : ''}${l.notes ? `<div class="note">📝 ${esc(l.notes)}</div>` : ''}</div>`;
-  if (q) enq += `<div class="sec ${l ? '' : 'full'}"><h4>🌐 طلب من صفحة الاستفسار</h4>${idcRow('المسار', esc(routeTxt(q.origin, q.destination)), true)}${idcRow('تاريخ السفر', q.travel ? fmtP(q.travel) : '')}${idcRow('عدد الركاب', q.pax ? esc(q.pax) : '')}${idcRow('وصل بتاريخ', q.at ? fmtP(String(q.at).slice(0, 10)) : '')}${idcRow('كود إحالة مُدخَل', q.refCode ? esc(q.refCode) : '')}${q.notes ? `<div class="note">📝 ${esc(q.notes)}</div>` : ''}</div>`;
+  if (l) enq += `<div class="sec ${q ? '' : 'full'}"><h4>🔎 المرجّح / الاستفسار</h4>${idcRow('الحالة', LSTATUS[l.status] || esc(l.status))}${idcRow('المسار', esc(routeTxt(l.orig, l.dest)))}${idcRow('تاريخ السفر', l.travel ? fmtP(l.travel) : '')}${idcRow('تاريخ العودة', l.returnDate ? fmtP(l.returnDate) : '')}${idcRow('عدد الركاب', l.pax ? esc(l.pax) : '')}${idcRow('تاريخ الاستفسار', l.inquiry ? fmtP(l.inquiry) : '')}${idcRow('موعد المتابعة', l.follow ? fmtP(l.follow) + (isLate(l) ? ' <span class="tg bad">متأخرة</span>' : '') : '')}${l.quotePrice ? idcRow('عرض السعر', money(l.quotePrice) + ' ' + cur + (l.quoteAirline ? ' — ' + esc(l.quoteAirline) : '') + (l.quoteUntil ? ' حتى ' + fmtP(l.quoteUntil) : '')) : ''}${l.notes ? `<div class="note">📝 ${esc(l.notes)}</div>` : ''}</div>`;
+  if (q) enq += `<div class="sec ${l ? '' : 'full'}"><h4>🌐 طلب من صفحة الاستفسار</h4>${idcRow('المسار', esc(routeTxt(q.origin, q.destination)))}${idcRow('تاريخ السفر', q.travel ? fmtP(q.travel) : '')}${idcRow('عدد الركاب', q.pax ? esc(q.pax) : '')}${idcRow('وصل بتاريخ', q.at ? fmtP(String(q.at).slice(0, 10)) : '')}${idcRow('كود إحالة مُدخَل', q.refCode ? esc(q.refCode) : '')}${q.notes ? `<div class="note">📝 ${esc(q.notes)}</div>` : ''}</div>`;
   let loy = '';
   if (c) {
     const mg = gifts.filter(x => x.client === c.key).sort((a, b) => String(b.at).localeCompare(String(a.at))), given = rewards[c.key] || 0;
@@ -2955,7 +2991,7 @@ function idcText(key){
   if (cl.passportExpiry) L.push('🛂 انتهاء الجواز: ' + fmtP(cl.passportExpiry));
   if (cl.prefAirline || cl.prefSeat || cl.prefMeal) L.push('⭐ التفضيلات: ' + [cl.prefAirline, cl.prefSeat, cl.prefMeal].filter(Boolean).join(' · '));
   if (c) { L.push('', '📊 ' + c.trips + ' حجز · ' + c.tickets + ' تذكرة · مدفوع ' + money(c.spent) + (c.remaining > 0 ? ' · متبقي ' + money(c.remaining) : '') + (c.tier ? ' · ' + TIER_LABEL[c.tier] : ''));
-    c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate))).slice(0, 8).forEach(r => L.push('• ' + fmtP(r.travelDate) + ' ' + apCode(r.origin) + '←' + apCode(r.destination) + (r.pnr ? ' ' + r.pnr : '') + (r.status === 'cancelled' ? ' (ملغي)' : ''))); }
+    c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate))).slice(0, 8).forEach(r => L.push('• ' + fmtP(r.travelDate) + ' ' + apCode(r.origin) + '‏←‏' + apCode(r.destination) + (r.pnr ? ' ' + r.pnr : '') + (r.status === 'cancelled' ? ' (ملغي)' : ''))); }
   else L.push('', 'لم يحجز بعد (' + (p.kind === 'lead' ? 'مرجّح' : 'طلب من الصفحة') + ')');
   if (cl.companions) L.push('', '👨‍👩‍👧 ' + cl.companions); if (cl.notes) L.push('📝 ' + cl.notes);
   return L.join('\n');
@@ -3027,13 +3063,13 @@ function sortBarHtml(opts, cur, setter, key){
   return '<div class="toolbar noprint sortbar"><span class="c-sub">ترتيب:</span><select onchange="' + setter + '=this.value;renderAcc()">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === cur ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') +
     '</select><button type="button" class="sec sm revbtn' + (isRev(key) ? ' on' : '') + '" data-rev="' + key + '" onclick="sortFlip(\'' + key + '\')">⇅ عكس الترتيب</button></div>';
 }
-function supSortBar(){ return suppliers.length > 1 ? sortBarHtml([['owed', 'الأكثر مستحقًا عليك'], ['name', 'الاسم (أ ← ي)'], ['bought', 'الأكثر مشتريات'], ['count', 'الأكثر حجوزات']], supSortKey, 'supSortKey', 's') : ''; }
+function supSortBar(){ return suppliers.length > 1 ? sortBarHtml([['owed', 'الأكثر مستحقًا عليك'], ['name', 'الاسم (أ ‏←‏ ي)'], ['bought', 'الأكثر مشتريات'], ['count', 'الأكثر حجوزات']], supSortKey, 'supSortKey', 's') : ''; }
 function supSorted(){
   var L = suppliers.slice(), k = supSortKey, S = function(x){ return supStats(x.id); };
   L.sort(k === 'name' ? function(a, b){ return String(a.name).localeCompare(String(b.name), 'ar'); } : k === 'bought' ? function(a, b){ return S(b).bought - S(a).bought; } : k === 'count' ? function(a, b){ return S(b).bks.length - S(a).bks.length; } : function(a, b){ return S(b).owed - S(a).owed; });
   if (isRev('s')) L.reverse(); return L;
 }
-function trashSortBar(){ return trash.length > 1 ? sortBarHtml([['date', 'الأحدث حذفًا'], ['kind', 'النوع (حجز / مرجّح)'], ['name', 'الاسم (أ ← ي)']], trashSortKey, 'trashSortKey', 't') : ''; }
+function trashSortBar(){ return trash.length > 1 ? sortBarHtml([['date', 'الأحدث حذفًا'], ['kind', 'النوع (حجز / مرجّح)'], ['name', 'الاسم (أ ‏←‏ ي)']], trashSortKey, 'trashSortKey', 't') : ''; }
 function trashSorted(){
   var L = trash.slice(), k = trashSortKey, nm = function(t){ try { return JSON.parse(t.payload).name || ''; } catch (e) { return ''; } };
   L.sort(k === 'kind' ? function(a, b){ return String(a.kind).localeCompare(String(b.kind)) || String(b.deletedAt).localeCompare(String(a.deletedAt)); } : k === 'name' ? function(a, b){ return nm(a).localeCompare(nm(b), 'ar'); } : function(a, b){ return String(b.deletedAt).localeCompare(String(a.deletedAt)); });
@@ -3084,7 +3120,7 @@ function renderDash(){
     K('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') + K('🔎', 'مرجّحون مفتوحون', openN, lateL.length ? lateL.length + ' متابعة متأخرة' : '', "showTab('l')", lateL.length ? 'warn' : '') +
     K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('a');$('pType').value='inq';renderPeople()", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
   var wk = week.length ? week.slice(0, 7).map(function(r){ var d = daysUntil(r.travelDate), rem = remaining(r);
-    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ← ' + esc(apCode(r.destination)) + ' · ' + fmtP(r.travelDate) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + r.id + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
+    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtP(r.travelDate) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + r.id + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
   var need = '';
   lateL.slice(0, 4).forEach(function(l){ need += dashRow('🔎 ' + esc(l.name), esc(routeTxt(l.orig, l.dest)) + ' · متابعة ' + fmtP(l.follow), '<span class="chip c-bad">متأخر</span>', "showTab('l');editLead('" + l.id + "')"); });
   debtors.slice(0, 4).forEach(function(x){ need += dashRow('💰 ' + esc(x.name), 'متبقٍ عليه', '<span class="chip c-bad">' + money(x.remaining) + '</span>', "openProfile('" + esc(x.key) + "')"); });
@@ -3093,7 +3129,7 @@ function renderDash(){
   var hist = []; for (var i = 5; i >= 0; i--) { var d0 = new Date(); d0.setDate(1); d0.setMonth(d0.getMonth() - i); var mk = d0.getFullYear() + '-' + ('0' + (d0.getMonth() + 1)).slice(-2); hist.push({m: mk, p: sumProfit(monthRows(mk)).prof, n: monthRows(mk).length}); }
   var mx = Math.max(1, Math.max.apply(null, hist.map(function(h){ return Math.abs(h.p); })));
   var bars = '<div class="dbars">' + hist.map(function(h){ return '<div class="db"><div class="db-v">' + (h.p ? money(h.p) : '') + '</div><div class="db-c"><i class="' + (h.p < 0 ? 'neg' : '') + '" style="height:' + Math.max(3, Math.round(Math.abs(h.p) / mx * 100)) + '%"></i></div><div class="db-l">' + monthLabel(h.m).split(' ')[0] + '</div><div class="db-n">' + h.n + ' حجز</div></div>'; }).join('') + '</div>';
-  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ← ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + r.id + "')"); }).join('') || '<div class="empty">لا توجد حجوزات بعد</div>';
+  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + r.id + "')"); }).join('') || '<div class="empty">لا توجد حجوزات بعد</div>';
   var inq = inquiries.slice().sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); }).slice(0, 4).map(function(q){ return dashRow('🌐 ' + esc(q.name), esc(routeTxt(q.origin, q.destination)), '<button class="sm" onclick="event.stopPropagation();inqToLead(\'' + q.id + '\')">➕ مرجّح</button>', ''); }).join('');
   box.innerHTML = '<div class="kpis">' + kpis + '</div><div class="dgrid">' +
     dashCard('✈️ رحلات الأسبوع القادم', wk, '<button class="sec sm" onclick="showTab(\'b\')">كل الحجوزات</button>') +
@@ -3151,7 +3187,7 @@ function acSave(e){
   patchClient(key, {name: name, phone: phone, added: todayStr(), gender: g, idNo: $('acId').value.trim(), birthday: $('acBirth').value, passportExpiry: $('acPass').value, prefAirline: $('acAirline').value.trim(),
     prefSeat: $('acSeat').value.trim(), prefMeal: $('acMeal').value.trim(), companions: $('acComp').value.trim(), notes: $('acNotes').value.trim(), phones: m.text});
   if (acKind === 'lead') {
-    leads.push({id: 'L' + Date.now(), name: name, phone: phone, orig: $('acOrig').value.trim(), dest: $('acDest').value.trim(), travel: $('acTravel').value, inquiry: todayStr(), follow: $('acFollow').value, status: 'new', notes: $('acLNote').value.trim(),
+    leads.push({id: 'L' + Date.now(), name: name, phone: phone, orig: $('acOrig').value.trim(), dest: $('acDest').value.trim(), travel: $('acTravel').value, returnDate: ($('acTrip').value === 'round' ? $('acReturn').value : ''), inquiry: todayStr(), follow: $('acFollow').value, status: 'new', notes: $('acLNote').value.trim(),
       pax: Math.max(1, Math.round(+$('acPax').value || 1)), quotePrice: 0, quoteAirline: '', quoteUntil: '', quoteInfo: '', refBy: '', gender: g});
     saveLeads(); acClose(); render(); showTab('l'); toast('✓ حُفظ العميل كمرجّح', 'ok'); return false;
   }
@@ -3223,7 +3259,7 @@ function ldCard(l){
     '' + phonesBlock(l.phone) + '</div>' +
     (l.quotePrice ? '<div class="lc-q"><small>عرض السعر</small><b>' + money(l.quotePrice) + '</b></div>' : '') + '</div>' +
     '<div class="lc-r"><span class="route">' + ap(l.orig) + '<span class="arr">←</span>' + ap(l.dest) + '</span>' + ((+l.pax || 1) > 1 ? ' <span class="chip c-gray">👥 ' + (+l.pax) + ' ركاب</span>' : '') + '</div>' +
-    '<div class="lc-d"><span>✈️ سفر: ' + (l.travel ? fmtD(l.travel) + ' ' + ch.t : '<i class="c-sub">غير محدد</i>') + '</span><span>📅 استفسار: ' + fmtD(l.inquiry) + '</span><span>⏰ متابعة: ' + (l.follow ? fmtD(l.follow) + ' ' + ch.f : '<i class="c-sub">—</i>') + '</span></div>' +
+    '<div class="lc-d"><span>✈️ سفر: ' + (l.travel ? fmtD(l.travel) + ' ' + ch.t : '<i class="c-sub">غير محدد</i>') + '</span>' + (l.returnDate ? '<span>↩️ عودة: ' + fmtD(l.returnDate) + '</span>' : '') + '<span>📅 استفسار: ' + fmtD(l.inquiry) + '</span><span>⏰ متابعة: ' + (l.follow ? fmtD(l.follow) + ' ' + ch.f : '<i class="c-sub">—</i>') + '</span></div>' +
     (l.quoteAirline ? '<div class="c-sub">🛫 ' + esc(l.quoteAirline) + (l.quoteUntil ? ' · العرض حتى ' + fmtD(l.quoteUntil) : '') + '</div>' : '') +
     (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 110 ? l.notes.slice(0, 110) + '…' : l.notes) + '</div>' : '') +
     '<div class="lc-a noprint">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + id + '\')">➕ تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + id + '\')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg(\'' + id + '\')">💬 رسالة</button>' +
@@ -3234,7 +3270,7 @@ function ldRow(l){
   var ch = ldChips(l);
   return '<tr class="' + (isLate(l) ? 'late' : '') + '"><td><div class="c-name">' + esc(l.name) + '</div>' + phonesBlock(l.phone) + '' +
     (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 80 ? l.notes.slice(0, 80) + '…' : l.notes) + '</div>' : '') + '</td><td><div class="route">' + ap(l.orig) + '<span class="arr">←</span>' + ap(l.dest) + '</div></td>' +
-    '<td>' + (l.travel ? '<div class="c-name">' + fmtD(l.travel) + '</div>' + ch.t : '<span class="c-sub">—</span>') + '</td><td>' + fmtD(l.inquiry) + '</td><td>' + (l.follow ? '<div class="c-name">' + fmtD(l.follow) + '</div>' + ch.f : '<span class="c-sub">—</span>') + '</td>' +
+    '<td>' + (l.travel ? '<div class="c-name">' + fmtD(l.travel) + '</div>' + ch.t : '<span class="c-sub">—</span>') + (l.returnDate ? '<div class="c-sub">↩️ ' + fmtD(l.returnDate) + '</div>' : '') + '</td><td>' + fmtD(l.inquiry) + '</td><td>' + (l.follow ? '<div class="c-name">' + fmtD(l.follow) + '</div>' + ch.f : '<span class="c-sub">—</span>') + '</td>' +
     '<td>' + (l.quotePrice ? money(l.quotePrice) : '<span class="c-sub">—</span>') + '</td><td><span class="badge b-' + l.status + '">' + LSTATUS[l.status] + '</span></td>' +
     '<td class="noprint"><div class="acts">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + l.id + '\')">تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + l.id + '\')">🧾</button><button class="sec sm" onclick="leadMsg(\'' + l.id + '\')">💬</button><button class="sec sm" onclick="editLead(\'' + l.id + '\')">تعديل</button><button class="del sm" onclick="delLead(\'' + l.id + '\')">حذف</button></div></td></tr>';
 }
@@ -3298,7 +3334,7 @@ function dupReasonTxt(why){
 function dupGuard(rec, idx){
   var f = dupFindAll(rec); if (idx >= 0) f = f.filter(function(x){ return x.why.indexOf('pnr') >= 0; });
   if (!f.length) return true;
-  var lines = f.slice(0, 3).map(function(x){ return '• ' + x.r.name + ' — ' + (x.r.origin || '') + ' ← ' + (x.r.destination || '') + ' — ' + fmtP(x.r.travelDate) + (x.r.pnr ? ' — ' + x.r.pnr : '') + '\n   (' + dupReasonTxt(x.why) + ')'; });
+  var lines = f.slice(0, 3).map(function(x){ return '• ' + x.r.name + ' — ' + (x.r.origin || '') + ' ‏←‏ ' + (x.r.destination || '') + ' — ' + fmtP(x.r.travelDate) + (x.r.pnr ? ' — ' + x.r.pnr : '') + '\n   (' + dupReasonTxt(x.why) + ')'; });
   return confirm('⚠ تنبيه تكرار محتمل:\n\n' + lines.join('\n') + '\n\nهل تريد الحفظ رغم ذلك؟');
 }
 function dupBkCheck(){
@@ -3307,7 +3343,7 @@ function dupBkCheck(){
   var f = (rec.pnr.trim().length >= 5 || (rec.travelDate && rec.destination)) ? dupFindAll(rec) : [];
   if ($('id').value) f = f.filter(function(x){ return x.why.indexOf('pnr') >= 0; });
   if (!f.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
-  box.innerHTML = f.slice(0, 3).map(function(x){ return '<div class="dup">⚠ ' + esc(dupReasonTxt(x.why)) + ': <b>' + esc(x.r.name) + '</b> · ' + esc(apCode(x.r.origin)) + ' ← ' + esc(apCode(x.r.destination)) + ' · ' + fmtP(x.r.travelDate) + (x.r.pnr ? ' · <span dir="ltr">' + esc(x.r.pnr) + '</span>' : '') + '</div>'; }).join('');
+  box.innerHTML = f.slice(0, 3).map(function(x){ return '<div class="dup">⚠ ' + esc(dupReasonTxt(x.why)) + ': <b>' + esc(x.r.name) + '</b> · ' + esc(apCode(x.r.origin)) + ' ‏←‏ ' + esc(apCode(x.r.destination)) + ' · ' + fmtP(x.r.travelDate) + (x.r.pnr ? ' · <span dir="ltr">' + esc(x.r.pnr) + '</span>' : '') + '</div>'; }).join('');
   box.style.display = '';
 }
 ['name', 'phone', 'pnr', 'travelDate', 'destination'].forEach(function(id){ var e = $(id); if (e) { e.addEventListener('input', dupBkCheck); e.addEventListener('change', dupBkCheck); } });
@@ -3318,10 +3354,10 @@ function buildRems(){
   var done = doneIds(), L = [], today = todayStr();
   data.forEach(function(r){
     if (r.status === 'cancelled') return;
-    var d = daysUntil(r.travelDate), route = apCode(r.origin) + ' ← ' + apCode(r.destination);
+    var d = daysUntil(r.travelDate), route = apCode(r.origin) + ' ‏←‏ ' + apCode(r.destination);
     if ((d === 0 || d === 1) && !done.has('remind:' + r.id)) L.push({ic: '✈️', title: r.name, sub: route + ' · ' + fmtP(r.travelDate) + (r.airline ? ' · ' + r.airline : ''), chip: [d === 0 ? 'c-bad' : 'c-warn', d === 0 ? 'اليوم' : 'غدًا'], phone: r.phone, done: 'remind:' + r.id, ord: d, text: function(){ return fillTpl(tplText('remind'), bookingVars(r)); }});
     if (r.returnDate) { var dr = daysUntil(r.returnDate);
-      if ((dr === 0 || dr === 1) && !done.has('ret:' + r.id)) L.push({ic: '↩️', title: r.name, sub: 'عودة ' + route.split(' ← ').reverse().join(' ← ') + ' · ' + fmtP(r.returnDate), chip: ['c-info', dr === 0 ? 'اليوم' : 'غدًا'], phone: r.phone, done: 'ret:' + r.id, ord: dr + 0.5, text: function(){ return fillTpl(tplText('return'), bookingVars(r)); }}); }
+      if ((dr === 0 || dr === 1) && !done.has('ret:' + r.id)) L.push({ic: '↩️', title: r.name, sub: 'عودة ' + route.split(' ‏←‏ ').reverse().join(' ‏←‏ ') + ' · ' + fmtP(r.returnDate), chip: ['c-info', dr === 0 ? 'اليوم' : 'غدًا'], phone: r.phone, done: 'ret:' + r.id, ord: dr + 0.5, text: function(){ return fillTpl(tplText('return'), bookingVars(r)); }}); }
     if (remaining(r) > 0 && d >= 0 && d <= 1 && !done.has('pay:' + r.id)) L.push({ic: '💰', title: r.name, sub: 'متبقٍ قبل السفر', chip: ['c-bad', moneyP(remaining(r))], phone: r.phone, done: 'pay:' + r.id, ord: d + 0.2, text: function(){ return fillTpl(tplText('payment'), bookingVars(r)); }});
   });
   buildTasks().forEach(function(t){
@@ -3355,20 +3391,20 @@ function remCard(){
 /* ---------- 9) قوالب رسائل إضافية ---------- */
 {
   var NEWT = {
-    reschedule: {label: 'تغيير موعد', m: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأنه تم تعديل موعد رحلتك، وهذه بياناتها الحالية:\n\n✈️ {origin} ← {dest}\n📅 {date}{returnLine}\n🏢 {airline}\n🔖 رقم الحجز: {pnr}\n\nيرجى مراجعة البيانات والرد بالتأكيد.\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأنه تم تعديل موعد رحلتكِ، وهذه بياناتها الحالية:\n\n✈️ {origin} ← {dest}\n📅 {date}{returnLine}\n🏢 {airline}\n🔖 رقم الحجز: {pnr}\n\nيرجى مراجعة البيانات والرد بالتأكيد.\n\n{signature}'},
-    docs: {label: 'طلب مستندات', m: 'السيد {name}، تحية طيبة من {office}،\n\nلإتمام إجراءات حجزك {origin} ← {dest} بتاريخ {date}، نرجو إرسال:\n\n🛂 صورة واضحة من جواز السفر (سارٍ لأكثر من 6 أشهر)\n🪪 صورة البطاقة الشخصية\n📸 أي مستندات أخرى مطلوبة للوجهة\n\nوذلك في أقرب وقت لتجنب أي تأخير.\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\nلإتمام إجراءات حجزكِ {origin} ← {dest} بتاريخ {date}، نرجو إرسال:\n\n🛂 صورة واضحة من جواز السفر (سارٍ لأكثر من 6 أشهر)\n🪪 صورة البطاقة الشخصية\n📸 أي مستندات أخرى مطلوبة للوجهة\n\nوذلك في أقرب وقت لتجنب أي تأخير.\n\n{signature}'},
-    thanks: {label: 'شكر على السداد', m: 'السيد {name}، تحية طيبة من {office}،\n\nاستلمنا دفعتك بخصوص رحلة {origin} ← {dest} بتاريخ {date}، شكرًا لك 🤍\n💰 المدفوع: {paid}\n{payLine}\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\nاستلمنا دفعتكِ بخصوص رحلة {origin} ← {dest} بتاريخ {date}، شكرًا لكِ 🤍\n💰 المدفوع: {paid}\n{payLine}\n\n{signature}'},
-    checkin: {label: 'تعليمات المطار', m: 'السيد {name}، تحية طيبة من {office}،\n\nتذكير بموعد رحلتك {when}:\n✈️ {origin} ← {dest} · 📅 {date}\n\nنوصي بما يلي:\n• الوصول للمطار قبل الإقلاع بـ 3 ساعات\n• إحضار جواز السفر والتذكرة\n• مراجعة حدود الأمتعة المسموحة\n\nرحلة سعيدة ✈️\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\nتذكير بموعد رحلتكِ {when}:\n✈️ {origin} ← {dest} · 📅 {date}\n\nنوصي بما يلي:\n• الوصول للمطار قبل الإقلاع بـ 3 ساعات\n• إحضار جواز السفر والتذكرة\n• مراجعة حدود الأمتعة المسموحة\n\nرحلة سعيدة ✈️\n\n{signature}'},
-    cancel: {label: 'إلغاء حجز', m: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأنه تم إلغاء حجز رحلتك {origin} ← {dest} بتاريخ {date} (رقم الحجز: {pnr}) بناءً على طلبك.\nوسنوافيك بتفاصيل أي مبلغ مستحق للاسترداد وفق شروط شركة الطيران.\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأنه تم إلغاء حجز رحلتكِ {origin} ← {dest} بتاريخ {date} (رقم الحجز: {pnr}) بناءً على طلبكِ.\nوسنوافيكِ بتفاصيل أي مبلغ مستحق للاسترداد وفق شروط شركة الطيران.\n\n{signature}'},
+    reschedule: {label: 'تغيير موعد', m: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأنه تم تعديل موعد رحلتك، وهذه بياناتها الحالية:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date}{returnLine}\n🏢 {airline}\n🔖 رقم الحجز: {pnr}\n\nيرجى مراجعة البيانات والرد بالتأكيد.\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأنه تم تعديل موعد رحلتكِ، وهذه بياناتها الحالية:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date}{returnLine}\n🏢 {airline}\n🔖 رقم الحجز: {pnr}\n\nيرجى مراجعة البيانات والرد بالتأكيد.\n\n{signature}'},
+    docs: {label: 'طلب مستندات', m: 'السيد {name}، تحية طيبة من {office}،\n\nلإتمام إجراءات حجزك {origin} ‏←‏ {dest} بتاريخ {date}، نرجو إرسال:\n\n🛂 صورة واضحة من جواز السفر (سارٍ لأكثر من 6 أشهر)\n🪪 صورة البطاقة الشخصية\n📸 أي مستندات أخرى مطلوبة للوجهة\n\nوذلك في أقرب وقت لتجنب أي تأخير.\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\nلإتمام إجراءات حجزكِ {origin} ‏←‏ {dest} بتاريخ {date}، نرجو إرسال:\n\n🛂 صورة واضحة من جواز السفر (سارٍ لأكثر من 6 أشهر)\n🪪 صورة البطاقة الشخصية\n📸 أي مستندات أخرى مطلوبة للوجهة\n\nوذلك في أقرب وقت لتجنب أي تأخير.\n\n{signature}'},
+    thanks: {label: 'شكر على السداد', m: 'السيد {name}، تحية طيبة من {office}،\n\nاستلمنا دفعتك بخصوص رحلة {origin} ‏←‏ {dest} بتاريخ {date}، شكرًا لك 🤍\n💰 المدفوع: {paid}\n{payLine}\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\nاستلمنا دفعتكِ بخصوص رحلة {origin} ‏←‏ {dest} بتاريخ {date}، شكرًا لكِ 🤍\n💰 المدفوع: {paid}\n{payLine}\n\n{signature}'},
+    checkin: {label: 'تعليمات المطار', m: 'السيد {name}، تحية طيبة من {office}،\n\nتذكير بموعد رحلتك {when}:\n‏✈️ {origin} ‏←‏ {dest} · 📅 {date}\n\nنوصي بما يلي:\n• الوصول للمطار قبل الإقلاع بـ 3 ساعات\n• إحضار جواز السفر والتذكرة\n• مراجعة حدود الأمتعة المسموحة\n\nرحلة سعيدة ✈️\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\nتذكير بموعد رحلتكِ {when}:\n‏✈️ {origin} ‏←‏ {dest} · 📅 {date}\n\nنوصي بما يلي:\n• الوصول للمطار قبل الإقلاع بـ 3 ساعات\n• إحضار جواز السفر والتذكرة\n• مراجعة حدود الأمتعة المسموحة\n\nرحلة سعيدة ✈️\n\n{signature}'},
+    cancel: {label: 'إلغاء حجز', m: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأنه تم إلغاء حجز رحلتك {origin} ‏←‏ {dest} بتاريخ {date} (رقم الحجز: {pnr}) بناءً على طلبك.\nوسنوافيك بتفاصيل أي مبلغ مستحق للاسترداد وفق شروط شركة الطيران.\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأنه تم إلغاء حجز رحلتكِ {origin} ‏←‏ {dest} بتاريخ {date} (رقم الحجز: {pnr}) بناءً على طلبكِ.\nوسنوافيكِ بتفاصيل أي مبلغ مستحق للاسترداد وفق شروط شركة الطيران.\n\n{signature}'},
     leadthanks: {label: 'شكر على التسجيل', m: 'السيد {name}، تحية طيبة من {office} 🌟\n\nشكرًا لتواصلك معنا وثقتك بنا ✈️\nتم تسجيل بياناتك وطلبك لدينا، وسنوافيك بأفضل الأسعار والمواعيد المتاحة في أقرب وقت.\n\nوإن رغبت بإضافة أي تفاصيل (الوجهة، التاريخ، عدد المسافرين) فنحن في خدمتك دائمًا.\n\n{signature}',
       f: 'السيدة {name}، تحية طيبة من {office} 🌟\n\nشكرًا لتواصلكِ معنا وثقتكِ بنا ✈️\nتم تسجيل بياناتكِ وطلبكِ لدينا، وسنوافيكِ بأفضل الأسعار والمواعيد المتاحة في أقرب وقت.\n\nوإن رغبتِ بإضافة أي تفاصيل (الوجهة، التاريخ، عدد المسافرين) فنحن في خدمتكِ دائمًا.\n\n{signature}'},
-    receipt: {label: 'ملخص إيصال', m: 'السيد {name}، تحية طيبة من {office}،\n\n🧾 إيصال حجز\n✈️ {origin} ← {dest}\n📅 {date}{returnLine}\n🏢 {airline} · 🔖 {pnr} · 🎟 {qty} تذكرة\n\n💵 الإجمالي: {total} {currency}\n✅ المدفوع: {paid} {currency}{payLine}\n\n{signature}',
-      f: 'السيدة {name}، تحية طيبة من {office}،\n\n🧾 إيصال حجز\n✈️ {origin} ← {dest}\n📅 {date}{returnLine}\n🏢 {airline} · 🔖 {pnr} · 🎟 {qty} تذكرة\n\n💵 الإجمالي: {total} {currency}\n✅ المدفوع: {paid} {currency}{payLine}\n\n{signature}'}
+    receipt: {label: 'ملخص إيصال', m: 'السيد {name}، تحية طيبة من {office}،\n\n🧾 إيصال حجز\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date}{returnLine}\n🏢 {airline} · 🔖 {pnr} · 🎟 {qty} تذكرة\n\n💵 الإجمالي: {total} {currency}\n✅ المدفوع: {paid} {currency}{payLine}\n\n{signature}',
+      f: 'السيدة {name}، تحية طيبة من {office}،\n\n🧾 إيصال حجز\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date}{returnLine}\n🏢 {airline} · 🔖 {pnr} · 🎟 {qty} تذكرة\n\n💵 الإجمالي: {total} {currency}\n✅ المدفوع: {paid} {currency}{payLine}\n\n{signature}'}
   };
   Object.keys(NEWT).forEach(function(k){ var o = NEWT[k]; TPLM[k] = o.m; TPLF[k] = o.f; TPL[k] = {label: o.label, text: o.m}; });
 }
@@ -3395,7 +3431,7 @@ function rcHtml(r){
   var row = function(a, b){ return b || b === 0 ? '<tr><td>' + a + '</td><td>' + b + '</td></tr>' : ''; };
   return '<div class="rc"><div class="h"><div><b>' + esc(o.name || 'مكتب حجز الطيران') + '</b><small>' + esc([o.phone, o.address].filter(Boolean).join(' · ')) + '</small></div><div class="no">إيصال حجز<b>' + rcNo(r) + '</b>' + fmtP(todayStr()) + '</div></div><div class="b">' +
     '<h4>بيانات العميل</h4><table>' + row('الاسم', esc(r.name)) + row('الهاتف', r.phone ? '<span dir="ltr">' + esc(r.phone) + '</span>' : '') + row('رقم الهوية/الجواز', r.idNo ? '<span dir="ltr">' + esc(r.idNo) + '</span>' : '') + '</table>' +
-    '<h4>بيانات الرحلة</h4><table>' + row('المسار', esc(r.origin || '—') + ' ← ' + esc(r.destination || '—')) + row('تاريخ السفر', fmtP(r.travelDate)) + (r.returnDate ? row('تاريخ العودة', fmtP(r.returnDate)) : '') +
+    '<h4>بيانات الرحلة</h4><table>' + row('المسار', esc(r.origin || '—') + ' ‏←‏ ' + esc(r.destination || '—')) + row('تاريخ السفر', fmtP(r.travelDate)) + (r.returnDate ? row('تاريخ العودة', fmtP(r.returnDate)) : '') +
     row('شركة الطيران', esc(r.airline || '')) + row('رقم الحجز (PNR)', r.pnr ? '<b dir="ltr">' + esc(r.pnr) + '</b>' : '') + row('عدد التذاكر', r.qty || 1) + row('الحالة', esc(STATUS[r.status] || '')) + '</table>' +
     '<h4>الحساب</h4><table>' + row('سعر التذاكر', moneyP(r.price) + ' ' + esc(cur)) + ((+r.discount) ? row('الخصم', '− ' + moneyP(r.discount) + ' ' + esc(cur)) : '') +
     '<tr class="tot"><td>الإجمالي</td><td>' + moneyP(tot) + ' ' + esc(cur) + '</td></tr>' + row('المدفوع', moneyP(r.paid) + ' ' + esc(cur)) + '<tr class="tot"><td>المتبقي</td><td>' + moneyP(rem) + ' ' + esc(cur) + '</td></tr></table>' +
@@ -3454,10 +3490,222 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-17 · 16';
+var APP_VERSION = '2026-11-17 · 19';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
+}
+
+/* ================= المرحلة 14: ذهاب/عودة للمرجّح + قائمة أرقام بزر (+) ================= */
+
+/* ---------- نوع الرحلة في نموذج المرجّح ---------- */
+var lTripType = 'one';
+function ltripSet(t){
+  lTripType = t === 'round' ? 'round' : 'one';
+  document.querySelectorAll('#lTrip button').forEach(function(b){ b.classList.toggle('on', b.dataset.t === lTripType); });
+  var bx = $('lreturnBox'); if (bx) bx.style.display = lTripType === 'round' ? '' : 'none';
+  if (lTripType === 'one' && $('lreturn')) $('lreturn').value = '';
+  if (lTripType === 'round' && $('lreturn') && $('ltravel').value) $('lreturn').min = $('ltravel').value;
+}
+{
+  var _rlf = resetLeadForm; resetLeadForm = function(){ _rlf.apply(this, arguments); ltripSet('one'); };
+  var _el = editLead; editLead = function(id){ _el.apply(this, arguments); var l = leads.find(function(x){ return x.id === id; }); if (l) { $('lreturn').value = l.returnDate || ''; ltripSet(l.returnDate ? 'round' : 'one'); $('lreturn').value = l.returnDate || ''; } };
+  var _cvl = convertLead; convertLead = function(id){ _cvl.apply(this, arguments); var l = leads.find(function(x){ return x.id === id; }); if (l && l.returnDate && $('returnDate')) $('returnDate').value = l.returnDate; };
+  var _lv2 = leadVars; leadVars = function(l){ var v = _lv2.apply(this, arguments); v.return = fmtP(l.returnDate); v.returnLine = l.returnDate ? '\n↩️ تاريخ العودة: ' + fmtP(l.returnDate) : ''; return v; };
+  [TPLM, TPLF].forEach(function(T){ T.quote = T.quote.replace('{date}\n', '{date}{returnLine}\n'); }); TPL.quote.text = TPLM.quote;
+}
+$('lf').addEventListener('submit', function(e){
+  if (lTripType === 'round') {
+    var t = $('ltravel').value, r = $('lreturn').value;
+    if (!r) { e.preventDefault(); e.stopImmediatePropagation(); alert('اختر تاريخ العودة أو غيّر نوع الرحلة إلى «ذهاب فقط».'); $('lreturn').focus(); return; }
+    if (t && r < t) { e.preventDefault(); e.stopImmediatePropagation(); alert('تاريخ العودة قبل تاريخ السفر.'); $('lreturn').focus(); return; }
+  }
+}, true);
+function acTripSet(){ var r = $('acTrip').value === 'round'; $('acReturnBox').style.display = r ? '' : 'none'; if (!r) $('acReturn').value = ''; }
+
+/* ---------- قائمة أرقام الهاتف بزر (+) ---------- */
+function phxRows(taId){
+  var ui = $(taId + '_ui'); if (!ui) return [];
+  return [].map.call(ui.querySelectorAll('.phrow'), function(r){ return {num: r.querySelector('.phn').value.trim(), label: r.querySelector('.phl').value.trim()}; });
+}
+function phxSync(taId){
+  var ta = $(taId); if (!ta) return;
+  var txt = phxRows(taId).filter(function(r){ return r.num; }).map(function(r){ return r.num + (r.label ? ' ' + r.label : ''); }).join('\n');
+  PHX_SET[taId].call(ta, txt);
+}
+var PHX_SET = {};
+function phxRowHtml(p){
+  return '<div class="phrow"><input class="phn" dir="ltr" inputmode="tel" placeholder="رقم آخر" value="' + esc(p.num || '') + '"><input class="phl" placeholder="ملاحظة (زوجته، العمل...)" value="' + esc(p.label || '') + '">' +
+    '<button type="button" class="phplus" data-a="add" title="إضافة رقم آخر">＋</button><button type="button" class="phdel" data-a="del" title="حذف الرقم">✕</button></div>';
+}
+function phxRender(taId){
+  var ta = $(taId), ui = $(taId + '_ui'); if (!ta || !ui) return;
+  var list = parsePhones(ta.value); ui.innerHTML = list.map(phxRowHtml).join('');
+}
+function phxAdd(taId, afterRow){
+  var ui = $(taId + '_ui'); if (!ui) return;
+  var tmp = document.createElement('div'); tmp.innerHTML = phxRowHtml({}); var row = tmp.firstChild;
+  if (afterRow && afterRow.parentNode === ui) ui.insertBefore(row, afterRow.nextSibling); else ui.appendChild(row);
+  row.querySelector('.phn').focus();
+}
+function phxInit(taId){
+  var ta = $(taId), ui = $(taId + '_ui'); if (!ta || !ui) return;
+  if (!PHX_SET[taId] || ta.__phx !== true) {
+    var d = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+    PHX_SET[taId] = d.set;
+    Object.defineProperty(ta, 'value', {configurable: true, get: function(){ return d.get.call(ta); }, set: function(v){ d.set.call(ta, v); phxRender(taId); }});
+    ta.__phx = true;
+  }
+  if (!ui.__bound) {
+    ui.__bound = true;
+    ui.addEventListener('input', function(){ phxSync(taId); });
+    ui.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return; var row = b.closest('.phrow');
+      if (b.dataset.a === 'add') phxAdd(taId, row);
+      else if (b.dataset.a === 'del') { row.remove(); phxSync(taId); }
+    });
+  }
+  phxRender(taId);
+}
+['phones', 'acPhones'].forEach(phxInit);
+[['f', 'phones'], ['acf', 'acPhones']].forEach(function(p){ var f = $(p[0]); if (f) f.addEventListener('reset', function(){ setTimeout(function(){ phxRender(p[1]); }, 0); }); });
+{
+  var _rp = renderProfile;
+  renderProfile = function(){ _rp.apply(this, arguments); var t = $('pfPhones'); if (t) { t.__phx = false; phxInit('pfPhones'); } };
+}
+
+/* ================= المرحلة 15: قائمة أسعار محسّنة (تاريخ، ذهاب/عودة، تصنيف) ================= */
+var PL_CATS = ['سياحة', 'عمرة', 'حج', 'عمل', 'دراسة', 'علاج', 'زيارة عائلية', 'أخرى'];
+var PL_CABIN = {eco: 'اقتصادية', biz: 'رجال أعمال', first: 'أولى'};
+var PL_TRIP = {one: '→ ذهاب فقط', round: '⇄ ذهاب وعودة'};
+var plF = {trip: '', cat: '', q: '', sort: 'date', rev: false, group: 'trip', hideOld: false};
+function plOld(e){ return !!(e.date && e.date < todayStr()); }
+
+/* مطابقة أفضل سعر: الوجهة + (الإقلاع) + نوع الرحلة + التاريخ، مع تجاهل المنتهي إن وُجد بديل */
+function plFind(origin, dest, o){
+  o = o || {}; var best = null, bs = -1e9;
+  PL().forEach(function(e){
+    if (!sameAp(e.dest, dest)) return;
+    var s = 0;
+    s += e.origin ? (sameAp(e.origin, origin) ? 4 : -3) : 1;
+    if (e.trip) s += ((e.trip === 'round') === !!o.round) ? 3 : -2;
+    if (e.date) { if (o.date && e.date === o.date) s += 4; else if (plOld(e)) s -= 6; else if (o.date) s -= 1; }
+    if (s > bs) { bs = s; best = e; }
+  });
+  return best;
+}
+function plChips(e){
+  return (e.trip ? '<span class="chip c-info">' + PL_TRIP[e.trip] + '</span> ' : '') + (e.date ? '<span class="chip ' + (plOld(e) ? 'c-gray' : 'c-ok') + '">' + fmtP(e.date) + (e.ret ? ' ⇄ ' + fmtP(e.ret) : '') + (plOld(e) ? ' · منتهي' : '') + '</span> ' : '') + (e.cabin ? '<span class="chip c-gray">' + PL_CABIN[e.cabin] + '</span>' : '');
+}
+var plCurL = null;
+var _ph0 = priceHint, _lph0 = leadPriceHint;
+priceHint = function(){
+  var box = $('priceHint'); if (!box) return;
+  var q = Math.max(1, Math.round(+$('qty').value || 1)), e = plFind($('origin').value, $('destination').value, {round: !!$('returnDate').value, date: $('travelDate').value});
+  if (!e || $('id').value || (+$('price').value > 0)) { box.style.display = 'none'; plCur = null; return; }
+  plCur = e; box.style.display = '';
+  box.innerHTML = '💡 سعر معتاد لـ <b>' + esc(e.dest) + '</b> ' + plChips(e) + ': بيع ' + money(e.price) + (+e.cost ? ' / شراء ' + money(e.cost) : '') + ' للتذكرة' + (q > 1 ? ' × ' + q : '') + (e.airline ? ' · ' + esc(e.airline) : '') + ' <button type="button" class="sm" onclick="priceApply()">تطبيق</button>';
+};
+leadPriceHint = function(){
+  var box = $('lpriceHint'); if (!box) return;
+  var q = Math.max(1, Math.round(+$('lpax').value || 1)), e = plFind($('lorig').value, $('ldest').value, {round: lTripType === 'round', date: $('ltravel').value});
+  if (!e || (+$('lquotePrice').value > 0)) { box.style.display = 'none'; plCurL = null; return; }
+  plCurL = e; box.style.display = '';
+  box.innerHTML = '💡 سعر معتاد لـ <b>' + esc(e.dest) + '</b> ' + plChips(e) + ': ' + money(e.price) + ' للتذكرة' + (q > 1 ? ' ‏←‏ ' + money(e.price * q) + ' لـ ' + q : '') + ' <button type="button" class="sm" onclick="plApplyLead()">تطبيق</button>';
+};
+function plApplyLead(){
+  var e = plCurL; if (!e) return; var q = Math.max(1, Math.round(+$('lpax').value || 1));
+  $('lquotePrice').value = r2((+e.price || 0) * q); if (e.airline && !$('lquoteAirline').value) $('lquoteAirline').value = e.airline; $('lpriceHint').style.display = 'none';
+}
+['origin', 'destination', 'qty'].forEach(function(id){ $(id).removeEventListener('input', _ph0); });
+['origin', 'destination', 'qty', 'travelDate', 'returnDate'].forEach(function(id){ $(id).addEventListener('input', priceHint); $(id).addEventListener('change', priceHint); });
+['lorig', 'ldest', 'lpax', 'lquotePrice'].forEach(function(id){ $(id).removeEventListener('input', _lph0); });
+['lorig', 'ldest', 'lpax', 'lquotePrice', 'ltravel', 'lreturn'].forEach(function(id){ $(id).addEventListener('input', leadPriceHint); $(id).addEventListener('change', leadPriceHint); });
+document.querySelectorAll('#lTrip button').forEach(function(b){ b.addEventListener('click', function(){ leadPriceHint(); }); });
+
+/* ---------- حفظ / تعديل / نسخ ---------- */
+function plSave(){
+  var dest = $('plDest').value.trim(); if (!dest) { alert('اكتب الوجهة.'); return; }
+  var trip = $('plTrip').value, date = $('plDate').value, ret = trip === 'round' ? $('plRet').value : '';
+  if (trip === 'round' && date && ret && ret < date) { alert('تاريخ العودة قبل تاريخ السفر.'); return; }
+  var e = {origin: $('plOrig').value.trim(), dest: dest, trip: trip, date: date, ret: ret, cabin: $('plCabin').value, cat: $('plCat').value, price: +$('plPrice').value || 0, cost: +$('plCost').value || 0, airline: $('plAir').value.trim(), note: $('plNote').value.trim()};
+  var L = PL().slice(); if (plEdit >= 0 && L[plEdit]) L[plEdit] = e; else L.push(e);
+  settings.priceList = L; saveSettings(); plEdit = -1; renderAcc();
+}
+function plDup(i){ var L = PL().slice(); if (!L[i]) return; L.splice(i + 1, 0, Object.assign({}, L[i])); settings.priceList = L; saveSettings(); plEdit = i + 1; renderAcc(); }
+function plTripChg(){ var r = $('plTrip').value === 'round'; $('plRetBox').style.display = r ? '' : 'none'; if (!r) $('plRet').value = ''; }
+function plSetQ(v){ plF.q = v; renderAcc(); var el = $('plQ'); if (el) { el.focus(); el.setSelectionRange(v.length, v.length); } }
+function plSet(k, v){ plF[k] = v; renderAcc(); }
+
+function plList(){
+  var q = plF.q.trim().toLowerCase();
+  var L = PL().map(function(e, i){ return {e: e, i: i}; }).filter(function(x){
+    var e = x.e;
+    if (plF.trip && (e.trip || '') !== (plF.trip === 'any' ? '' : plF.trip)) return false;
+    if (plF.cat && (e.cat || '') !== plF.cat) return false;
+    if (plF.hideOld && plOld(e)) return false;
+    if (q && !((e.dest || '') + ' ' + (e.origin || '') + ' ' + (e.airline || '') + ' ' + (e.note || '') + ' ' + (e.cat || '')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  var k = plF.sort, A = function(x){ return x.e; };
+  L.sort(function(a, b){
+    var x = A(a), y = A(b), c = 0;
+    if (k === 'date') { var dx = x.date || '9999', dy = y.date || '9999'; c = dx.localeCompare(dy); }
+    else if (k === 'price') c = (+x.price || 0) - (+y.price || 0);
+    else if (k === 'profit') c = ((+x.price || 0) - (+x.cost || 0)) - ((+y.price || 0) - (+y.cost || 0));
+    else if (k === 'cat') c = String(x.cat || 'ي').localeCompare(String(y.cat || 'ي'), 'ar');
+    else c = String(x.dest || '').localeCompare(String(y.dest || ''), 'ar');
+    if (!c) c = String(x.dest || '').localeCompare(String(y.dest || ''), 'ar');
+    return plF.rev ? -c : c;
+  });
+  return L;
+}
+function plRowHtml(x){
+  var e = x.e, i = x.i, profit = (+e.cost) ? (+e.price || 0) - (+e.cost) : null;
+  return '<tr class="' + (plOld(e) ? 'plold' : '') + '"><td><b>' + (e.origin ? esc(e.origin) + ' ‏←‏ ' : '') + esc(e.dest) + '</b>' + (e.note ? '<div class="c-sub">' + esc(e.note) + '</div>' : '') + '</td>' +
+    '<td>' + (e.date ? fmtP(e.date) + (e.ret ? '<div class="c-sub">↩ ' + fmtP(e.ret) + '</div>' : '') + (plOld(e) ? '<div><span class="chip c-gray">منتهي</span></div>' : '') : '<span class="c-sub">أي تاريخ</span>') + '</td>' +
+    '<td>' + (e.cabin ? PL_CABIN[e.cabin] : '<span class="c-sub">—</span>') + '</td><td>' + (e.cat ? '<span class="chip c-info">' + esc(e.cat) + '</span>' : '<span class="c-sub">—</span>') + '</td>' +
+    '<td><b>' + money(e.price) + '</b></td><td>' + (e.cost ? money(e.cost) : '—') + '</td><td>' + (profit === null ? '—' : '<span class="' + (profit < 0 ? 'bad' : 'good') + '">' + money(profit) + '</span>') + '</td><td>' + esc(e.airline || '—') + '</td>' +
+    '<td class="plact"><button class="sec sm" onclick="plLoad(' + i + ')" title="تعديل">✏️</button><button class="sec sm" onclick="plDup(' + i + ')" title="نسخ">⧉</button><button class="del sm" onclick="plDel(' + i + ')" title="حذف">🗑</button></td></tr>';
+}
+function plGroups(list){
+  var g = plF.group, key = function(e){ return g === 'trip' ? (e.trip || '') : g === 'cat' ? (e.cat || '') : g === 'dest' ? (e.dest || '') : 'all'; };
+  var title = function(k){ return g === 'trip' ? (k ? PL_TRIP[k] : 'نوع الرحلة غير محدد') : g === 'cat' ? (k || 'بدون تصنيف') : g === 'dest' ? k : 'كل الأسعار'; };
+  var order = [], map = {};
+  list.forEach(function(x){ var k = key(x.e); if (!(k in map)) { map[k] = []; order.push(k); } map[k].push(x); });
+  if (g === 'trip') order.sort(function(a, b){ var o = {round: 0, one: 1, '': 2}; return o[a] - o[b]; });
+  return order.map(function(k){ return {title: title(k), items: map[k]}; });
+}
+function accPricesHtml(){
+  var e = plEdit >= 0 ? PL()[plEdit] || {} : {}, all = PL(), list = plList();
+  var cnt = function(t){ return all.filter(function(x){ return t === '' ? true : t === 'any' ? !x.trip : x.trip === t; }).length; };
+  var pill = function(v, l){ return '<button type="button" class="' + (plF.trip === v ? 'on' : '') + '" onclick="plSet(\'trip\',\'' + v + '\')">' + l + ' (' + cnt(v) + ')</button>'; };
+  var form = '<div class="sgrp"><h3>' + (plEdit >= 0 ? '✏️ تعديل سعر' : '➕ إضافة سعر') + '</h3>' +
+    '<div class="fsec">✈️ الرحلة</div><div class="grid">' +
+    '<div><label>نوع الرحلة</label><select id="plTrip" onchange="plTripChg()"><option value="one"' + (e.trip === 'one' ? ' selected' : '') + '>→ ذهاب فقط</option><option value="round"' + (e.trip === 'round' ? ' selected' : '') + '>⇄ ذهاب وعودة</option><option value=""' + (plEdit >= 0 && !e.trip ? ' selected' : '') + '>غير محدد</option></select></div>' +
+    '<div><label>الوجهة *</label><input id="plDest" list="airports" value="' + esc(e.dest || '') + '"></div><div><label>من (اختياري)</label><input id="plOrig" list="airports" value="' + esc(e.origin || '') + '"></div>' +
+    '<div><label>تاريخ السفر (اختياري)</label><input type="date" id="plDate" value="' + esc(e.date || '') + '"></div><div id="plRetBox" style="' + (e.trip === 'round' ? '' : 'display:none') + '"><label>تاريخ العودة</label><input type="date" id="plRet" value="' + esc(e.ret || '') + '"></div></div>' +
+    '<div class="fsec">🏷 التصنيف</div><div class="grid">' +
+    '<div><label>التصنيف</label><select id="plCat"><option value="">— بدون —</option>' + PL_CATS.map(function(c){ return '<option' + (e.cat === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div>' +
+    '<div><label>درجة السفر</label><select id="plCabin"><option value="">— غير محددة —</option>' + Object.keys(PL_CABIN).map(function(k){ return '<option value="' + k + '"' + (e.cabin === k ? ' selected' : '') + '>' + PL_CABIN[k] + '</option>'; }).join('') + '</select></div>' +
+    '<div><label>شركة الطيران</label><input id="plAir" list="airlines" value="' + esc(e.airline || '') + '"></div></div>' +
+    '<div class="fsec">💰 الأسعار (للتذكرة الواحدة)</div><div class="grid">' +
+    '<div><label>سعر البيع</label><input type="number" id="plPrice" min="0" step="any" value="' + (e.price || '') + '"></div><div><label>سعر الشراء المعتاد (اختياري)</label><input type="number" id="plCost" min="0" step="any" value="' + (e.cost || '') + '"></div>' +
+    '<div class="full"><label>ملاحظة</label><input id="plNote" value="' + esc(e.note || '') + '"></div></div>' +
+    '<div class="actions"><button onclick="plSave()">' + (plEdit >= 0 ? '💾 حفظ التعديل' : '＋ إضافة') + '</button>' + (plEdit >= 0 ? '<button class="sec" onclick="plEdit=-1;renderAcc()">إلغاء</button>' : '') + '</div></div>';
+  var sel = function(k, opts, cur){ return '<select onchange="plSet(\'' + k + '\',this.value)">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; };
+  var bar = all.length ? '<div class="sgrp"><h3>💲 الأسعار المسجلة (' + list.length + ' من ' + all.length + ')</h3>' +
+    '<div class="seg" style="margin-bottom:8px">' + pill('', 'الكل') + pill('one', 'ذهاب فقط') + pill('round', 'ذهاب وعودة') + (cnt('any') ? pill('any', 'غير محدد') : '') + '</div>' +
+    '<div class="toolbar noprint"><input id="plQ" placeholder="🔍 بحث: وجهة، شركة، ملاحظة" value="' + esc(plF.q) + '" oninput="plSetQ(this.value)" style="max-width:230px">' +
+    sel('cat', [['', 'كل التصنيفات']].concat(PL_CATS.map(function(c){ return [c, c]; })), plF.cat) +
+    '<span class="c-sub">تجميع:</span>' + sel('group', [['trip', 'نوع الرحلة'], ['cat', 'التصنيف'], ['dest', 'الوجهة'], ['none', 'بدون تجميع']], plF.group) +
+    '<span class="c-sub">ترتيب:</span>' + sel('sort', [['date', 'تاريخ الرحلة'], ['dest', 'الوجهة'], ['price', 'السعر'], ['profit', 'الربح'], ['cat', 'التصنيف']], plF.sort) +
+    '<button type="button" class="sec sm revbtn' + (plF.rev ? ' on' : '') + '" onclick="plSet(\'rev\',!plF.rev)">⇅ عكس</button>' +
+    '<label class="optrow" style="margin:0"><input type="checkbox" ' + (plF.hideOld ? 'checked' : '') + ' onchange="plSet(\'hideOld\',this.checked)"> إخفاء المنتهية</label></div>' : '';
+  var body = '';
+  if (all.length) body = (list.length ? plGroups(list).map(function(g){
+    return '<h4 class="plgh">' + esc(g.title) + ' <span class="c-sub">(' + g.items.length + ')</span></h4><div class="tbl"><table class="ptbl noSort"><thead><tr><th>الرحلة</th><th>التاريخ</th><th>الدرجة</th><th>التصنيف</th><th>بيع</th><th>شراء</th><th>الربح</th><th>الشركة</th><th></th></tr></thead><tbody>' + g.items.map(plRowHtml).join('') + '</tbody></table></div>'; }).join('') : '<div class="empty">لا نتائج مطابقة للفلاتر.</div>') + '</div>';
+  return '<p class="hint">سجّل الأسعار المعتادة (للتذكرة الواحدة) وحدّد نوع الرحلة وتاريخها وتصنيفها. عند إدخال الوجهة في الحجز أو عرض السعر يظهر السعر الأنسب (حسب ذهاب/عودة والتاريخ) لتطبّقه بضغطة.</p>' + form + bar + body;
 }
 
 const _render = render;
