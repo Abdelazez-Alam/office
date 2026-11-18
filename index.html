@@ -1229,7 +1229,7 @@ function render(){
       <td><div>${esc(r.airline) || '<span class="c-sub">—</span>'}</div>${r.pnr ? `<div class="pnr" dir="ltr">${esc(r.pnr)}</div>` : ''}${(+r.qty||1) > 1 ? `<div class="c-sub">🎟 ${+r.qty} تذاكر</div>` : ''}</td>
       <td>${moneyHtml}${profitLine(r)}</td>
       <td><span class="badge b-${r.status}">${STATUS[r.status]}</span></td>
-      <td class="noprint"><div class="acts"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button> <button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button> <button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button> <button class="sec sm" onclick="edit('${r.id}')">تعديل</button> <button class="del sm" onclick="del('${r.id}')">حذف</button></div></td>
+      <td class="noprint"><div class="acts"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button> <button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button> <button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${r.id}')">🛫 مستند السفر</button> <button class="sec sm" onclick="edit('${r.id}')">تعديل</button> <button class="del sm" onclick="del('${r.id}')">حذف</button></div></td>
     </tr>`;
   }).join('') : `<tr><td class="empty" colspan="8">لا توجد نتائج</td></tr>`;
 }
@@ -2061,7 +2061,7 @@ function tripHtml(r){
     <div class="t-air">${esc(r.airline) || '<span class="c-sub">—</span>'}${r.pnr ? ` <span class="pnr" dir="ltr">${esc(r.pnr)}</span>` : ''}${(+r.qty || 1) > 1 ? `<div class="c-sub">🎟 ${+r.qty} تذاكر</div>` : ''}</div>
     <div class="t-money">${money1}${profitLine(r)}</div>
     <div class="t-st"><span class="badge b-${r.status}">${STATUS[r.status]}</span></div>
-    <div class="acts noprint"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button><button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button><button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button><button class="sec sm" onclick="edit('${r.id}')">تعديل</button><button class="del sm" onclick="del('${r.id}')">حذف</button></div>
+    <div class="acts noprint"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button><button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button><button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${r.id}')">🛫 مستند السفر</button><button class="sec sm" onclick="edit('${r.id}')">تعديل</button><button class="del sm" onclick="del('${r.id}')">حذف</button></div>
     ${r.notes ? `<div class="c-note t-note">📝 ${esc(r.notes.length > 140 ? r.notes.slice(0, 140) + '…' : r.notes)}</div>` : ''}${ppWarn(r)}
   </div>`;
 }
@@ -2752,7 +2752,7 @@ function helpClose(){ $('helpm').style.display = 'none'; }
       <li><b>مكاتبك الموردة:</b> الحسابات ‏←‏ المكاتب الموردة، لتتبع ما تشتريه منها.</li>
       <li><b>أول حجز:</b> اضغط الزر أدناه.</li></ol><div class="actions"><button onclick="newBooking()">＋ تسجيل أول حجز</button><button class="sec" onclick="openSettings()">⚙ الإعدادات</button><button class="sec" onclick="helpOpen()">❓ دليل سريع</button></div></div>`;
   else { const last = +lsGet('office_last_backup', 0), days = last ? Math.floor((Date.now() - last) / 86400000) : null;
-    if (days === null || days >= 14) html += `<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">💾 ${days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : 'مضى ' + days + ' يومًا على آخر نسخة احتياطية.'} <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>`; }
+    if (days === null || days >= 7) html += `<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">💾 ${days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : '⚠️ مضى ' + days + ' يومًا على آخر نسخة احتياطية — الخطة المجانية لا تحفظ نسخًا تلقائية.'} <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>`; }
   if (html) box.insertAdjacentHTML('afterbegin', html);
 }; }
 
@@ -3565,7 +3565,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-18 · 21';
+var APP_VERSION = '2026-11-18 · 22';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3865,6 +3865,84 @@ idcOpen = function(key){
 /* v17: علامة / بعد السيد والسيدة في القوالب */
 var _fillRaw17 = fillRaw;
 fillRaw = function(text, v){ return _fillRaw17(String(text).replace(/(السيدة?)[ \t]+(?=\{name\})/g, '$1/ '), v); };
+
+/* v18: مستند السفر A4 + المبالغ المتأخرة */
+const TD_CSS = `.td-route{display:flex;align-items:center;justify-content:center;gap:18px;margin:14px 0 6px;padding:14px;border:1px solid #cfd5df;border-radius:10px;background:#f6f8fb}
+.td-route .ap{text-align:center;min-width:90px}.td-route .ap b{display:block;font-size:30px;letter-spacing:2px;direction:ltr}.td-route .ap small{color:#556;font-size:11px}.td-route .ar{font-size:26px;color:#556}
+.td-st{display:inline-block;border:1px solid #1a1f2b;border-radius:99px;padding:0 12px;font-weight:700;font-size:12px}
+.td-ul{margin:0;padding:0 18px 0 0}.td-ul li{margin:2px 0}`;
+var TD_OPT = {pay: false, ret: true};
+var tdId = null;
+function tdHtml(id, opt){
+  opt = opt || TD_OPT; const r = data.find(x => String(x.id) === String(id)); if (!r) return '<p>لا توجد بيانات</p>';
+  const o = office(), cur = esc(o.currency || ''), rem = remaining(r);
+  const rows = cfRow('اسم المسافر', esc(r.name)) + cfRow('رقم الهوية / الجواز', r.idNo ? esc(r.idNo) : '', true) + cfRow('رقم الهاتف', r.phone ? '<span class="ltr">' + esc(r.phone) + '</span>' : '') +
+    cfRow('عدد التذاكر', r.qty || 1) + cfRow('شركة الطيران', esc(r.airline || '')) + cfRow('رقم الحجز (PNR)', r.pnr ? esc(r.pnr) : '', true) + cfRow('تاريخ الحجز', r.bookingDate ? fmtP(r.bookingDate) : '');
+  const flight = cfRow('تاريخ السفر', fmtP(r.travelDate)) + (opt.ret && r.returnDate ? cfRow('تاريخ العودة', fmtP(r.returnDate)) : '') + cfRow('حالة الحجز', '<span class="td-st">' + (STATUS[r.status] || esc(r.status || '')) + '</span>');
+  const pay = opt.pay && (+r.price) ? `<div class="cf-sec"><h3>الدفع</h3><div class="cf-sum"><div><b>${moneyP((+r.price || 0) - (+r.discount || 0))}</b><small>الإجمالي ${cur}</small></div><div><b>${moneyP(r.paid)}</b><small>المدفوع ${cur}</small></div><div><b>${moneyP(rem)}</b><small>المتبقي ${cur}</small></div><div><b>${rem > 0 ? 'غير مكتمل' : 'مسدد'}</b><small>الحالة</small></div></div></div>` : '';
+  return `<div class="cf"><div class="cf-hd"><div class="o">${settings.logo ? `<img src="${settings.logo}" alt="">` : ''}<div><div class="on">${esc(o.name || 'مكتب الطيران')}</div><div class="os">${[o.phone, o.address].filter(Boolean).map(esc).join(' — ')}</div></div></div><div class="t"><b>مستند سفر</b>${fmtP(todayStr())}</div></div>
+  <div class="td-route"><div class="ap"><b>${esc(apCode(r.origin))}</b><small>${esc(String(r.origin || '').replace(/\s*\([A-Za-z]{3}\)/, ''))}</small></div><div class="ar">✈</div><div class="ap"><b>${esc(apCode(r.destination))}</b><small>${esc(String(r.destination || '').replace(/\s*\([A-Za-z]{3}\)/, ''))}</small></div></div>
+  <div class="cf-sec"><h3>تفاصيل الرحلة</h3><div class="cf-g"><div>${flight}</div><div>${cfRow('شركة الطيران', esc(r.airline || '')) + cfRow('رقم الحجز (PNR)', r.pnr ? esc(r.pnr) : '', true) + cfRow('عدد التذاكر', r.qty || 1)}</div></div></div>
+  <div class="cf-sec"><h3>بيانات المسافر</h3><div class="cf-g"><div>${cfRow('الاسم', esc(r.name)) + cfRow('رقم الهوية / الجواز', r.idNo ? esc(r.idNo) : '', true)}</div><div>${cfRow('الهاتف', r.phone ? '<span class="ltr">' + esc(r.phone) + '</span>' : '') + cfRow('تاريخ الحجز', r.bookingDate ? fmtP(r.bookingDate) : '')}</div></div></div>${pay}
+  <div class="cf-sec"><h3>تعليمات هامة</h3><ul class="td-ul"><li>الوصول إلى المطار قبل الإقلاع بثلاث ساعات على الأقل.</li><li>إحضار جواز السفر ساريًا (أكثر من 6 أشهر) وهذا المستند.</li><li>مراجعة اشتراطات التأشيرة والدخول لبلد الوجهة قبل السفر.</li></ul></div>
+  ${r.notes ? `<div class="cf-sec"><h3>ملاحظات</h3><div class="cf-note">${esc(r.notes)}</div></div>` : ''}
+  <div class="cf-ft"><span>${esc(o.name || '')}${o.phone ? ' — ' + esc(o.phone) : ''}</span><span>صدر بتاريخ ${fmtP(todayStr())}</span></div></div>`;
+}
+function tdOpen(id){
+  tdId = id; let m = $('tdm');
+  if (!m) { m = document.createElement('div'); m.id = 'tdm'; m.className = 'modal'; m.style.cssText = 'display:none;z-index:70'; m.onclick = e => { if (e.target === m) tdClose(); };
+    m.innerHTML = '<div class="mbox wide" style="padding:14px"><h2 style="margin-top:0">🛫 مستند السفر (A4)</h2><div id="tdOpts" class="cfopts"></div><div id="tdPrev" class="cfprev"></div><div class="actions" style="margin-top:12px"><button onclick="tdPrint()">🖨 طباعة / حفظ PDF</button><button class="sec" onclick="tdMsg()">💬 إرسال رسالة</button><button class="sec" onclick="tdClose()">إغلاق</button></div></div>'; document.body.appendChild(m); }
+  tdRender(); m.style.display = 'flex';
+}
+function tdRender(){
+  const L = {ret: 'تاريخ العودة', pay: 'بيانات الدفع (الإجمالي/المدفوع/المتبقي)'};
+  $('tdOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${TD_OPT[k] ? 'checked' : ''} onchange="TD_OPT['${k}']=this.checked;tdRender()"> ${L[k]}</label>`).join('');
+  $('tdPrev').innerHTML = `<style>${CF_CSS}${TD_CSS}</style>` + tdHtml(tdId, TD_OPT);
+}
+function tdClose(){ const m = $('tdm'); if (m) m.style.display = 'none'; }
+function tdMsg(){ tdClose(); bkMsg(tdId); }
+function tdPrint(){
+  let f = $('tdFrame'); if (f) f.remove(); f = document.createElement('iframe'); f.id = 'tdFrame'; f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(f);
+  const d = f.contentWindow.document; d.open(); d.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>مستند سفر</title><style>${CF_BASE}${CF_CSS}${TD_CSS}</style></head><body>${tdHtml(tdId, TD_OPT)}</body></html>`); d.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { alert('تعذر الطباعة'); } }, 300);
+}
+
+/* ---- المبالغ المتأخرة ---- */
+function odDays(){ return +lsGet('office_od_days', 7) || 7; }
+function odSetDays(v){ lsSet('office_od_days', v); renderDash(); }
+function odSnooze(i, d){ const g = OD[i]; if (!g) return; lsSet('od_snz_' + g.key, String(Date.now() + d * 86400000)); renderDash(); }
+var OD = [];
+function odBuild(){
+  const N = odDays(), M = new Map();
+  data.forEach(r => {
+    if (r.status === 'cancelled' || !r.travelDate || remaining(r) <= 0) return;
+    const ago = -daysUntil(r.travelDate); if (ago < N) return;
+    const k = ckey(r); let g = M.get(k); if (!g) { g = {key: k, name: r.name, phone: r.phone, total: 0, oldest: 0, n: 0}; M.set(k, g); }
+    g.total += remaining(r); g.n++; g.oldest = Math.max(g.oldest, ago);
+  });
+  const all = [...M.values()].sort((a, b) => b.oldest - a.oldest || b.total - a.total);
+  const now = Date.now(); OD = all.filter(g => +lsGet('od_snz_' + g.key, 0) <= now); OD.hidden = all.length - OD.length;
+  return OD;
+}
+function odMsg(g){ return fillTpl(tplText('balance'), Object.assign(baseVars(), {gender: clientGender(g.key), name: g.name, remaining: moneyP(g.total)})); }
+function odDo(i){ const g = OD[i]; if (!g) return; waSend(g.phone, odMsg(g)); lsSet('od_snz_' + g.key, String(Date.now() + 3 * 86400000)); setTimeout(renderDash, 400); }
+function odCard(){
+  odBuild(); const tot = OD.reduce((s, g) => s + g.total, 0), cur = esc(office().currency || '');
+  const sel = '<select class="sm" onchange="odSetDays(this.value)" title="بعد السفر بكم يوم يُعدّ متأخرًا">' + [3, 7, 14, 30].map(n => `<option value="${n}" ${n === odDays() ? 'selected' : ''}>بعد ${n} يوم</option>`).join('') + '</select>';
+  const h = OD.length ? OD.slice(0, 6).map((g, i) => '<div class="dr"><div class="dr-m"><b>⏳ ' + esc(g.name) + '</b><span class="c-sub">' + g.n + ' حجز · متأخر منذ ' + g.oldest + ' يوم</span></div><div class="dr-s"><span class="chip c-bad">' + moneyP(g.total) + '</span><button class="sm" onclick="odDo(' + i + ')">💬 أرسل</button><button class="sec sm" onclick="odSnooze(' + i + ',7)" title="تأجيل 7 أيام">⏸</button></div></div>').join('') +
+    (OD.length > 6 ? '<div class="c-sub" style="padding:6px 2px">و ' + (OD.length - 6) + ' عملاء آخرين</div>' : '') + '<div class="c-sub" style="padding:6px 2px">الإجمالي: <b>' + moneyP(tot) + ' ' + cur + '</b>' + (OD.hidden ? ' · ' + OD.hidden + ' مؤجل' : '') + '</div>'
+    : '<div class="empty">✅ لا مبالغ متأخرة' + (OD.hidden ? ' (' + OD.hidden + ' مؤجل)' : '') + '</div>';
+  return dashCard('⏳ مبالغ متأخرة' + (OD.length ? ' (' + OD.length + ')' : ''), h, sel);
+}
+{
+  const _rd18 = renderDash;
+  renderDash = function(){
+    _rd18.apply(this, arguments);
+    const g = document.querySelector('#dashBox .dgrid'); if (g && g.firstElementChild) g.firstElementChild.insertAdjacentHTML('afterend', odCard());
+    const box = $('dashBox'), last = +lsGet('office_last_backup', 0), days = last ? Math.floor((Date.now() - last) / 86400000) : null;
+    if (box && data.length && (days === null || days >= 7)) box.insertAdjacentHTML('afterbegin', '<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">💾 ' + (days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : '⚠️ مضى ' + days + ' يومًا على آخر نسخة احتياطية.') + ' الخطة المجانية لا تحفظ نسخًا تلقائية. <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>');
+  };
+}
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
