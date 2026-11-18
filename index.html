@@ -62,7 +62,7 @@
   th{background:var(--surface2);font-size:12.5px;color:var(--mut);cursor:pointer;user-select:none}
   table.rec{min-width:0}
   table.rec th{padding:11px 10px;background:var(--surface2);color:var(--mut);font-size:12.5px;font-weight:700;position:sticky;top:0;z-index:1;border-bottom:2px solid var(--bd)}
-  table.rec td{padding:13px 10px;vertical-align:middle;white-space:normal;border-bottom:1px solid var(--bd)}
+  table.rec td{padding:10px 10px;vertical-align:middle;white-space:normal;border-bottom:1px solid var(--bd)}
   table.rec tbody tr:hover{background:var(--pri-soft)}
   tr.cancelled{opacity:.55}
   table.rec tbody tr.soon{background:color-mix(in srgb,var(--warn) 9%,var(--surface))}
@@ -225,10 +225,9 @@
   :root[data-font=almarai]{--ff:"Almarai","Segoe UI",system-ui,Tahoma,sans-serif}
   :root[data-font=ibm]{--ff:"IBM Plex Sans Arabic","Segoe UI",system-ui,Tahoma,sans-serif}
   :root[data-font=kufi]{--ff:"Noto Kufi Arabic","Segoe UI",system-ui,Tahoma,sans-serif}
-  :root[data-size=s]{--fs:14px} :root[data-size=l]{--fs:17px}
-  :root[data-round=sharp]{--r:4px} :root[data-round=round]{--r:22px}
-  [data-round=sharp] button,[data-round=sharp] input,[data-round=sharp] select,[data-round=sharp] textarea,[data-round=sharp] .stat,[data-round=sharp] .mbox{border-radius:4px}
-  [data-round=round] button,[data-round=round] input,[data-round=round] select,[data-round=round] textarea{border-radius:16px}
+  :root{--fs:13px;--tk:.8667;--ch:40px;--cfs:calc(14px*var(--tk))}
+  :root[data-size=f12]{--fs:12px;--tk:.8}:root[data-size=f13]{--fs:13px;--tk:.8667}:root[data-size=f14]{--fs:14px;--tk:.9333}:root[data-size=f16]{--fs:16px;--tk:1.0667}:root[data-size=f18]{--fs:18px;--tk:1.2}
+  :root[data-ctrl=c1]{--ch:34px}:root[data-ctrl=c2]{--ch:40px}:root[data-ctrl=c3]{--ch:46px}
   :root[data-tint=on]{--bg:color-mix(in srgb,var(--pri) 8%,#f7f8fa)}
   :root[data-tint=on][data-mode=dark]{--bg:color-mix(in srgb,var(--pri) 9%,#0b0f17)}
   :root[data-head=pri] header{background:var(--pri);color:var(--on-pri)}
@@ -358,56 +357,60 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
 .ptbl td .good{color:var(--ok);font-weight:700}.ptbl td .bad{color:var(--bad);font-weight:700}
 
 /* ===== v17: تصميم مريح وجذاب ===== */
-:root{--r:14px;--fld:#f5f8fb;--fld-bd:#d5dee8;--cardsh:0 1px 2px rgba(16,40,64,.05),0 8px 24px -10px rgba(16,40,64,.14)}
+:root{--fld:#f5f8fb;--fld-bd:#d5dee8;--cardsh:0 1px 2px rgba(16,40,64,.05),0 8px 24px -10px rgba(16,40,64,.14)}
 :root[data-mode=dark]{--fld:var(--surface2);--fld-bd:var(--bd)}
-body{line-height:1.7}
+body{line-height:1.6}
+:root,:root[data-round=soft]{--r:14px;--rc:12px;--rb:12px}:root[data-round=sharp]{--r:4px;--rc:5px;--rb:5px}:root[data-round=round]{--r:18px;--rc:16px;--rb:16px}:root[data-round=pill]{--r:22px;--rc:22px;--rb:999px}
 :root:not([data-mode=dark]) body{background:linear-gradient(180deg,color-mix(in srgb,var(--pri) 9%,var(--bg)) 0,var(--bg) 360px) no-repeat,var(--bg)}
 /* الرأس */
 header{padding:14px 20px;background:linear-gradient(135deg,var(--pri),color-mix(in srgb,var(--pri) 62%,#06202e))!important;color:#fff!important;border-bottom:0!important;box-shadow:0 6px 20px -8px color-mix(in srgb,var(--pri) 70%,#000)}
 header:after{display:none!important}
-header h1{color:#fff!important;font-size:1.2rem;font-weight:800;letter-spacing:.2px}
+header h1{color:#fff!important;font-size:calc(1.35*var(--fs));font-weight:800;letter-spacing:.2px}
 #sbBtn{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;min-width:44px;font-size:1.25rem;padding:6px 12px;border-radius:12px}
 /* القائمة الجانبية */
 .sidebar{background:var(--surface);color:var(--txt);box-shadow:-10px 0 30px -18px rgba(16,40,64,.35);border:0}
 .sb-brand{color:var(--pri);font-weight:800}
-.sb-g{color:var(--mut);font-size:.78rem;letter-spacing:.3px}
-.sb-i{color:var(--txt);padding:12px 14px;font-size:1rem;border-radius:12px;margin:2px 0}
+.sb-g{color:var(--mut);font-size:calc(.85*var(--fs));letter-spacing:.3px}
+.sb-i{color:var(--txt);padding:10px 14px;font-size:var(--fs);border-radius:var(--rc);margin:2px 0}
 .sb-i:hover{background:var(--pri-soft)}
 .sb-i.on{background:linear-gradient(135deg,var(--pri),color-mix(in srgb,var(--pri) 70%,#06202e));color:#fff;font-weight:800;box-shadow:0 6px 14px -6px color-mix(in srgb,var(--pri) 70%,#000)}
 .sb-i.tool{color:var(--mut)}
 .sb-add,.sb-i,.sb-brand,.sb-nav{flex-shrink:0}
-.sb-add{min-height:50px;line-height:1.3;background:linear-gradient(135deg,var(--ok),color-mix(in srgb,var(--ok) 70%,#000));color:#fff;border-radius:14px;font-weight:800;font-size:1.02rem;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--ok) 80%,#000)}
+.sb-add{min-height:calc(var(--ch) + 6px);line-height:1.3;background:linear-gradient(135deg,var(--ok),color-mix(in srgb,var(--ok) 70%,#000));color:#fff;font-weight:800;font-size:var(--cfs);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--ok) 80%,#000)}
 /* البطاقات */
-.card{background:var(--surface);border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-radius:18px;box-shadow:var(--cardsh)!important;padding:24px;margin-bottom:20px}
-.card h2{font-size:1.15rem;font-weight:800;margin:0 0 16px;display:flex;align-items:center;gap:10px}
+.card{background:var(--surface);border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-radius:var(--r);box-shadow:var(--cardsh)!important;padding:20px;margin-bottom:16px}
+.card h2{font-size:calc(1.2*var(--fs));font-weight:800;margin:0 0 16px;display:flex;align-items:center;gap:10px}
 .card>h2:before,.newbk h2:before{content:"";width:5px;height:22px;border-radius:4px;background:linear-gradient(180deg,var(--pri),color-mix(in srgb,var(--pri) 50%,var(--ok)))}
 .stat:before,.stat:after{display:none!important}
-.stat,.kpi{border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-radius:18px;box-shadow:var(--cardsh)!important;background:var(--surface)}
+.stat,.kpi{border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);border-radius:var(--r);box-shadow:var(--cardsh)!important;background:var(--surface)}
 /* الحقول */
-label{font-size:.9rem;font-weight:700;color:var(--txt);margin-bottom:6px;display:block;opacity:.85}
-input,select,textarea{min-height:48px;font-size:16px;border-radius:12px;padding:10px 14px;background:var(--fld);border:1.5px solid var(--fld-bd);color:var(--txt);transition:border-color .15s,box-shadow .15s,background .15s}
+label{font-size:var(--fs);font-weight:700;color:var(--txt);margin-bottom:6px;display:block;opacity:.85}
+input,select,textarea{min-height:var(--ch);font-size:var(--cfs);border-radius:var(--rc);padding:5px 12px;background:var(--fld);border:1.5px solid var(--fld-bd);color:var(--txt);transition:border-color .15s,box-shadow .15s,background .15s}
 input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--pri) 45%,var(--fld-bd))}
 input:focus,select:focus,textarea:focus{outline:0;background:var(--surface);border-color:var(--pri);box-shadow:0 0 0 4px color-mix(in srgb,var(--pri) 18%,transparent)}
-textarea{min-height:96px}
+textarea{min-height:calc(var(--ch)*2.2);padding-block:8px}
+input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:var(--rc)!important}
+button,.sb-add,.sb-i,.chip{border-radius:var(--rb)!important}
+button.sm,.sm{min-height:calc(var(--ch) - 8px);font-size:calc(var(--cfs) - 1px);padding:2px 12px}
 input[type=checkbox],input[type=radio]{min-height:0}
 form .grid,.grid{gap:16px 18px}
 form .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 /* عناوين أقسام النموذج */
-.fsec{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:800;color:var(--pri);background:var(--pri-soft);border:0;border-radius:12px;padding:9px 14px;margin:14px 0 2px}
+.fsec{display:flex;align-items:center;gap:8px;font-size:var(--fs);font-weight:800;color:var(--pri);background:var(--pri-soft);border:0;border-radius:var(--rc);padding:9px 14px;margin:14px 0 2px}
 .grid>.fsec:first-child{margin-top:0}
-.pickbox{background:var(--pri-soft);border:1.5px dashed color-mix(in srgb,var(--pri) 45%,transparent);border-radius:14px;padding:14px 16px}
+.pickbox{background:var(--pri-soft);border:1.5px dashed color-mix(in srgb,var(--pri) 45%,transparent);border-radius:var(--r);padding:12px 14px}
 .pickbox input{background:var(--surface)}
 .costbox{background:color-mix(in srgb,var(--warn) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 28%,transparent);border-radius:14px;padding:12px 14px}
 .actions{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
 .actions button[type=submit],#saveBtn{min-width:160px;font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--pri),color-mix(in srgb,var(--pri) 70%,#06202e));box-shadow:0 8px 18px -8px color-mix(in srgb,var(--pri) 80%,#000)}
-button{min-height:44px;border-radius:12px;font-size:.98rem;padding:9px 18px;transition:transform .08s,box-shadow .15s}
+button{min-height:var(--ch);font-size:var(--cfs);padding:4px 16px;transition:transform .08s,box-shadow .15s}
 button:active{transform:translateY(1px)}
 /* الجداول والقوائم */
-table{font-size:.95rem}
-th{background:var(--pri-soft)!important;color:var(--pri)!important;font-weight:800;font-size:.86rem;padding:13px 10px;border-bottom:0}
+table{font-size:inherit}
+th{background:var(--pri-soft)!important;color:var(--pri)!important;font-weight:800;font-size:calc(.92*var(--fs));padding:10px 10px;border-bottom:0}
 td{padding:13px 10px;border-bottom:1px solid color-mix(in srgb,var(--bd) 55%,transparent)}
 tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
-.cust{border-radius:18px;box-shadow:var(--cardsh)!important;border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);margin-bottom:14px}
+.cust{border-radius:var(--r);overflow:visible!important;box-shadow:var(--cardsh)!important;border:1px solid color-mix(in srgb,var(--bd) 60%,transparent);margin-bottom:14px}
 .cust:not(.closed) .cust-h{background:var(--pri-soft)}
 .pill,.tg,.badge,.chip{border-radius:99px}
 .wrap{max-width:1180px}
@@ -421,7 +424,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 /* ملف العميل */
 .cfopts{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 12px}.cfo{display:flex;align-items:center;gap:6px;color:var(--txt);margin:0;font-weight:600}.cfo input{min-height:0;width:18px;height:18px}
 .cfprev{background:#fff;color:#1a1f2b;border:1px solid var(--bd);border-radius:12px;max-height:62vh;overflow:auto;padding:8px}
-@media(max-width:700px){.card{padding:16px;border-radius:16px}header{padding:11px 12px}button{min-height:48px}form .grid{grid-template-columns:1fr 1fr}form .grid>.full,form .grid>.fsec{grid-column:1/-1}}
+@media(max-width:700px){.card{padding:14px}header{padding:10px 12px}form .grid{grid-template-columns:1fr 1fr}form .grid>.full,form .grid>.fsec{grid-column:1/-1}}
 @media(max-width:430px){form .grid{grid-template-columns:1fr}}
 /* ترتيب حقول نموذج الحجز على شبكة 12 عمودًا */
 @media(min-width:701px){
@@ -431,6 +434,39 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 #f>.grid>div:has(#origin),#f>.grid>div:has(#destination){grid-column:span 6}
 #f>.grid>div:has(#qty),#f>.grid>div:has(#price),#f>.grid>div:has(#discount),#f>.grid>div:has(#paid){grid-column:span 3}
 }
+/* ===== v19: قوائم الإجراءات + مهام اليوم ===== */
+.amenu{position:relative;display:inline-block}
+.amenu .amb{min-width:calc(var(--ch) - 6px);padding:2px 12px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.amlist{display:none;z-index:300;min-width:190px;max-width:min(270px,92vw);flex-direction:column;gap:2px;padding:6px;background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 18px 40px -12px rgba(16,40,64,.38)}
+.amenu.open .amlist{display:flex}
+.amlist button{display:flex;align-items:center;gap:8px;width:100%;text-align:start;justify-content:flex-start;background:transparent!important;color:var(--txt)!important;border:0!important;box-shadow:none!important;min-height:calc(var(--ch) - 2px);padding:4px 12px;font-size:var(--cfs);font-weight:600}
+.amlist button:hover,.amlist button:focus-visible{background:var(--pri-soft)!important}
+.amlist button.del{color:var(--bad)!important}
+.amacts{display:flex;align-items:center;justify-content:flex-end;max-width:none!important}
+.cust-h>.acts.amacts{justify-content:flex-start}
+.trip>.acts.amacts{justify-content:flex-end}
+.tk .tktiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.tktile{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;display:flex;flex-direction:column;gap:2px;border-inline-start:5px solid var(--mut);box-shadow:var(--cardsh)}
+.tktile b{font-size:calc(26px*var(--tk,1));line-height:1.1}.tktile small{color:var(--mut)}
+.tktile.tk-bad{border-inline-start-color:var(--bad)}.tktile.tk-warn{border-inline-start-color:var(--warn)}.tktile.tk-ok{border-inline-start-color:var(--ok)}
+.tkchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tkchip{background:var(--surface)!important;color:var(--txt)!important;border:1.5px solid var(--bd)!important;font-weight:600;min-height:calc(var(--ch) - 6px)}
+.tkchip b{background:var(--pri-soft);color:var(--pri);border-radius:99px;padding:0 8px;margin-inline-start:4px}
+.tkchip.on{background:var(--pri)!important;color:var(--on-pri)!important;border-color:var(--pri)!important}.tkchip.on b{background:rgba(255,255,255,.25);color:inherit}
+.tksec{margin-bottom:8px}
+.tksec-h{display:flex;align-items:baseline;gap:10px;margin:6px 4px 8px;font-size:calc(1.1*var(--fs))}
+.tksec-h.tk-bad b{color:var(--bad)}.tksec-h.tk-warn b{color:var(--warn)}.tksec-h.tk-ok b{color:var(--ok)}
+.tkgrp{padding:0!important;overflow:hidden}
+.tkgrp-h{display:flex;align-items:center;gap:10px;padding:12px 18px;cursor:pointer;user-select:none}
+.tkgrp-h h2{margin:0!important;flex:1;font-size:var(--fs)!important}.tkgrp-h h2:before{display:none!important}
+.tkcv{color:var(--mut);transition:transform .15s}.tkgrp.shut .tkcv{transform:rotate(90deg)}
+.tkbody{border-top:1px solid var(--bd)}
+.tkrow{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid color-mix(in srgb,var(--bd) 55%,transparent)}
+.tkrow:last-child{border-bottom:0}.tkrow:hover{background:color-mix(in srgb,var(--pri) 4%,transparent)}
+.tkmain{flex:1;min-width:0}.tkmain .c-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tkact{display:flex;gap:6px;align-items:center;flex-shrink:0}
+@media(max-width:700px){.tk .tktiles{gap:8px}.tktile{padding:10px 12px}.tkrow{flex-wrap:wrap;padding:12px 14px}.tkmain{flex-basis:calc(100% - 52px)}.tkact{width:100%;justify-content:flex-end}.tkgrp-h{padding:12px 14px}}
+#tasksBox{display:block!important}#tasksBox .tk{width:100%;display:block}#tasksBox .tk .card{width:auto;max-width:none}
 </style>
 </head>
 <body>
@@ -812,8 +848,9 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
           <div class="sgrid" style="margin-top:12px">
             <div><label>الوضع</label><select id="sMode"><option value="auto">تلقائي (حسب الجهاز)</option><option value="light">فاتح</option><option value="dark">داكن</option></select></div>
             <div><label>الخط</label><select id="sFont"></select></div>
-            <div><label>حجم الخط</label><select id="sSize"><option value="s">صغير</option><option value="m">متوسط</option><option value="l">كبير</option></select></div>
-            <div><label>شكل الزوايا</label><select id="sRound"><option value="sharp">حادة</option><option value="soft">متوسطة</option><option value="round">مستديرة</option></select></div>
+            <div><label>حجم الخط (كل النصوص)</label><select id="sSize"><option value="f12">صغير جدًا</option><option value="f13">صغير</option><option value="f14">متوسط</option><option value="f16">كبير</option><option value="f18">كبير جدًا</option></select></div>
+            <div><label>حجم الحقول والأزرار</label><select id="sCtrl"><option value="c1">صغير</option><option value="c2">متوسط</option><option value="c3">كبير</option></select></div>
+            <div><label>شكل الزوايا</label><select id="sRound"><option value="sharp">حادة</option><option value="soft">متوسطة</option><option value="round">مستديرة</option><option value="pill">كبسولة (أزرار دائرية)</option></select></div>
             <div><label>كثافة العرض</label><select id="sDens"><option value="compact">مضغوطة (بيانات أكثر)</option><option value="normal">عادية</option><option value="comfy">مريحة (مسافات أوسع)</option></select></div></div>
           <label class="chk"><input type="checkbox" id="sTint"> تلوين خلفية الصفحة بلون الثيم</label>
           <label class="chk"><input type="checkbox" id="sHead"> شريط علوي بلون الثيم</label>
@@ -2621,20 +2658,23 @@ var PALETTES = {
 };
 var FONTS = {sys: ['خط النظام (افتراضي)', ''], cairo: ['القاهرة (Cairo)', 'Cairo'], tajawal: ['تجوّل (Tajawal)', 'Tajawal'], almarai: ['المرعي (Almarai)', 'Almarai'], ibm: ['IBM Plex عربي', 'IBM+Plex+Sans+Arabic'], kufi: ['نوتو كوفي', 'Noto+Kufi+Arabic']};
 var PRESETS = [
-  {n: 'كلاسيكي', d: 'الافتراضي المتوازن', t: {p: 'sky', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 'm', round: 'soft', dens: 'normal'}},
-  {n: 'رسمي كحلي', d: 'مظهر مكتبي جاد', t: {p: 'navy', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 'm', round: 'sharp', dens: 'normal'}},
-  {n: 'عصري ناعم', d: 'نيلي وزوايا مستديرة', t: {p: 'indigo', m: 'light', tint: 1, head: 'pri', font: 'cairo', s: 'm', round: 'round', dens: 'normal'}},
-  {n: 'بحري', d: 'أزرق منعش', t: {p: 'ocean', m: 'light', tint: 1, head: 'pri', font: 'tajawal', s: 'm', round: 'soft', dens: 'normal'}},
-  {n: 'زمردي', d: 'أخضر هادئ', t: {p: 'emerald', m: 'light', tint: 1, head: 'pri', font: 'cairo', s: 'm', round: 'round', dens: 'normal'}},
-  {n: 'دافئ', d: 'قهوة وكريمي', t: {p: 'coffee', m: 'light', tint: 1, head: 'dark', font: 'almarai', s: 'm', round: 'soft', dens: 'normal'}},
-  {n: 'وردي أنيق', d: 'لمسة أنثوية', t: {p: 'rose', m: 'light', tint: 1, head: 'pri', font: 'tajawal', s: 'm', round: 'round', dens: 'normal'}},
-  {n: 'ليلي', d: 'داكن مريح للعين', t: {p: 'violet', m: 'dark', tint: 0, head: 'dark', font: 'cairo', s: 'm', round: 'soft', dens: 'normal'}},
-  {n: 'احترافي مضغوط', d: 'جرافيت وبيانات أكثر', t: {p: 'graphite', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 's', round: 'sharp', dens: 'compact'}},
-  {n: 'قراءة مريحة', d: 'خط كبير ووضوح عالٍ', t: {p: 'blue', m: 'light', tint: 0, head: 'dark', font: 'ibm', s: 'l', round: 'soft', dens: 'comfy'}}
+  {n: 'كلاسيكي', d: 'الافتراضي المتوازن', t: {p: 'sky', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 'f13', c: 'c2', v: 23, round: 'round', dens: 'normal'}},
+  {n: 'رسمي كحلي', d: 'مظهر مكتبي جاد', t: {p: 'navy', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 'f13', round: 'sharp', dens: 'normal'}},
+  {n: 'عصري ناعم', d: 'نيلي وزوايا مستديرة', t: {p: 'indigo', m: 'light', tint: 1, head: 'pri', font: 'cairo', s: 'f13', round: 'round', dens: 'normal'}},
+  {n: 'بحري', d: 'أزرق منعش', t: {p: 'ocean', m: 'light', tint: 1, head: 'pri', font: 'tajawal', s: 'f13', round: 'soft', dens: 'normal'}},
+  {n: 'زمردي', d: 'أخضر هادئ', t: {p: 'emerald', m: 'light', tint: 1, head: 'pri', font: 'cairo', s: 'f13', round: 'round', dens: 'normal'}},
+  {n: 'دافئ', d: 'قهوة وكريمي', t: {p: 'coffee', m: 'light', tint: 1, head: 'dark', font: 'almarai', s: 'f13', round: 'soft', dens: 'normal'}},
+  {n: 'وردي أنيق', d: 'لمسة أنثوية', t: {p: 'rose', m: 'light', tint: 1, head: 'pri', font: 'tajawal', s: 'f13', round: 'round', dens: 'normal'}},
+  {n: 'ليلي', d: 'داكن مريح للعين', t: {p: 'violet', m: 'dark', tint: 0, head: 'dark', font: 'cairo', s: 'f13', round: 'soft', dens: 'normal'}},
+  {n: 'احترافي مضغوط', d: 'جرافيت وبيانات أكثر', t: {p: 'graphite', m: 'light', tint: 0, head: 'dark', font: 'sys', s: 'f12', round: 'sharp', dens: 'compact'}},
+  {n: 'قراءة مريحة', d: 'خط كبير ووضوح عالٍ', t: {p: 'blue', m: 'light', tint: 0, head: 'dark', font: 'ibm', s: 'f16', round: 'soft', dens: 'comfy'}}
 ];
 function themeGet(){
-  const d = {p: 'sky', m: 'auto', tint: 0, head: 'dark', font: 'sys', s: 'm', round: 'soft', dens: 'normal'};
-  try { return Object.assign(d, JSON.parse(localStorage.getItem('office_theme') || 'null') || {}); } catch (e) { return d; }
+  const d = {p: 'sky', m: 'auto', tint: 0, head: 'dark', font: 'sys', s: 'f13', c: 'c2', v: 23, round: 'round', dens: 'normal'};
+  let t = d; try { t = Object.assign(d, JSON.parse(localStorage.getItem('office_theme') || 'null') || {}); } catch (e) {}
+  if (!(t.v >= 23)) { t.v = 23; t.s = 'f13'; t.c = 'c2'; t.round = 'round'; }
+  if (!/^f1[2468]$/.test(t.s)) t.s = 'f13'; if (!/^c[123]$/.test(t.c)) t.c = 'c2';
+  return t;
 }
 function loadFont(k){
   const f = FONTS[k]; if (!f || !f[1] || document.getElementById('gf-' + k)) return;
@@ -2644,7 +2684,7 @@ function themeApply(t){
   if (!PALETTES) return;
   t = Object.assign(themeGet(), t || {}); if (!PALETTES[t.p]) t.p = 'sky';
   const dark = t.m === 'dark' || (t.m === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches), r = document.documentElement, pal = PALETTES[t.p];
-  Object.assign(r.dataset, {theme: t.p, mode: dark ? 'dark' : 'light', tint: t.tint ? 'on' : 'off', head: t.head, font: t.font, size: t.s, round: t.round, dens: t.dens});
+  Object.assign(r.dataset, {theme: t.p, mode: dark ? 'dark' : 'light', tint: t.tint ? 'on' : 'off', head: t.head, font: t.font, size: t.s, ctrl: t.c, round: t.round, dens: t.dens});
   r.style.setProperty('--pri', dark ? pal[1] : pal[0]);
   loadFont(t.font);
   try { localStorage.setItem('office_theme', JSON.stringify(t)); } catch (e) {}
@@ -2660,15 +2700,15 @@ function presetPreview(p){
   return `<span class="pv" style="background:${bg}"><i style="background:${head}"></i><b style="background:${dark ? '#161d29' : '#fff'};border-radius:${rad}px"><u style="background:${pri};border-radius:${rad}px"></u></b></span>`;
 }
 function lookRender(){
-  const t = themeGet(), cur = JSON.stringify([t.p, t.m === 'auto' ? 'x' : t.m, t.tint, t.head, t.font, t.s, t.round, t.dens]);
+  const t = themeGet(), cur = JSON.stringify([t.p, t.m === 'auto' ? 'x' : t.m, t.tint, t.head, t.font, t.s, t.c, t.round, t.dens]);
   $('sPresets').innerHTML = PRESETS.map((p, i) => { const q = p.t, on = t.p === q.p && (t.m === q.m) && !!t.tint === !!q.tint && t.head === q.head && t.font === q.font && t.s === q.s && t.round === q.round && t.dens === q.dens;
     return `<button type="button" class="preset ${on ? 'on' : ''}" onclick="themePreset(${i})">${presetPreview(p)}<b>${p.n}</b><small>${p.d}</small></button>`; }).join('');
   $('sSwatches').innerHTML = Object.entries(PALETTES).map(([k, v]) => `<button type="button" title="${v[2]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${k}'})"></button>`).join('');
-  $('sMode').value = t.m; $('sFont').value = t.font; $('sSize').value = t.s; $('sRound').value = t.round; $('sDens').value = t.dens; $('sTint').checked = !!t.tint; $('sHead').checked = t.head === 'pri';
+  $('sMode').value = t.m; $('sFont').value = t.font; $('sSize').value = t.s; $('sCtrl').value = t.c; $('sRound').value = t.round; $('sDens').value = t.dens; $('sTint').checked = !!t.tint; $('sHead').checked = t.head === 'pri';
 }
 function themeSwatches(){ lookRender(); }
 $('sFont').innerHTML = Object.entries(FONTS).map(([k, v]) => `<option value="${k}">${v[0]}</option>`).join('');
-[['sFont', 'font'], ['sSize', 's'], ['sRound', 'round'], ['sDens', 'dens']].forEach(([id, k]) => $(id).addEventListener('change', () => themeApply({[k]: $(id).value})));
+[['sFont', 'font'], ['sSize', 's'], ['sCtrl', 'c'], ['sRound', 'round'], ['sDens', 'dens']].forEach(([id, k]) => $(id).addEventListener('change', () => themeApply({[k]: $(id).value})));
 $('sTint').addEventListener('change', () => themeApply({tint: $('sTint').checked ? 1 : 0}));
 $('sHead').addEventListener('change', () => themeApply({head: $('sHead').checked ? 'pri' : 'dark'}));
 themeApply({});
@@ -3565,7 +3605,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-18 · 22';
+var APP_VERSION = '2026-11-18 · 23';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3941,6 +3981,88 @@ function odCard(){
     const g = document.querySelector('#dashBox .dgrid'); if (g && g.firstElementChild) g.firstElementChild.insertAdjacentHTML('afterend', odCard());
     const box = $('dashBox'), last = +lsGet('office_last_backup', 0), days = last ? Math.floor((Date.now() - last) / 86400000) : null;
     if (box && data.length && (days === null || days >= 7)) box.insertAdjacentHTML('afterbegin', '<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">💾 ' + (days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : '⚠️ مضى ' + days + ' يومًا على آخر نسخة احتياطية.') + ' الخطة المجانية لا تحفظ نسخًا تلقائية. <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>');
+  };
+}
+
+/* v19: أحجام الخطوط، قوائم الإجراءات المنسدلة، مهام اليوم المصنّفة */
+
+/* ---- 1) تحويل أحجام الخطوط الثابتة (px) إلى نسبة قابلة للتغيير من الإعدادات ---- */
+(function scaleFonts(){
+  const walk = rules => { for (const r of rules) {
+    if (r.style && r.style.fontSize && /^[\d.]+px$/.test(r.style.fontSize)) r.style.setProperty('font-size', 'calc(' + r.style.fontSize + ' * var(--tk,1))', r.style.getPropertyPriority('font-size'));
+    if (r.cssRules) walk(r.cssRules); } };
+  for (const ss of document.styleSheets) { try { walk(ss.cssRules); } catch (e) {} }
+})();
+
+/* ---- 2) قائمة الإجراءات المنسدلة ---- */
+var AM_OPEN = null, AM_T = 0;
+function amClose(){ if (!AM_OPEN) return; AM_OPEN.classList.remove('open'); const l = AM_OPEN.querySelector('.amlist'); if (l) l.style.cssText = ''; AM_OPEN = null; }
+function amToggle(btn){
+  const w = btn.closest('.amenu'); if (!w) return; if (AM_OPEN === w) { amClose(); return; } amClose();
+  w.classList.add('open'); AM_OPEN = w; AM_T = Date.now(); const l = w.querySelector('.amlist'), r = btn.getBoundingClientRect();
+  l.style.cssText = 'position:fixed;visibility:hidden;display:flex'; const lw = l.offsetWidth, lh = l.offsetHeight, W = document.documentElement.clientWidth, H = window.innerHeight;
+  let left = Math.min(Math.max(r.right - lw, 8), W - lw - 8), top = r.bottom + 6; if (top + lh > H - 8 && r.top - 6 - lh > 8) top = r.top - 6 - lh;
+  l.style.cssText = 'position:fixed;display:flex;left:' + left + 'px;top:' + top + 'px';
+}
+function amHtml(inner, label, cls){ return '<div class="amenu noprint"><button type="button" class="sec sm amb ' + (cls || '') + '" onclick="amToggle(this)" title="إجراءات">' + (label || '⋯') + '</button><div class="amlist">' + inner + '</div></div>'; }
+document.addEventListener('click', e => { if (!e.target.closest('.amenu')) amClose(); else if (e.target.closest('.amlist button')) setTimeout(amClose, 0); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') amClose(); });
+window.addEventListener('scroll', () => { if (Date.now() - AM_T > 400) amClose(); }, true); window.addEventListener('resize', amClose);
+
+function amBtn(label, fn, cls){ const b = document.createElement('button'); b.type = 'button'; b.className = cls || 'sec'; b.textContent = label; b.addEventListener('click', fn); return b; }
+function actsToMenu(root){
+  root.querySelectorAll('.acts:not([data-m]),.lc-a:not([data-m])').forEach(a => {
+    const btns = [...a.children].filter(x => x.tagName === 'BUTTON'); if (btns.length < 2) return; a.dataset.m = 1;
+    const head = a.parentElement && a.parentElement.classList.contains('cust-h'), l = document.createElement('div'); l.className = 'amlist';
+    if (head) { const card = a.closest('.cust'), i = card ? +card.id.replace('cust-', '') : -1, it = () => grpItems[i];
+      btns.forEach(x => l.appendChild(x));
+      l.appendChild(amBtn('🪪 بطاقة العميل', () => it() && idcOpen(it().k))); l.appendChild(amBtn('📄 ملف العميل A4', () => it() && cfOpen(it().k))); l.appendChild(amBtn('💬 واتساب', () => it() && waSend(it().c.phone, ''))); }
+    else btns.forEach(x => l.appendChild(x));
+    l.querySelectorAll('.sm').forEach(x => x.classList.remove('sm'));
+    const w = document.createElement('div'); w.className = 'amenu noprint'; const b = document.createElement('button'); b.type = 'button'; b.className = 'sec sm amb'; b.title = 'إجراءات'; b.setAttribute('onclick', 'amToggle(this)'); b.textContent = head ? '⋯ إجراءات' : '⋯';
+    w.append(b, l); a.appendChild(w); a.classList.add('amacts');
+  });
+}
+(function(){
+  let q = 0; const run = () => { q = 0; ['grpBox', 'flatBox', 'ppRows', 'ldBox', 'ldTbl'].forEach(id => { const e = $(id); if (e) actsToMenu(e); }); };
+  const mo = new MutationObserver(() => { if (!q) q = requestAnimationFrame(run); });
+  ['grpBox', 'flatBox', 'ppRows', 'ldBox', 'ldTbl'].forEach(id => { const e = $(id); if (e) mo.observe(e, {childList: true, subtree: true}); }); run();
+})();
+
+/* ---- 3) مهام اليوم: تصنيفات وعرض منسق ---- */
+const TGM = {inq: ['🌐', 'طلبات جديدة', 'u'], travel: ['✈️', 'يسافرون قريبًا', 'u'], pay: ['💰', 'مبالغ متبقية', 'u'], pass: ['🛂', 'مشكلة جواز', 'u'],
+  ret: ['↩️', 'رحلة العودة', 'f'], back: ['🏠', 'عادوا من السفر', 'f'], lead: ['📞', 'متابعة المرجحين', 'f'],
+  gift: ['🎁', 'هدايا الولاء', 'm'], ref: ['🤝', 'خصومات الإحالة', 'm'], bday: ['🎂', 'أعياد الميلاد', 'm'], pp: ['🪪', 'جوازات تنتهي', 'm']};
+const TLV = {u: ['🔴', 'عاجل', 'يحتاج تصرفًا الآن', 'bad'], f: ['🟡', 'متابعة', 'تواصل مع العملاء', 'warn'], m: ['🟢', 'مناسبات', 'يمكن تأجيلها', 'ok']};
+var tkFilter = 'all', tkCol = new Set();
+function tkSet(k){ tkFilter = k; renderTasks(); }
+function tkTog(g){ tkCol.has(g) ? tkCol.delete(g) : tkCol.add(g); renderTasks(); }
+function tkRow(t, i){
+  const ini = esc([...String(t.title || '').trim()][0] || '؟'), x = t.x || [];
+  const menu = x.length ? amHtml(x.map((a, j) => `<button type="button" class="${a.cls || 'sec'}" onclick="taskDo(${i},'x',${j})">${a.label}</button>`).join('')) : '';
+  return `<div class="tkrow"><div class="avatar">${ini}</div><div class="tkmain"><div class="c-name">${t.key ? `<a class="plink" onclick="taskDo(${i},'prof')">${esc(t.title)}</a>` : esc(t.title)}${t.chip ? ` <span class="chip ${t.chip[0]}">${esc(t.chip[1])}</span>` : ''}</div>
+    <div class="c-sub">${esc(t.sub || '')}</div>${t.sub2 ? `<div class="c-note">${esc(t.sub2)}</div>` : ''}</div>
+    <div class="tkact noprint">${t.wa ? `<button class="sm" onclick="taskDo(${i},'wa')">💬 واتساب</button>` : ''}${t.doneId ? `<button class="sec sm" onclick="taskDo(${i},'done')">✓ تم</button>` : ''}${menu}</div></div>`;
+}
+{
+  const _rt19 = renderTasks;
+  renderTasks = function(){
+    _rt19.apply(this, arguments); const box = $('tasksBox'); if (!box) return;
+    box.querySelectorAll('.card.tg').forEach(e => e.remove()); box.querySelectorAll('.card .empty').forEach(e => e.closest('.card').remove()); const old = box.querySelector('.tk'); if (old) old.remove();
+    const items = taskItems.map((t, i) => [t, i]), by = {}; items.forEach(([t, i]) => (by[t.group] = by[t.group] || []).push([t, i]));
+    if (!items.length) { box.insertAdjacentHTML('beforeend', '<div class="tk"><div class="card"><div class="empty">🎉 لا توجد مهام اليوم. كل شيء تمام!</div></div></div>'); return; }
+    if (tkFilter !== 'all' && !by[tkFilter]) tkFilter = 'all';
+    const lvCount = {u: 0, f: 0, m: 0}; items.forEach(([t]) => { const m = TGM[t.group]; if (m) lvCount[m[2]]++; });
+    const tiles = ['u', 'f', 'm'].map(k => `<div class="tktile tk-${TLV[k][3]}"><span>${TLV[k][0]} ${TLV[k][1]}</span><b>${lvCount[k]}</b><small>${TLV[k][2]}</small></div>`).join('');
+    const chips = `<button type="button" class="tkchip ${tkFilter === 'all' ? 'on' : ''}" onclick="tkSet('all')">الكل <b>${items.length}</b></button>` +
+      TG.filter(([g]) => by[g]).map(([g]) => { const m = TGM[g] || ['•', g, 'f']; return `<button type="button" class="tkchip ${tkFilter === g ? 'on' : ''}" onclick="tkSet('${g}')">${m[0]} ${m[1]} <b>${by[g].length}</b></button>`; }).join('');
+    const secs = ['u', 'f', 'm'].map(lv => {
+      const groups = TG.filter(([g]) => by[g] && (TGM[g] || [0, 0, 'f'])[2] === lv && (tkFilter === 'all' || tkFilter === g)); if (!groups.length) return '';
+      return `<div class="tksec"><div class="tksec-h tk-${TLV[lv][3]}"><b>${TLV[lv][0]} ${TLV[lv][1]}</b><span class="c-sub">${TLV[lv][2]}</span></div>` +
+        groups.map(([g, title]) => { const list = by[g], shut = tkCol.has(g);
+          return `<div class="card tkgrp ${shut ? 'shut' : ''}"><div class="tkgrp-h" onclick="tkTog('${g}')"><h2>${esc(title)}</h2><span class="chip c-info">${list.length}</span><span class="tkcv">▾</span></div>${shut ? '' : `<div class="tkbody">${list.map(([t, i]) => tkRow(t, i)).join('')}</div>`}</div>`; }).join('') + '</div>';
+    }).join('');
+    box.insertAdjacentHTML('beforeend', `<div class="tk"><div class="tktiles">${tiles}</div><div class="tkchips noprint">${chips}</div>${secs}</div>`);
   };
 }
 
