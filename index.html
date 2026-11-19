@@ -1207,9 +1207,11 @@ $('f').addEventListener('submit', e => {
     const ck = CM.get(ckey(rec)); if ((pp && (!ck || ck.passportExpiry !== pp)) || (bd && (!ck || ck.birthday !== bd))) patchClient(ckey(rec), patch); }
   { const ck0 = ckey(rec), m = mergePhones(ck0, (CM.get(ck0) || {}).phones || '', $('phones').value); if (m.rejected.length) alert(m.rejected.join('\n')); if (m.text !== ((CM.get(ck0) || {}).phones || '')) patchClient(ck0, {phones: m.text}); }
   { const gv = $('gender').value; if (gv) { const c2 = CM.get(ckey(rec)); if (!c2 || c2.gender !== gv) patchClient(ckey(rec), {gender: gv}); } }
+  plAutoBk(rec);
   if (convertingLeadId) {
     const l = leads.find(x => x.id === convertingLeadId);
-    if (l) { l.status = 'converted'; saveLeads(); }
+    if (l) { leads = leads.filter(x => x.id !== convertingLeadId); saveLeads(); }
+    convertingLeadId = null;
   }
   resetForm(); render();
 });
@@ -1415,7 +1417,7 @@ $('lf').addEventListener('submit', e => {
   { const dm = !rec.id || !leads.some(x => x.id === rec.id) ? leadDup(rec) : ''; if (dm && !confirm('⚠ ' + dm + '\nهل تريد الحفظ رغم ذلك؟')) return; }
   const i = leads.findIndex(x => x.id === rec.id);
   if (i >= 0) leads[i] = rec; else leads.push(rec);
-  saveLeads(); resetLeadForm(); render();
+  saveLeads(); plAutoLead(rec); resetLeadForm(); render();
 });
 function editLead(id){
   const l = leads.find(x => x.id === id); if(!l) return;
@@ -4126,13 +4128,29 @@ VARS.push(['time', 'ساعة الإقلاع'], ['returnTime', 'ساعة إقلا
   const lv = leadVars; leadVars = function(l){ const v = lv.apply(this, arguments); v.time = fmtTm(l.departTime); v.returnTime = fmtTm(l.returnTime); return v; };
   const e21 = edit; edit = function(id){ e21.apply(this, arguments); const r = data.find(x => x.id === id); if (r) { $('departTime').value = r.departTime || ''; $('returnTime').value = r.returnTime || ''; } };
   const el = editLead; editLead = function(id){ el.apply(this, arguments); const l = leads.find(x => x.id === id); if (l) { $('ldepartTime').value = l.departTime || ''; $('lreturnTime').value = l.returnTime || ''; } };
-  const cv = convertLead; convertLead = function(id){ cv.apply(this, arguments); const l = leads.find(x => x.id === id); if (l) { $('departTime').value = l.departTime || ''; if (l.returnDate) $('returnTime').value = l.returnTime || ''; } };
+  const cv = convertLead; convertLead = function(id){ cv.apply(this, arguments); showTab('n'); const l = leads.find(x => x.id === id); if (l) { $('departTime').value = l.departTime || ''; if (l.returnDate) $('returnTime').value = l.returnTime || ''; } };
   const lt = ltripSet; ltripSet = function(t){ lt.apply(this, arguments); if (t === 'one' && $('lreturnTime')) $('lreturnTime').value = ''; };
   const at = acTripSet; acTripSet = function(){ at.apply(this, arguments); if ($('acTrip').value !== 'round') $('acRetTime').value = ''; };
 }
 /* نسخة مضغوطة للجداول: التاريخ ثم الساعة تحته */
 function fmtHT(r){ const d = _dOf(r), t = fmtTm(r && r.departTime); return fmtP(d) + (d && t ? '<br><small class="tm">⏰ ' + t + '</small>' : ''); }
 function fmtHR(r){ const t = fmtTm(r && r.returnTime); return fmtP(r && r.returnDate) + (r && r.returnDate && t ? '<br><small class="tm">⏰ ' + t + '</small>' : ''); }
+/* ---------- تسجيل تلقائي في قائمة الأسعار ---------- */
+function plAuto(x){
+  try {
+    const price = r2(+x.price || 0); if (!x.dest || !String(x.dest).trim() || price <= 0) return;
+    const air = String(x.airline || '').trim(), cost = r2(+x.cost || 0);
+    const L = PL().slice();
+    const same = e => sameAp(e.dest, x.dest) && (!!e.origin === !!x.origin) && (!x.origin || sameAp(e.origin, x.origin)) && (e.trip || 'one') === x.trip && (e.date || '') === (x.date || '') && (e.ret || '') === (x.ret || '') && String(e.airline || '').trim().toLowerCase() === air.toLowerCase();
+    const i = L.findIndex(same);
+    if (i >= 0) { if (L[i].price === price && (!cost || L[i].cost === cost)) return; L[i] = Object.assign({}, L[i], {price: price, cost: cost || L[i].cost || 0}); }
+    else L.push({origin: String(x.origin || '').trim(), dest: String(x.dest).trim(), trip: x.trip, date: x.date || '', ret: x.ret || '', cabin: '', cat: '', price: price, cost: cost, airline: air, note: x.src === 'l' ? 'سُجل تلقائيًا من مرجّح' : 'سُجل تلقائيًا من حجز', auto: true});
+    settings.priceList = L; saveSettings();
+    if (typeof toast === 'function') toast('💲 سُجل السعر في قائمة الأسعار', 'ok');
+  } catch (e) { console.warn('plAuto', e); }
+}
+function plAutoBk(r){ const q = Math.max(1, +r.qty || 1); plAuto({origin: r.origin, dest: r.destination, trip: r.returnDate ? 'round' : 'one', date: r.travelDate, ret: r.returnDate || '', price: (+r.price || 0) / q, cost: (+r.cost || 0) / q, airline: r.airline, src: 'b'}); }
+function plAutoLead(l){ const q = Math.max(1, +l.pax || 1); plAuto({origin: l.orig, dest: l.dest, trip: l.returnDate ? 'round' : 'one', date: l.travel, ret: l.returnDate || '', price: (+l.quotePrice || 0) / q, cost: 0, airline: l.quoteAirline, src: 'l'}); }
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
