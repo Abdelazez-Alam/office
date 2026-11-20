@@ -913,6 +913,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
     <form id="gLogin" style="display:none">
       <label>البريد الإلكتروني</label><input id="gEmail" type="email" dir="ltr" autocomplete="username" required>
       <label>كلمة المرور</label><input id="gPass" type="password" dir="ltr" autocomplete="current-password" required>
+      <div id="gCap" style="display:flex;justify-content:center;margin:10px 0"></div>
       <button type="submit">دخول</button>
       <button type="button" class="glink" id="gReset">تغيير إعدادات الاتصال</button>
     </form>
@@ -1148,10 +1149,21 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
   };
   g('gReset').onclick = () => { LS.del('office_cfg'); BASE = ''; KEY = ''; showGate(); };
   g('gRetry').onclick = boot;
+  const GTS = /^[0-9A-Za-z_-]{10,80}$/.test(fileCfg.turnstile || '') ? fileCfg.turnstile : '';
+  let gTok = '', gTid = null;
+  const gCapReset = () => { gTok = ''; try { if (gTid !== null && window.turnstile) window.turnstile.reset(gTid); } catch(_) {} };
+  if (GTS) {
+    window.__gTsReady = () => { gTid = window.turnstile.render('#gCap', {sitekey: GTS, language: 'ar', callback: t => { gTok = t; }, 'expired-callback': () => { gTok = ''; }, 'error-callback': () => { gTok = ''; }}); };
+    const sc = document.createElement('script'); sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__gTsReady'; sc.async = true; document.head.appendChild(sc);
+  }
   g('gLogin').onsubmit = async e => {
-    e.preventDefault(); msg('جارٍ الدخول...', true);
-    try { saveSess(await authCall('password', {email: g('gEmail').value.trim(), password: g('gPass').value})); g('gPass').value = ''; boot(); }
+    e.preventDefault();
+    if (GTS && !gTok) { msg('أكمل مربع التحقق «أنا لست روبوتًا» أولًا.'); return; }
+    msg('جارٍ الدخول...', true);
+    try { const body = {email: g('gEmail').value.trim(), password: g('gPass').value}; if (GTS) body.gotrue_meta_security = {captcha_token: gTok};
+      saveSess(await authCall('password', body)); g('gPass').value = ''; boot(); }
     catch(err) {
+      gCapReset();
       const m = err.message || '', host = BASE.replace(/^https?:\/\//, '');
       const why = /invalid login credentials/i.test(m) ? 'البريد أو كلمة المرور غير صحيحة (أو الحساب غير موجود في هذا المشروع).'
         : /api key|apikey|forbidden|unauthorized|jwt/i.test(m) ? 'المفتاح في config.js غير صحيح أو ناقص (انسخ Publishable key كاملًا).'
