@@ -956,14 +956,24 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
   const FIELDS = {bookings: BOOK_FIELDS, leads: LEAD_FIELDS, clients: CLIENT_FIELDS, taskdone: TASK_FIELDS, gifts: GIFT_FIELDS, inquiries: INQ_FIELDS, suppliers: SUP_FIELDS, payments: PAY_FIELDS, trash: TRASH_FIELDS};
   const NUM = {qty:1, price:1, discount:1, paid:1, pax:1, quotePrice:1, optout:1, cost:1, amount:1};
   const ONE = {qty:1, pax:1};
+  const DATECOL = new Set(['travel_date','booking_date','return_date','travel','inquiry','follow','quote_until','birthday','passport_expiry','at','deleted_at']);
+  const TIMECOL = new Set(['depart_time','return_time']);
+  const NULLCOL = new Set([...DATECOL, ...TIMECOL, 'supplier']);
   const toDb = (rec, fields) => { const o = {}; for (const [js, col] of fields) {
     let v = rec[js];
     if (NUM[js]) { v = Number(v); if (!isFinite(v)) v = ONE[js] ? 1 : 0; if (ONE[js]) v = Math.max(1, Math.round(v)); if (js === 'optout') v = v ? 1 : 0; }
-    else v = v == null ? '' : String(v);
+    else {
+      v = v == null ? '' : String(v);
+      if (DATECOL.has(col) && v && col !== 'at' && col !== 'deleted_at' && !/^\d{4}-\d{2}-\d{2}$/.test(v)) v = '';
+      if (TIMECOL.has(col) && v && !/^\d{1,2}:\d{2}/.test(v)) v = '';
+      if (NULLCOL.has(col) && v === '') v = null;
+    }
     o[col] = v; } return o; };
   const fromDb = (row, fields) => { const o = {}; for (const [js, col] of fields) {
     let v = row[col];
     if (NUM[js]) v = v == null ? (ONE[js] ? 1 : 0) : Number(v); else v = v == null ? '' : v;
+    if (TIMECOL.has(col) && v) v = String(v).slice(0, 5);
+    else if (DATECOL.has(col) && v && col !== 'at' && col !== 'deleted_at') v = String(v).slice(0, 10);
     o[js] = v; } return o; };
   const pgq = s => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
   const inList = arr => encodeURIComponent('(' + arr.map(pgq).join(',') + ')');
@@ -1285,7 +1295,7 @@ function render(){
         (r.status !== 'cancelled' ? (rem > 0 ? `<span class="chip c-bad">متبقي ${money(rem)}</span>` : '<span class="chip c-ok">✓ مسدد</span>') : '')
       : '<span class="c-sub">—</span>';
     return `<tr class="${cls}">
-      <td><div class="c-name"><a class="plink" onclick="openProfileB('${r.id}')">${esc(r.name)}</a></div>
+      <td><div class="c-name"><a class="plink" onclick="openProfileB('${jq(r.id)}')">${esc(r.name)}</a></div>
         ${phonesBlock(r.phone)}${ppWarn(r)}${r.idNo ? `<div class="c-sub">🪪 ${esc(r.idNo)}</div>` : ''}${note}</td>
       <td><div class="route">${ap(r.origin)}<span class="arr">←</span>${ap(r.destination)}</div></td>
       <td><div class="c-name">${fmtDT(r)}</div>${r.returnDate ? `<div class="c-sub">↩ عودة ${fmtDR(r)}</div>` : ''}${chip}</td>
@@ -1293,7 +1303,7 @@ function render(){
       <td><div>${esc(r.airline) || '<span class="c-sub">—</span>'}</div>${r.pnr ? `<div class="pnr" dir="ltr">${esc(r.pnr)}</div>` : ''}${(+r.qty||1) > 1 ? `<div class="c-sub">🎟 ${+r.qty} تذاكر</div>` : ''}</td>
       <td>${moneyHtml}${profitLine(r)}</td>
       <td><span class="badge b-${r.status}">${STATUS[r.status]}</span></td>
-      <td class="noprint"><div class="acts"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button> <button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button> <button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${r.id}')">🛫 مستند السفر</button> <button class="sec sm" onclick="edit('${r.id}')">تعديل</button> <button class="del sm" onclick="del('${r.id}')">حذف</button></div></td>
+      <td class="noprint"><div class="acts"><button class="sm" onclick="openPay('${jq(r.id)}')">💵 دفعات</button> <button class="sm" onclick="openTickets('${jq(r.id)}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button> <button class="sec sm" onclick="bkMsg('${jq(r.id)}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${jq(r.id)}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${jq(r.id)}')">🛫 مستند السفر</button> <button class="sec sm" onclick="edit('${jq(r.id)}')">تعديل</button> <button class="del sm" onclick="del('${jq(r.id)}')">حذف</button></div></td>
     </tr>`;
   }).join('') : `<tr><td class="empty" colspan="8">لا توجد نتائج</td></tr>`;
 }
@@ -1311,7 +1321,7 @@ function download(name, content, type){
 }
 function exportCSV(){
   const head = ['الاسم','الهاتف','رقم البطاقة','مطار الإقلاع','مطار الهبوط','تاريخ السفر','ساعة الإقلاع','تاريخ الحجز','شركة الطيران','PNR','عدد التذاكر','الحالة','السعر','الخصم','المدفوع','المتبقي','أحاله','ملاحظات'];
-  const cell = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const cell = csvCell;
   const rows = filtered().map(r => [r.name, r.phone, r.idNo||'', r.origin, r.destination, r.travelDate, fmtTm(r.departTime), r.bookingDate, r.airline, r.pnr, (r.qty||1), STATUS[r.status], r.price, (r.discount||0), r.paid, remaining(r), r.refBy||'', r.notes].map(cell).join(','));
   download('عملاء-الطيران-'+todayStr()+'.csv', '\ufeff' + [head.map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
 }
@@ -1475,7 +1485,7 @@ function renderLeads(){
     <td>${fmtD(l.inquiry)}</td>
     <td>${l.follow ? `<div class="c-name">${fmtD(l.follow)}</div>${fchip}` : '<span class="c-sub">—</span>'}</td>
     <td><span class="badge b-${l.status}">${LSTATUS[l.status]}</span></td>
-    <td class="noprint"><div class="acts">${l.status!=='converted' ? `<button class="sm" onclick="convertLead('${l.id}')">تحويل لحجز</button> ` : ''}<button class="sec sm" onclick="openQuote('${l.id}')">🧾 عرض سعر</button> <button class="sec sm" onclick="leadMsg('${l.id}')">💬 رسالة</button> <button class="sec sm" onclick="editLead('${l.id}')">تعديل</button> <button class="del sm" onclick="delLead('${l.id}')">حذف</button></div></td>
+    <td class="noprint"><div class="acts">${l.status!=='converted' ? `<button class="sm" onclick="convertLead('${jq(l.id)}')">تحويل لحجز</button> ` : ''}<button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button> <button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button> <button class="sec sm" onclick="editLead('${jq(l.id)}')">تعديل</button> <button class="del sm" onclick="delLead('${jq(l.id)}')">حذف</button></div></td>
   </tr>`;
   }).join('') : `<tr><td class="empty" colspan="7">لا توجد نتائج</td></tr>`;
   const openN = leads.filter(isOpen).length, lateN = leads.filter(isLate).length;
@@ -1852,13 +1862,13 @@ function renderProfile(){
       </div>
       <div class="actions"><button onclick="saveProfile()">💾 حفظ بيانات العميل</button></div></div>
     <div class="sgrp"><h3>🔗 الإحالات</h3>
-      <div>كود الإحالة: <b class="code" dir="ltr">${esc(c.code)}</b> <button class="sec sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(c.code)}')">نسخ</button>
+      <div>كود الإحالة: <b class="code" dir="ltr">${esc(c.code)}</b> <button class="sec sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${jq(c.code)}')">نسخ</button>
         <button class="sm" onclick="profileInvite()">💬 إرسال دعوة الإحالة</button></div>
       <div class="c-sub">${c.refName ? 'أحاله: <b>' + esc(c.refName) + '</b>' : 'لم يُحَل من أحد'} · ${c.referrals.length ? 'أحال ' + c.referrals.length + ' (حجز منهم ' + refActive(c) + '، خصومات ممنوحة ' + given + ')' : 'لم يُحل أحدًا بعد'}</div>
       ${c.referrals.length ? '<div class="c-sub">' + c.referrals.map(x => esc(x.name) + (x.trips ? '' : ' (لم يحجز)')).join(' · ') + '</div>' : ''}</div>
     <div class="sgrp"><h3>🎁 الهدايا</h3>
       ${giftsDue(c).length ? `<div class="c-sub" style="color:var(--warn)">هدية مستحقة: ${giftsDue(c).map(t => TIER_LABEL[t] + (tierGift(t) ? ' — ' + esc(tierGift(t)) : '')).join(' ، ')}</div>` : ''}
-      ${mygifts.map(g => `<div class="tk"><span>🎁 ${esc(g.gift)} <small>${g.tier ? TIER_LABEL[g.tier] + ' · ' : ''}${fmtP(g.at)}</small></span><button class="del sm" onclick="delGift('${g.id}')">حذف</button></div>`).join('') || '<div class="c-sub">لا توجد هدايا مسجلة</div>'}
+      ${mygifts.map(g => `<div class="tk"><span>🎁 ${esc(g.gift)} <small>${g.tier ? TIER_LABEL[g.tier] + ' · ' : ''}${fmtP(g.at)}</small></span><button class="del sm" onclick="delGift('${jq(g.id)}')">حذف</button></div>`).join('') || '<div class="c-sub">لا توجد هدايا مسجلة</div>'}
       <div class="grid" style="margin-top:8px"><div class="full"><input id="pfGift" placeholder="نص الهدية (مثال: خصم 10%)" value="${esc(tierGift(c.tier) || '')}"></div></div>
       <div class="actions"><button class="sec sm" onclick="giveGift(pKey,'',$('pfGift').value.trim())">➕ تسجيل هدية ممنوحة</button></div></div>
     <div class="sgrp"><h3>سجل الحجوزات (${hist.length})</h3><div class="tbl"><table class="rec"><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>التذاكر</th><th>السعر</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>
@@ -1927,7 +1937,7 @@ function renderCampaigns(){
 function campSend(i){ const x = cgList[i]; if (!x) return; waSend(x.c.phone, fillTpl($('cgText').value, custVars(x.c))); }
 const campAll = () => segmentList().filter(c => !(c.client && c.client.optout)).map(c => ({c}));
 function campCSV(){
-  const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const cell = csvCell;
   download('حملة-' + todayStr() + '.csv', '﻿' + [['الاسم','الهاتف','التذاكر','المستوى','آخر نشاط','كود الإحالة'].map(cell).join(','),
     ...campAll().map(x => [x.c.name, x.c.phone, x.c.tickets, (TIER_LABEL[x.c.tier] || ''), x.c.lastAct, x.c.code].map(cell).join(','))].join('\r\n'), 'text/csv;charset=utf-8');
 }
@@ -1996,7 +2006,7 @@ function previewVars(){
 function tplPreview(){ $('sTplPrev').textContent = fillTpl($('sTplText').value, previewVars()); }
 function tplStore(){ const k = tplCur; if (k) { const v = $('sTplText').value; if (v.trim() === TPL[k].text.trim() || !v.trim()) delete tplDraft[k]; else tplDraft[k] = v; } }
 function tplList(){
-  $('sTplList').innerHTML = Object.entries(TPL).map(([k, v]) => `<button type="button" class="${k === tplCur ? 'on' : ''}" onclick="tplSelect('${k}')">${v.label}${tplDraft[k] ? ' <i title="معدّل">●</i>' : ''}</button>`).join('');
+  $('sTplList').innerHTML = Object.entries(TPL).map(([k, v]) => `<button type="button" class="${k === tplCur ? 'on' : ''}" onclick="tplSelect('${jq(k)}')">${v.label}${tplDraft[k] ? ' <i title="معدّل">●</i>' : ''}</button>`).join('');
 }
 function tplSelect(k){ tplStore(); tplCur = k; $('sTplText').value = tplDraft[k] || TPL[k].text; $('sTplName').textContent = TPL[k].label; tplList(); tplPreview(); }
 function tplInsert(k){ const t = $('sTplText'), a = t.selectionStart == null ? t.value.length : t.selectionStart, e = t.selectionEnd == null ? a : t.selectionEnd, v = '{' + k + '}';
@@ -2010,7 +2020,7 @@ function openSettings(){
   set('sName', o.name); set('sPhone', o.phone); set('sAddr', o.address); set('sCC', o.cc); set('sCur', o.currency); set('sQuoteFooter', o.quoteFooter);
   set('sBronze', +o.bronzeFrom || 1); set('sSilver', thrV() + 1); set('sGoldFrom', o.goldFrom); set('sGiftBronze', o.giftBronze); set('sGiftSilver', o.giftSilver); set('sGiftGold', o.giftGold);
   set('sRefReward', o.refReward); set('sBdayGift', o.birthdayGift); set('sOffer', o.offer);
-  $('sVarChips').innerHTML = VARS.map(v => `<button type="button" class="vchip" onclick="tplInsert('${v[0]}')" title="${v[1]}"><span dir="ltr">{${v[0]}}</span> ${v[1]}</button>`).join('');
+  $('sVarChips').innerHTML = VARS.map(v => `<button type="button" class="vchip" onclick="tplInsert('${jq(v[0])}')" title="${v[1]}"><span dir="ltr">{${v[0]}}</span> ${v[1]}</button>`).join('');
   tplCur = 'confirm'; tplGen = 'm'; $('sTplText').value = tplDraft.confirm || TPL.confirm.text; $('sTplName').textContent = TPL.confirm.label; tplList(); tplPreview(); ladderPreview();
   $('sLogoImg').style.display = logoDraft ? '' : 'none'; $('sLogoImg').src = logoDraft || ''; themeSwatches();
   const u = askUrl(); $('sAskUrl').value = u; $('sQr').src = qrUrl(u);
@@ -2091,7 +2101,7 @@ function themeApply(t){
 }
 function themeSwatches(){
   const t = themeGet();
-  $('sSwatches').innerHTML = Object.entries(THEMES).map(([k, v]) => `<button type="button" title="${v[1]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${k}',m:themeGet().m})"></button>`).join('');
+  $('sSwatches').innerHTML = Object.entries(THEMES).map(([k, v]) => `<button type="button" title="${v[1]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${jq(k)}',m:themeGet().m})"></button>`).join('');
   $('sMode').value = t.m;
 }
 
@@ -2125,7 +2135,7 @@ function tripHtml(r){
     <div class="t-air">${esc(r.airline) || '<span class="c-sub">—</span>'}${r.pnr ? ` <span class="pnr" dir="ltr">${esc(r.pnr)}</span>` : ''}${(+r.qty || 1) > 1 ? `<div class="c-sub">🎟 ${+r.qty} تذاكر</div>` : ''}</div>
     <div class="t-money">${money1}${profitLine(r)}</div>
     <div class="t-st"><span class="badge b-${r.status}">${STATUS[r.status]}</span></div>
-    <div class="acts noprint"><button class="sm" onclick="openPay('${r.id}')">💵 دفعات</button><button class="sm" onclick="openTickets('${r.id}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button><button class="sec sm" onclick="bkMsg('${r.id}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${r.id}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${r.id}')">🛫 مستند السفر</button><button class="sec sm" onclick="edit('${r.id}')">تعديل</button><button class="del sm" onclick="del('${r.id}')">حذف</button></div>
+    <div class="acts noprint"><button class="sm" onclick="openPay('${jq(r.id)}')">💵 دفعات</button><button class="sm" onclick="openTickets('${jq(r.id)}')">🎫 تذكرة <span class="tc" data-cid="${r.id}"></span></button><button class="sec sm" onclick="bkMsg('${jq(r.id)}')">💬 رسالة</button> <button class="sec sm" onclick="rcOpen('${jq(r.id)}')">🧾 إيصال</button> <button class="sec sm" onclick="tdOpen('${jq(r.id)}')">🛫 مستند السفر</button><button class="sec sm" onclick="edit('${jq(r.id)}')">تعديل</button><button class="del sm" onclick="del('${jq(r.id)}')">حذف</button></div>
     ${r.notes ? `<div class="c-note t-note">📝 ${esc(r.notes.length > 140 ? r.notes.slice(0, 140) + '…' : r.notes)}</div>` : ''}${ppWarn(r)}
   </div>`;
 }
@@ -2261,11 +2271,11 @@ function renderPeople(){
       kind = `<span class="chip c-info">🔎 مرجّح</span> <span class="badge b-${l.status}">${LSTATUS[l.status] || l.status}</span>`;
       det = `<div><b dir="ltr">${esc(routeTxt(l.orig, l.dest))}</b>${l.travel ? ' · ' + fmtDT(l) : ''}${(+l.pax || 1) > 1 ? ' · ' + (+l.pax) + ' ركاب' : ''}</div>` +
         (l.quotePrice ? `<div class="c-sub">عرض سعر: ${money(l.quotePrice)}</div>` : '') + (l.follow ? `<div class="c-sub">المتابعة: ${fmtD(l.follow)}${isLate(l) ? ' <span class="chip c-bad">متأخرة</span>' : ''}</div>` : '');
-      acts = `<button class="sm" onclick="convertLead('${l.id}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${l.id}')">فتح</button><button class="sec sm" onclick="openQuote('${l.id}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${l.id}')">💬 رسالة</button>`;
+      acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
     } else { const n = p.inq;
       kind = '<span class="chip c-warn">🌐 طلب جديد</span>';
       det = `<div><b dir="ltr">${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}${n.refCode ? `<div class="c-sub">🔗 كود إحالة: ${esc(n.refCode)}</div>` : ''}`;
-      acts = `<button class="sm" onclick="inqToLead('${n.id}')">➕ تحويل لمرجّح</button><button class="sec sm" onclick="inqMsg('${n.id}')">💬 رد</button><button class="del sm" onclick="inqDelete('${n.id}')">حذف</button>`;
+      acts = `<button class="sm" onclick="inqToLead('${jq(n.id)}')">➕ تحويل لمرجّح</button><button class="sec sm" onclick="inqMsg('${jq(n.id)}')">💬 رد</button><button class="del sm" onclick="inqDelete('${jq(n.id)}')">حذف</button>`;
     }
     return `<tr><td><div class="c-name">${p.kind === 'booked' ? `<a class="plink" onclick="openProfile(peopleItems[${i}].key)">${esc(p.name)}</a>` : esc(p.name)} <button class="sec sm noprint" onclick="idcOpen(peopleItems[${i}].key)">🪪 بطاقة</button></div>
       ${phonesBlock(p.phone)}</td>
@@ -2284,7 +2294,7 @@ function inqMsg(id){
   xmOpen('رد على ' + q.name, q.phone, [{label: TPL.inqreply.label, text: fillTpl(tplText('inqreply'), Object.assign(baseVars(), {name: q.name, gender: q.gender || '', origin:q.origin, dest:q.destination, pax:q.pax || 1}))}], 0);
 }
 function peopleCSV(){
-  const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"', KIND = {booked:'حجز', lead:'مرجّح (لم يحجز)', inq:'طلب جديد من الصفحة', client:'مسجّل بدون حجز'};
+  const cell = csvCell, KIND = {booked:'حجز', lead:'مرجّح (لم يحجز)', inq:'طلب جديد من الصفحة', client:'مسجّل بدون حجز'};
   download('جميع-العملاء-' + todayStr() + '.csv', '﻿' + [['الاسم','الهاتف','الحالة','عدد الحجوزات','عدد التذاكر','المدفوع','المتبقي','آخر نشاط'].map(cell).join(','),
     ...peopleItems.map(p => [p.name, p.phone, KIND[p.kind], p.c ? p.c.trips : '', p.c ? p.c.tickets : '', p.c ? p.c.spent : '', p.remaining, p.act].map(cell).join(','))].join('\r\n'), 'text/csv;charset=utf-8');
 }
@@ -2358,7 +2368,7 @@ function renderPay(){
     <div class="sgrp"><h3>من العميل</h3>
       ${prior > 0 ? `<div class="c-sub">مدفوع قبل تسجيل الدفعات: <b>${money(prior)}</b></div>` : ''}
       ${ins.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>الطريقة</th><th>ملاحظة</th><th></th></tr></thead><tbody>${ins.map(p => `<tr><td>${fmtD(p.at)}</td><td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td>${esc(p.note)}</td>
-        <td class="acts"><button class="sec sm" onclick="receiptPrint('${p.id}')">🧾 إيصال</button><button class="sec sm" onclick="receiptWA('${p.id}')">💬</button><button class="del sm" onclick="delPay('${p.id}')">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="c-sub">لا توجد دفعات مسجلة بعد.</div>'}
+        <td class="acts"><button class="sec sm" onclick="receiptPrint('${jq(p.id)}')">🧾 إيصال</button><button class="sec sm" onclick="receiptWA('${jq(p.id)}')">💬</button><button class="del sm" onclick="delPay('${jq(p.id)}')">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="c-sub">لا توجد دفعات مسجلة بعد.</div>'}
       <div class="grid payform"><div><label>المبلغ</label><input type="number" id="payAmt" min="0" step="any" value="${rem > 0 ? rem : ''}"></div>
         <div><label>التاريخ</label><input type="date" id="payAt" value="${todayStr()}"></div>
         <div><label>الطريقة</label><select id="payMethod">${mOpts('كاش')}</select></div>
@@ -2368,7 +2378,7 @@ function renderPay(){
       ${sup || hasCost(r) ? `<div class="pstats"><div><b>${money(r.cost)}</b>سعر الشراء</div><div><b>${money(sumOut)}</b>دفعته للمكتب</div>
         <div class="${(+r.cost || 0) - sumOut > 0 ? 'bad' : 'good'}"><b>${money(Math.max(0, (+r.cost || 0) - sumOut))}</b>${(+r.cost || 0) - sumOut > 0 ? 'باقٍ للمكتب' : 'مسدد ✓'}</div></div>` : ''}
       ${!sup ? '<div class="c-sub">حدّد المكتب المورّد من «تعديل» الحجز لتُسجَّل الدفعات على حسابه.</div>' : `
-      ${outs.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>الطريقة</th><th>ملاحظة</th><th></th></tr></thead><tbody>${outs.map(p => `<tr><td>${fmtD(p.at)}</td><td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td>${esc(p.note)}</td><td class="acts"><button class="del sm" onclick="delPay('${p.id}')">حذف</button></td></tr>`).join('')}</tbody></table>` : ''}
+      ${outs.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>الطريقة</th><th>ملاحظة</th><th></th></tr></thead><tbody>${outs.map(p => `<tr><td>${fmtD(p.at)}</td><td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td>${esc(p.note)}</td><td class="acts"><button class="del sm" onclick="delPay('${jq(p.id)}')">حذف</button></td></tr>`).join('')}</tbody></table>` : ''}
       <div class="grid payform"><div><label>المبلغ</label><input type="number" id="outAmt" min="0" step="any" value="${(+r.cost || 0) - sumOut > 0 ? (+r.cost || 0) - sumOut : ''}"></div>
         <div><label>التاريخ</label><input type="date" id="outAt" value="${todayStr()}"></div>
         <div><label>الطريقة</label><select id="outMethod">${mOpts('تحويل بنكي')}</select></div>
@@ -2479,7 +2489,7 @@ const grpTbl = (title, g) => g.length ? `<div class="sgrp"><h3>${title}</h3><tab
 let accTab = 'profit', accMonth = '', supSel = null, plEdit = -1;
 function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
 function exportMonth(){
-  const m = accMonth || todayStr().slice(0, 7), cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
   const head = ['التاريخ', 'العميل', 'الوجهة', 'شركة الطيران', 'المكتب المورد', 'سعر البيع (بعد الخصم)', 'سعر الشراء', 'العمولة'];
   const rows = monthRows(m).map(b => [b.bookingDate, b.name, b.destination, b.airline, supName(b.supplier), netPrice(b), hasCost(b) ? b.cost : '', hasCost(b) ? commOf(b) : ''].map(cell).join(','));
   download('أرباح-' + m + '.csv', '﻿' + [head.map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
@@ -2505,11 +2515,11 @@ function accSupHtml(){
       <div class="pstats"><div><b>${money(st.bought)}</b>إجمالي المشتريات ${c}</div><div><b>${money(st.paidOut)}</b>المسدد</div><div class="${st.owed > 0 ? 'bad' : 'good'}"><b>${money(Math.abs(st.owed))}</b>${st.owed > 0 ? 'باقٍ عليك للمكتب' : st.owed < 0 ? 'رصيد لك عنده' : 'مسدد ✓'}</div></div>
       <div class="sgrp"><h3>الحجوزات</h3>${st.mine.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>العميل</th><th>الوجهة</th><th>الشراء</th><th>المسدد</th><th></th></tr></thead><tbody>${st.mine.slice().sort((a, b) => String(b.bookingDate).localeCompare(String(a.bookingDate))).map(b => {
         const po = payOut(b.id).reduce((x, p) => x + p.amount, 0);
-        return `<tr class="${b.status === 'cancelled' ? 'cancelled' : ''}"><td>${fmtD(b.bookingDate)}</td><td>${esc(b.name)}</td><td>${esc(b.destination)}</td><td>${money(b.cost)}</td><td>${money(po)}</td><td><button class="sec sm" onclick="openPay('${b.id}')">💵</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="c-sub">لا توجد حجوزات مرتبطة بهذا المكتب.</div>'}</div>
-      <div class="sgrp"><h3>دفعات للمكتب</h3>${outs.length ? `<table class="ptbl"><tbody>${outs.map(p => { const b = data.find(x => x.id === p.booking); return `<tr><td>${fmtD(p.at)}</td><td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td>${b ? esc(b.name) : '<span class="c-sub">دفعة عامة</span>'} ${esc(p.note)}</td><td><button class="del sm" onclick="delPay('${p.id}')">حذف</button></td></tr>`; }).join('')}</tbody></table>` : ''}
+        return `<tr class="${b.status === 'cancelled' ? 'cancelled' : ''}"><td>${fmtD(b.bookingDate)}</td><td>${esc(b.name)}</td><td>${esc(b.destination)}</td><td>${money(b.cost)}</td><td>${money(po)}</td><td><button class="sec sm" onclick="openPay('${jq(b.id)}')">💵</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="c-sub">لا توجد حجوزات مرتبطة بهذا المكتب.</div>'}</div>
+      <div class="sgrp"><h3>دفعات للمكتب</h3>${outs.length ? `<table class="ptbl"><tbody>${outs.map(p => { const b = data.find(x => x.id === p.booking); return `<tr><td>${fmtD(p.at)}</td><td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td>${b ? esc(b.name) : '<span class="c-sub">دفعة عامة</span>'} ${esc(p.note)}</td><td><button class="del sm" onclick="delPay('${jq(p.id)}')">حذف</button></td></tr>`; }).join('')}</tbody></table>` : ''}
         <div class="grid payform"><div><label>المبلغ</label><input type="number" id="spAmt" min="0" step="any" value="${st.owed > 0 ? st.owed : ''}"></div><div><label>التاريخ</label><input type="date" id="spAt" value="${todayStr()}"></div>
         <div><label>الطريقة</label><select id="spMethod">${mOpts('تحويل بنكي')}</select></div><div><label>ملاحظة</label><input id="spNote"></div></div>
-        <div class="actions"><button onclick="supPay('${s.id}')">＋ تسجيل دفعة للمكتب</button></div></div>`;
+        <div class="actions"><button onclick="supPay('${jq(s.id)}')">＋ تسجيل دفعة للمكتب</button></div></div>`;
   }
   return `<div class="sgrp" id="supForm"><h3>مكتب مورّد</h3><input type="hidden" id="supId"><div class="grid">
       <div><label>اسم المورد / المكتب *</label><input id="supName"></div><div><label>الهاتف (اختياري)</label><input id="supPhone" dir="ltr" style="text-align:right"></div><div class="full"><label>ملاحظات</label><input id="supNotes"></div></div>
@@ -2517,7 +2527,7 @@ function accSupHtml(){
     ${supSortBar()}${suppliers.length ? supSorted().map(s => { const st = supStats(s.id);
       return `<div class="supcard"><div><b>${esc(s.name)}</b>${s.phone ? ` <span class="c-sub" dir="ltr">${esc(s.phone)}</span>` : ''}<div class="c-sub">${st.bks.length} حجز · مشتريات ${money(st.bought)} · مسدد ${money(st.paidOut)}</div></div>
         <div>${st.owed > 0 ? `<span class="chip c-bad">باقٍ عليك ${money(st.owed)}</span>` : st.owed < 0 ? `<span class="chip c-info">رصيد لك ${money(-st.owed)}</span>` : '<span class="chip c-ok">✓ مسدد</span>'}</div>
-        <div class="acts"><button class="sm" onclick="supSel='${s.id}';renderAcc()">📒 كشف الحساب</button><button class="sec sm" onclick="supEdit('${s.id}')">تعديل</button><button class="del sm" onclick="supDel('${s.id}')">حذف</button></div></div>`; }).join('')
+        <div class="acts"><button class="sm" onclick="supSel='${jq(s.id)}';renderAcc()">📒 كشف الحساب</button><button class="sec sm" onclick="supEdit('${jq(s.id)}')">تعديل</button><button class="del sm" onclick="supDel('${jq(s.id)}')">حذف</button></div></div>`; }).join('')
       : '<div class="empty">لم تسجّل أي مكتب بعد. أضف المكاتب التي تشتري منها لتتبع حساب كل مكتب.</div>'}`;
 }
 
@@ -2590,14 +2600,14 @@ function accTrashHtml(){
     let r = {}; try { r = JSON.parse(t.payload); } catch (e) {}
     const title = t.kind === 'booking' ? `✈️ حجز: ${esc(r.name)} — ${esc(r.destination || '')} ${fmtPT(r)}` : `🔎 مرجّح: ${esc(r.name)} ${esc(r.dest || '')}`;
     return `<div class="supcard"><div><b>${title}</b><div class="c-sub">حُذف ${fmtP(t.deletedAt)} · يُحذف نهائيًا بعد ${Math.max(0, 30 - trashDays(t))} يوم</div></div><div></div>
-      <div class="acts"><button class="sm" onclick="trashRestore('${t.id}')">↩ استرجاع</button><button class="del sm" onclick="trashPurge('${t.id}')">حذف نهائي</button></div></div>`; }).join('') : '<div class="empty">السلة فارغة.</div>');
+      <div class="acts"><button class="sm" onclick="trashRestore('${jq(t.id)}')">↩ استرجاع</button><button class="del sm" onclick="trashPurge('${jq(t.id)}')">حذف نهائي</button></div></div>`; }).join('') : '<div class="empty">السلة فارغة.</div>');
 }
 
 /* ---------- صفحة الحسابات ---------- */
 function renderAcc(){
   const box = $('tabAcc'); if (!box || box.style.display === 'none') return;
   const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['prices', '💲 قائمة الأسعار'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
-  $('accNav').innerHTML = tabs.map(([k, l]) => `<button class="${accTab === k ? 'on' : ''}" onclick="accTab='${k}';renderAcc()">${l}</button>`).join('');
+  $('accNav').innerHTML = tabs.map(([k, l]) => `<button class="${accTab === k ? 'on' : ''}" onclick="accTab='${jq(k)}';renderAcc()">${l}</button>`).join('');
   $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'prices' ? accPricesHtml() : accTrashHtml();
   const am = $('accMonth'); if (am) am.onchange = () => { accMonth = am.value; renderAcc(); };
 }
@@ -2613,7 +2623,7 @@ function dupCheck(){
   if (byPhone && byPhone.key !== editingKey) {
     dupKey = byPhone.key;
     const same = nm && byPhone.name.trim().toLowerCase() === nm;
-    html = `<div class="dup ${same ? 'info' : ''}">${same ? '✓ عميل سابق' : '⚠ هذا الرقم مسجل باسم'} <b>${esc(byPhone.name)}</b> (${byPhone.trips} حجز${byPhone.remaining > 0 ? ' · متبقي عليه ' + money(byPhone.remaining) : ''}) <button type="button" class="sm" onclick="dupUse()">استخدام بياناته</button> <button type="button" class="sec sm" onclick="openProfile('${esc(byPhone.key)}')">فتح ملفه</button></div>`;
+    html = `<div class="dup ${same ? 'info' : ''}">${same ? '✓ عميل سابق' : '⚠ هذا الرقم مسجل باسم'} <b>${esc(byPhone.name)}</b> (${byPhone.trips} حجز${byPhone.remaining > 0 ? ' · متبقي عليه ' + money(byPhone.remaining) : ''}) <button type="button" class="sm" onclick="dupUse()">استخدام بياناته</button> <button type="button" class="sec sm" onclick="openProfile('${jq(byPhone.key)}')">فتح ملفه</button></div>`;
   } else if (nm.length >= 3 && !$('id').value) {
     const byName = custAll.find(c => c.name.trim().toLowerCase() === nm && c.key !== k);
     if (byName) { dupKey = byName.key; html = `<div class="dup">⚠ يوجد عميل بنفس الاسم <b>${esc(byName.name)}</b> برقم <span dir="ltr">${esc(byName.phone)}</span> (${byName.trips} حجز). هل هو نفس الشخص؟ <button type="button" class="sm" onclick="dupUse()">استخدام بياناته</button></div>`; }
@@ -2651,11 +2661,11 @@ function gsRun(){
   const ss = suppliers.filter(s => has(s.name, s.phone, s.notes)).slice(0, 4);
   const sec = (t, items) => items.length ? `<div class="gs-h">${t}</div>` + items.join('') : '';
   const it = (js, main, sub) => `<button type="button" class="gs-i" onclick="${js}"><b>${main}</b><span class="c-sub">${sub}</span></button>`;
-  const html = sec('👥 العملاء', cs.map(c => it(`gsGo('c','${esc(c.key)}')`, esc(c.name), `<span dir="ltr">${esc(c.phone)}</span> · ${c.trips} حجز`)))
-    + sec('✈️ الحجوزات', bs.map(b => it(`gsGo('b','${b.id}')`, esc(b.name) + (b.pnr ? ` <span dir="ltr" class="pnr">${esc(b.pnr)}</span>` : ''), `${esc(b.origin)} ‏←‏ ${esc(b.destination)} · ${fmtPT(b)}`)))
-    + sec('🔎 المرجّحون', ls.map(l => it(`gsGo('l','${l.id}')`, esc(l.name), `${esc(l.dest || '')} · <span dir="ltr">${esc(l.phone)}</span>`)))
-    + sec('🌐 طلبات الصفحة', qs.map(i => it(`gsGo('q','${esc(i.id)}')`, esc(i.name), `${esc(i.destination || '')} · <span dir="ltr">${esc(i.phone)}</span>`)))
-    + sec('🏢 المكاتب', ss.map(s => it(`gsGo('s','${s.id}')`, esc(s.name), s.phone ? `<span dir="ltr">${esc(s.phone)}</span>` : '')));
+  const html = sec('👥 العملاء', cs.map(c => it(`gsGo('c','${jq(c.key)}')`, esc(c.name), `<span dir="ltr">${esc(c.phone)}</span> · ${c.trips} حجز`)))
+    + sec('✈️ الحجوزات', bs.map(b => it(`gsGo('b','${jq(b.id)}')`, esc(b.name) + (b.pnr ? ` <span dir="ltr" class="pnr">${esc(b.pnr)}</span>` : ''), `${esc(b.origin)} ‏←‏ ${esc(b.destination)} · ${fmtPT(b)}`)))
+    + sec('🔎 المرجّحون', ls.map(l => it(`gsGo('l','${jq(l.id)}')`, esc(l.name), `${esc(l.dest || '')} · <span dir="ltr">${esc(l.phone)}</span>`)))
+    + sec('🌐 طلبات الصفحة', qs.map(i => it(`gsGo('q','${jq(i.id)}')`, esc(i.name), `${esc(i.destination || '')} · <span dir="ltr">${esc(i.phone)}</span>`)))
+    + sec('🏢 المكاتب', ss.map(s => it(`gsGo('s','${jq(s.id)}')`, esc(s.name), s.phone ? `<span dir="ltr">${esc(s.phone)}</span>` : '')));
   box.innerHTML = html || '<div class="c-sub" style="padding:10px">لا توجد نتائج</div>'; box.style.display = '';
 }
 function gsGo(kind, id){
@@ -2730,7 +2740,7 @@ function lookRender(){
   const t = themeGet(), cur = JSON.stringify([t.p, t.m === 'auto' ? 'x' : t.m, t.tint, t.head, t.font, t.s, t.c, t.round, t.dens]);
   $('sPresets').innerHTML = PRESETS.map((p, i) => { const q = p.t, on = t.p === q.p && (t.m === q.m) && !!t.tint === !!q.tint && t.head === q.head && t.font === q.font && t.s === q.s && t.round === q.round && t.dens === q.dens;
     return `<button type="button" class="preset ${on ? 'on' : ''}" onclick="themePreset(${i})">${presetPreview(p)}<b>${p.n}</b><small>${p.d}</small></button>`; }).join('');
-  $('sSwatches').innerHTML = Object.entries(PALETTES).map(([k, v]) => `<button type="button" title="${v[2]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${k}'})"></button>`).join('');
+  $('sSwatches').innerHTML = Object.entries(PALETTES).map(([k, v]) => `<button type="button" title="${v[2]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${jq(k)}'})"></button>`).join('');
   $('sMode').value = t.m; $('sFont').value = t.font; $('sSize').value = t.s; $('sCtrl').value = t.c; $('sRound').value = t.round; $('sDens').value = t.dens; $('sTint').checked = !!t.tint; $('sHead').checked = t.head === 'pri';
 }
 function themeSwatches(){ lookRender(); }
@@ -2908,7 +2918,7 @@ const tdDefault = k => tplGen === 'f' ? TPLF[k] : TPL[k].text;
 function tplPreview(){ const v = previewVars(); v.name = tplGen === 'f' ? 'سارة محمد' : 'أحمد محمد'; $('sTplPrev').textContent = fillRaw($('sTplText').value, v); }
 function tplStore(){ const k = tplCur; if (k) { const v = $('sTplText').value, dk = tdKey(k); if (v.trim() === tdDefault(k).trim() || !v.trim()) delete tplDraft[dk]; else tplDraft[dk] = v; } }
 function tplList(){
-  $('sTplList').innerHTML = Object.entries(TPL).map(([k, v]) => `<button type="button" class="${k === tplCur ? 'on' : ''}" onclick="tplSelect('${k}')">${v.label}${(tplDraft[k] || tplDraft[k + '@f']) ? ' <i title="معدّل">●</i>' : ''}</button>`).join('');
+  $('sTplList').innerHTML = Object.entries(TPL).map(([k, v]) => `<button type="button" class="${k === tplCur ? 'on' : ''}" onclick="tplSelect('${jq(k)}')">${v.label}${(tplDraft[k] || tplDraft[k + '@f']) ? ' <i title="معدّل">●</i>' : ''}</button>`).join('');
   document.querySelectorAll('#sTplGen button').forEach(b => b.classList.toggle('on', b.dataset.g === tplGen));
 }
 function tplSelect(k){ tplStore(); tplCur = k; $('sTplText').value = tplDraft[tdKey(k)] || tdDefault(k); $('sTplName').textContent = TPL[k].label; tplList(); tplPreview(); }
@@ -2925,7 +2935,7 @@ function genderSuggest(){
   const h = $('genderHint'); if (!h) return; const nm = $('name').value.trim();
   if ($('gender').value || nm.length < 2) { h.innerHTML = ''; return; }
   const g = guessGender(nm);
-  h.innerHTML = `مقترح: <b>${gLabel(g)}</b> <button type="button" class="sm" onclick="$('gender').value='${g}';genderSuggest()">تأكيد</button>`;
+  h.innerHTML = `مقترح: <b>${gLabel(g)}</b> <button type="button" class="sm" onclick="$('gender').value='${jq(g)}';genderSuggest()">تأكيد</button>`;
 }
 function autoGender(){
   if (!$('gender').value) { const k = ckp(toLat($('phone').value)), g = k.length >= 8 ? clientGender(k) : ''; if (g) $('gender').value = g; }
@@ -3204,7 +3214,7 @@ function sortableScan(){ document.querySelectorAll('table').forEach(sortableInit
 /* ---------- ترتيب بطاقات الموردين وسلة المحذوفات ---------- */
 function sortBarHtml(opts, cur, setter, key){
   return '<div class="toolbar noprint sortbar"><span class="c-sub">ترتيب:</span><select onchange="' + setter + '=this.value;renderAcc()">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === cur ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') +
-    '</select><button type="button" class="sec sm revbtn' + (isRev(key) ? ' on' : '') + '" data-rev="' + key + '" onclick="sortFlip(\'' + key + '\')">⇅ عكس الترتيب</button></div>';
+    '</select><button type="button" class="sec sm revbtn' + (isRev(key) ? ' on' : '') + '" data-rev="' + key + '" onclick="sortFlip(\'' + jq(key) + '\')">⇅ عكس الترتيب</button></div>';
 }
 function supSortBar(){ return suppliers.length > 1 ? sortBarHtml([['owed', 'الأكثر مستحقًا عليك'], ['name', 'الاسم (أ ‏←‏ ي)'], ['bought', 'الأكثر مشتريات'], ['count', 'الأكثر حجوزات']], supSortKey, 'supSortKey', 's') : ''; }
 function supSorted(){
@@ -3226,7 +3236,7 @@ function sbBuild(){
     {g: 'التسويق', i: [['r', '⭐', 'الولاء والإحالات'], ['c', '📣', 'حملات العروض']]},
     {g: 'المال', i: [['s', '💼', 'الحسابات والأرباح']]}];
   var h = '<div class="sb-brand"><span>✈</span><b>' + esc(office().name || 'مكتب حجز الطيران') + '</b></div><button type="button" class="sb-add" onclick="sbClose();acOpen()">➕ إضافة عميل</button><nav class="sb-nav" aria-label="الصفحات">';
-  G.forEach(function(g){ if (g.g) h += '<div class="sb-g">' + g.g + '</div>'; g.i.forEach(function(it){ h += '<button type="button" class="sb-i" data-t="' + it[0] + '" onclick="sbGo(\'' + it[0] + '\')"><i>' + it[1] + '</i><span>' + it[2] + '</span><em class="sb-bd" id="sbBd_' + it[0] + '"></em></button>'; }); });
+  G.forEach(function(g){ if (g.g) h += '<div class="sb-g">' + g.g + '</div>'; g.i.forEach(function(it){ h += '<button type="button" class="sb-i" data-t="' + it[0] + '" onclick="sbGo(\'' + jq(it[0]) + '\')"><i>' + it[1] + '</i><span>' + it[2] + '</span><em class="sb-bd" id="sbBd_' + it[0] + '"></em></button>'; }); });
   h += '<div class="sb-g">أدوات</div>';
   [['⚙️', 'الإعدادات', 'openSettings()'], ['🎨', 'المظهر والألوان', "openSettings();setPane('look')"], ['💾', 'نسخة احتياطية', 'backup()'], ['📊', 'تصدير Excel', 'exportCSV()'], ['🔄', 'تحديث البيانات', 'location.reload()'], ['🖨', 'طباعة', 'window.print()'], ['♻', 'استرجاع نسخة', "document.getElementById('restoreFile').click()"], ['❓', 'دليل سريع', 'helpOpen()'], ['🚪', 'تسجيل الخروج', 'cloudLogout()']]
     .forEach(function(x){ h += '<button type="button" class="sb-i tool" onclick="sbClose();' + x[2] + '"><i>' + x[0] + '</i><span>' + x[1] + '</span></button>'; });
@@ -3263,17 +3273,17 @@ function renderDash(){
     K('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') + K('🔎', 'مرجّحون مفتوحون', openN, lateL.length ? lateL.length + ' متابعة متأخرة' : '', "showTab('l')", lateL.length ? 'warn' : '') +
     K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('a');$('pType').value='inq';renderPeople()", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
   var wk = week.length ? week.slice(0, 7).map(function(r){ var d = daysUntil(r.travelDate), rem = remaining(r);
-    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + r.id + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
+    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + jq(r.id) + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
   var need = '';
-  lateL.slice(0, 4).forEach(function(l){ need += dashRow('🔎 ' + esc(l.name), esc(routeTxt(l.orig, l.dest)) + ' · متابعة ' + fmtP(l.follow), '<span class="chip c-bad">متأخر</span>', "showTab('l');editLead('" + l.id + "')"); });
-  debtors.slice(0, 4).forEach(function(x){ need += dashRow('💰 ' + esc(x.name), 'متبقٍ عليه', '<span class="chip c-bad">' + money(x.remaining) + '</span>', "openProfile('" + esc(x.key) + "')"); });
-  custAll.forEach(function(x){ var cl = x.client || {}; if (cl.passportExpiry) { var d = daysUntil(cl.passportExpiry); if (d <= 60 && x.nextTrip) need += dashRow('🛂 ' + esc(x.name), 'انتهاء الجواز ' + fmtP(cl.passportExpiry), '<span class="chip ' + (d < 0 ? 'c-bad' : 'c-warn') + '">' + (d < 0 ? 'منتهٍ' : 'بعد ' + d + ' يوم') + '</span>', "openProfile('" + esc(x.key) + "')"); } });
-  custAll.forEach(function(x){ var cl = x.client || {}; if (cl.birthday) { var b = idcNextBd(cl.birthday); if (b !== '' && b <= 7) need += dashRow('🎂 ' + esc(x.name), 'عيد ميلاده ' + (b === 0 ? 'اليوم' : 'بعد ' + b + ' يوم'), '', "openProfile('" + esc(x.key) + "')"); } });
+  lateL.slice(0, 4).forEach(function(l){ need += dashRow('🔎 ' + esc(l.name), esc(routeTxt(l.orig, l.dest)) + ' · متابعة ' + fmtP(l.follow), '<span class="chip c-bad">متأخر</span>', "showTab('l');editLead('" + jq(l.id) + "')"); });
+  debtors.slice(0, 4).forEach(function(x){ need += dashRow('💰 ' + esc(x.name), 'متبقٍ عليه', '<span class="chip c-bad">' + money(x.remaining) + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); });
+  custAll.forEach(function(x){ var cl = x.client || {}; if (cl.passportExpiry) { var d = daysUntil(cl.passportExpiry); if (d <= 60 && x.nextTrip) need += dashRow('🛂 ' + esc(x.name), 'انتهاء الجواز ' + fmtP(cl.passportExpiry), '<span class="chip ' + (d < 0 ? 'c-bad' : 'c-warn') + '">' + (d < 0 ? 'منتهٍ' : 'بعد ' + d + ' يوم') + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); } });
+  custAll.forEach(function(x){ var cl = x.client || {}; if (cl.birthday) { var b = idcNextBd(cl.birthday); if (b !== '' && b <= 7) need += dashRow('🎂 ' + esc(x.name), 'عيد ميلاده ' + (b === 0 ? 'اليوم' : 'بعد ' + b + ' يوم'), '', "openProfile('" + jq(esc(x.key)) + "')"); } });
   var hist = []; for (var i = 5; i >= 0; i--) { var d0 = new Date(); d0.setDate(1); d0.setMonth(d0.getMonth() - i); var mk = d0.getFullYear() + '-' + ('0' + (d0.getMonth() + 1)).slice(-2); hist.push({m: mk, p: sumProfit(monthRows(mk)).prof, n: monthRows(mk).length}); }
   var mx = Math.max(1, Math.max.apply(null, hist.map(function(h){ return Math.abs(h.p); })));
   var bars = '<div class="dbars">' + hist.map(function(h){ return '<div class="db"><div class="db-v">' + (h.p ? money(h.p) : '') + '</div><div class="db-c"><i class="' + (h.p < 0 ? 'neg' : '') + '" style="height:' + Math.max(3, Math.round(Math.abs(h.p) / mx * 100)) + '%"></i></div><div class="db-l">' + monthLabel(h.m).split(' ')[0] + '</div><div class="db-n">' + h.n + ' حجز</div></div>'; }).join('') + '</div>';
-  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + r.id + "')"); }).join('') || '<div class="empty">لا توجد حجوزات بعد</div>';
-  var inq = inquiries.slice().sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); }).slice(0, 4).map(function(q){ return dashRow('🌐 ' + esc(q.name), esc(routeTxt(q.origin, q.destination)), '<button class="sm" onclick="event.stopPropagation();inqToLead(\'' + q.id + '\')">➕ مرجّح</button>', ''); }).join('');
+  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + jq(r.id) + "')"); }).join('') || '<div class="empty">لا توجد حجوزات بعد</div>';
+  var inq = inquiries.slice().sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); }).slice(0, 4).map(function(q){ return dashRow('🌐 ' + esc(q.name), esc(routeTxt(q.origin, q.destination)), '<button class="sm" onclick="event.stopPropagation();inqToLead(\'' + jq(q.id) + '\')">➕ مرجّح</button>', ''); }).join('');
   box.innerHTML = '<div class="kpis">' + kpis + '</div><div class="dgrid">' +
     dashCard('✈️ رحلات الأسبوع القادم', wk, '<button class="sec sm" onclick="showTab(\'b\')">كل الحجوزات</button>') +
     dashCard('🔔 تحتاج انتباهك', need || '<div class="empty">🎉 لا شيء عاجل الآن</div>', '<button class="sec sm" onclick="showTab(\'t\')">كل المهام</button>') +
@@ -3287,7 +3297,7 @@ function initV10(){
   try { ['p', 'f', 'l', 's', 't'].forEach(function(k){ sortRev[k] = localStorage.getItem('office_rev_' + k) === '1'; }); } catch (e) {}
   sbBuild(); $('dashStatsHost').appendChild($('stats'));
   var on = true; try { on = localStorage.getItem('office_sb') !== '0'; } catch (e) {} document.body.classList.toggle('sbon', on);
-  [['pSort', 'p'], ['fSort', 'f']].forEach(function(x){ var s = $(x[0]); if (s) s.insertAdjacentHTML('afterend', '<button type="button" class="sec sm revbtn noprint" data-rev="' + x[1] + '" onclick="sortFlip(\'' + x[1] + '\')" title="عكس الترتيب">⇅ عكس الترتيب</button>'); });
+  [['pSort', 'p'], ['fSort', 'f']].forEach(function(x){ var s = $(x[0]); if (s) s.insertAdjacentHTML('afterend', '<button type="button" class="sec sm revbtn noprint" data-rev="' + x[1] + '" onclick="sortFlip(\'' + jq(x[1]) + '\')" title="عكس الترتيب">⇅ عكس الترتيب</button>'); });
   document.querySelectorAll('#tabBookings th[data-k]').forEach(function(th){ th.innerHTML = th.innerHTML.replace(/\s*⇅/, ''); });
   document.querySelectorAll('#tabAll th[data-pk]').forEach(function(th){ th.onclick = function(){ ppHead(th.dataset.pk); }; });
   sortRevUI();
@@ -3396,8 +3406,8 @@ function ldChips(l){
 }
 function ldCard(l){
   var ch = ldChips(l), init = [].slice.call(String(l.name).trim())[0] || '؟', id = l.id;
-  var snooze = '<select class="lsnz" onchange="ldSnooze(\'' + id + '\',this.value);this.value=\'\'" title="تأجيل المتابعة"><option value="">⏰ تأجيل</option><option value="1">غدًا</option><option value="3">بعد 3 أيام</option><option value="7">بعد أسبوع</option><option value="14">بعد أسبوعين</option></select>';
-  var stSel = '<select class="lst" onchange="ldStatus(\'' + id + '\',this.value)">' + ['new', 'contacted', 'noanswer', 'lost', 'converted'].map(function(s){ return '<option value="' + s + '"' + (s === l.status ? ' selected' : '') + '>' + LSTATUS[s] + '</option>'; }).join('') + '</select>';
+  var snooze = '<select class="lsnz" onchange="ldSnooze(\'' + jq(id) + '\',this.value);this.value=\'\'" title="تأجيل المتابعة"><option value="">⏰ تأجيل</option><option value="1">غدًا</option><option value="3">بعد 3 أيام</option><option value="7">بعد أسبوع</option><option value="14">بعد أسبوعين</option></select>';
+  var stSel = '<select class="lst" onchange="ldStatus(\'' + jq(id) + '\',this.value)">' + ['new', 'contacted', 'noanswer', 'lost', 'converted'].map(function(s){ return '<option value="' + s + '"' + (s === l.status ? ' selected' : '') + '>' + LSTATUS[s] + '</option>'; }).join('') + '</select>';
   return '<div class="lcard st-' + l.status + (isLate(l) ? ' late' : '') + '"><div class="lc-h"><div class="avatar">' + esc(init) + '</div><div class="lc-id"><div class="c-name">' + esc(l.name) + ' <span class="badge b-' + l.status + '">' + LSTATUS[l.status] + '</span></div>' +
     '' + phonesBlock(l.phone) + '</div>' +
     (l.quotePrice ? '<div class="lc-q"><small>عرض السعر</small><b>' + money(l.quotePrice) + '</b></div>' : '') + '</div>' +
@@ -3405,8 +3415,8 @@ function ldCard(l){
     '<div class="lc-d"><span>✈️ سفر: ' + (l.travel ? fmtDT(l) + ' ' + ch.t : '<i class="c-sub">غير محدد</i>') + '</span>' + (l.returnDate ? '<span>↩️ عودة: ' + fmtDR(l) + '</span>' : '') + '<span>📅 استفسار: ' + fmtD(l.inquiry) + '</span><span>⏰ متابعة: ' + (l.follow ? fmtD(l.follow) + ' ' + ch.f : '<i class="c-sub">—</i>') + '</span></div>' +
     (l.quoteAirline ? '<div class="c-sub">🛫 ' + esc(l.quoteAirline) + (l.quoteUntil ? ' · العرض حتى ' + fmtD(l.quoteUntil) : '') + '</div>' : '') +
     (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 110 ? l.notes.slice(0, 110) + '…' : l.notes) + '</div>' : '') +
-    '<div class="lc-a noprint">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + id + '\')">➕ تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + id + '\')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg(\'' + id + '\')">💬 رسالة</button>' +
-    '<button class="sec sm" onclick="idcOpen(ckey(leads.find(function(x){return x.id===\'' + id + '\'})))">🪪</button><button class="sec sm" onclick="editLead(\'' + id + '\')">✏️ تعديل</button><button class="del sm" onclick="delLead(\'' + id + '\')">حذف</button></div>' +
+    '<div class="lc-a noprint">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + jq(id) + '\')">➕ تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + jq(id) + '\')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg(\'' + jq(id) + '\')">💬 رسالة</button>' +
+    '<button class="sec sm" onclick="idcOpen(ckey(leads.find(function(x){return x.id===\'' + jq(id) + '\'})))">🪪</button><button class="sec sm" onclick="editLead(\'' + jq(id) + '\')">✏️ تعديل</button><button class="del sm" onclick="delLead(\'' + jq(id) + '\')">حذف</button></div>' +
     '<div class="lc-f noprint">' + stSel + (isOpen(l) ? snooze : '') + '</div></div>';
 }
 function ldRow(l){
@@ -3415,13 +3425,13 @@ function ldRow(l){
     (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 80 ? l.notes.slice(0, 80) + '…' : l.notes) + '</div>' : '') + '</td><td><div class="route">' + ap(l.orig) + '<span class="arr">←</span>' + ap(l.dest) + '</div></td>' +
     '<td>' + (l.travel ? '<div class="c-name">' + fmtDT(l) + '</div>' + ch.t : '<span class="c-sub">—</span>') + (l.returnDate ? '<div class="c-sub">↩️ ' + fmtDR(l) + '</div>' : '') + '</td><td>' + fmtD(l.inquiry) + '</td><td>' + (l.follow ? '<div class="c-name">' + fmtD(l.follow) + '</div>' + ch.f : '<span class="c-sub">—</span>') + '</td>' +
     '<td>' + (l.quotePrice ? money(l.quotePrice) : '<span class="c-sub">—</span>') + '</td><td><span class="badge b-' + l.status + '">' + LSTATUS[l.status] + '</span></td>' +
-    '<td class="noprint"><div class="acts">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + l.id + '\')">تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + l.id + '\')">🧾</button><button class="sec sm" onclick="leadMsg(\'' + l.id + '\')">💬</button><button class="sec sm" onclick="editLead(\'' + l.id + '\')">تعديل</button><button class="del sm" onclick="delLead(\'' + l.id + '\')">حذف</button></div></td></tr>';
+    '<td class="noprint"><div class="acts">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + jq(l.id) + '\')">تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + jq(l.id) + '\')">🧾</button><button class="sec sm" onclick="leadMsg(\'' + jq(l.id) + '\')">💬</button><button class="sec sm" onclick="editLead(\'' + jq(l.id) + '\')">تعديل</button><button class="del sm" onclick="delLead(\'' + jq(l.id) + '\')">حذف</button></div></td></tr>';
 }
 function renderLeads(){
   if (!$('ldBox')) return;
   var openN = leads.filter(isOpen).length; $('leadCount').textContent = openN ? '(' + openN + ')' : '';
   var cur = $('lfStatus').value;
-  $('ldKpis').innerHTML = L_STATUS.map(function(s){ var n = ldStatusCount(s[0]); return '<button type="button" class="lpill' + (cur === s[0] ? ' on' : '') + (s[0] === 'late' && n ? ' warn' : '') + '" onclick="ldSetStatus(\'' + s[0] + '\')">' + s[1] + ' <b>' + n + '</b></button>'; }).join('');
+  $('ldKpis').innerHTML = L_STATUS.map(function(s){ var n = ldStatusCount(s[0]); return '<button type="button" class="lpill' + (cur === s[0] ? ' on' : '') + (s[0] === 'late' && n ? ' warn' : '') + '" onclick="ldSetStatus(\'' + jq(s[0]) + '\')">' + s[1] + ' <b>' + n + '</b></button>'; }).join('');
   var list = ldSorted(ldFiltered()), shown = list.slice(0, ldLimit), tbl = ldView === 'table';
   $('ldBox').style.display = tbl ? 'none' : ''; $('ldTbl').style.display = tbl ? '' : 'none';
   $('ldView').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === ldView); });
@@ -3822,7 +3832,7 @@ function plGroups(list){
 function accPricesHtml(){
   var e = plEdit >= 0 ? PL()[plEdit] || {} : {}, all = PL(), list = plList();
   var cnt = function(t){ return all.filter(function(x){ return t === '' ? true : t === 'any' ? !x.trip : x.trip === t; }).length; };
-  var pill = function(v, l){ return '<button type="button" class="' + (plF.trip === v ? 'on' : '') + '" onclick="plSet(\'trip\',\'' + v + '\')">' + l + ' (' + cnt(v) + ')</button>'; };
+  var pill = function(v, l){ return '<button type="button" class="' + (plF.trip === v ? 'on' : '') + '" onclick="plSet(\'trip\',\'' + jq(v) + '\')">' + l + ' (' + cnt(v) + ')</button>'; };
   var form = '<div class="sgrp"><h3>' + (plEdit >= 0 ? '✏️ تعديل سعر' : '➕ إضافة سعر') + '</h3>' +
     '<div class="fsec">✈️ الرحلة</div><div class="grid">' +
     '<div><label>نوع الرحلة</label><select id="plTrip" onchange="plTripChg()"><option value="one"' + (e.trip === 'one' ? ' selected' : '') + '>→ ذهاب فقط</option><option value="round"' + (e.trip === 'round' ? ' selected' : '') + '>⇄ ذهاب وعودة</option><option value=""' + (plEdit >= 0 && !e.trip ? ' selected' : '') + '>غير محدد</option></select></div>' +
@@ -3836,7 +3846,7 @@ function accPricesHtml(){
     '<div><label>سعر البيع</label><input type="number" id="plPrice" min="0" step="any" value="' + (e.price || '') + '"></div><div><label>سعر الشراء المعتاد (اختياري)</label><input type="number" id="plCost" min="0" step="any" value="' + (e.cost || '') + '"></div>' +
     '<div class="full"><label>ملاحظة</label><input id="plNote" value="' + esc(e.note || '') + '"></div></div>' +
     '<div class="actions"><button onclick="plSave()">' + (plEdit >= 0 ? '💾 حفظ التعديل' : '＋ إضافة') + '</button>' + (plEdit >= 0 ? '<button class="sec" onclick="plEdit=-1;renderAcc()">إلغاء</button>' : '') + '</div></div>';
-  var sel = function(k, opts, cur){ return '<select onchange="plSet(\'' + k + '\',this.value)">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; };
+  var sel = function(k, opts, cur){ return '<select onchange="plSet(\'' + jq(k) + '\',this.value)">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; };
   var bar = all.length ? '<div class="sgrp"><h3>💲 الأسعار المسجلة (' + list.length + ' من ' + all.length + ')</h3>' +
     '<div class="seg" style="margin-bottom:8px">' + pill('', 'الكل') + pill('one', 'ذهاب فقط') + pill('round', 'ذهاب وعودة') + (cnt('any') ? pill('any', 'غير محدد') : '') + '</div>' +
     '<div class="toolbar noprint"><input id="plQ" placeholder="🔍 بحث: وجهة، شركة، ملاحظة" value="' + esc(plF.q) + '" oninput="plSetQ(this.value)" style="max-width:230px">' +
@@ -3909,7 +3919,7 @@ function cfOpen(key){
 }
 function cfRender(){
   const L = {bk: 'الحجوزات', acc: 'الحسابات (السعر/المدفوع/المتبقي)', notes: 'الملاحظات', sign: 'خانة التوقيع'};
-  $('cfOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${CF_OPT[k] ? 'checked' : ''} onchange="CF_OPT['${k}']=this.checked;cfRender()"> ${L[k]}</label>`).join('');
+  $('cfOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${CF_OPT[k] ? 'checked' : ''} onchange="CF_OPT['${jq(k)}']=this.checked;cfRender()"> ${L[k]}</label>`).join('');
   $('cfPrev').innerHTML = `<style>${CF_CSS}</style>` + cfHtml(cfKey, CF_OPT);
 }
 function cfClose(){ const m = $('cfm'); if (m) m.style.display = 'none'; }
@@ -3965,7 +3975,7 @@ function tdOpen(id){
 }
 function tdRender(){
   const L = {ret: 'تاريخ العودة', pay: 'بيانات الدفع (الإجمالي/المدفوع/المتبقي)'};
-  $('tdOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${TD_OPT[k] ? 'checked' : ''} onchange="TD_OPT['${k}']=this.checked;tdRender()"> ${L[k]}</label>`).join('');
+  $('tdOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${TD_OPT[k] ? 'checked' : ''} onchange="TD_OPT['${jq(k)}']=this.checked;tdRender()"> ${L[k]}</label>`).join('');
   $('tdPrev').innerHTML = `<style>${CF_CSS}${TD_CSS}</style>` + tdHtml(tdId, TD_OPT);
 }
 function tdClose(){ const m = $('tdm'); if (m) m.style.display = 'none'; }
@@ -4084,12 +4094,12 @@ function tkRow(t, i){
     const lvCount = {u: 0, f: 0, m: 0}; items.forEach(([t]) => { const m = TGM[t.group]; if (m) lvCount[m[2]]++; });
     const tiles = ['u', 'f', 'm'].map(k => `<div class="tktile tk-${TLV[k][3]}"><span>${TLV[k][0]} ${TLV[k][1]}</span><b>${lvCount[k]}</b><small>${TLV[k][2]}</small></div>`).join('');
     const chips = `<button type="button" class="tkchip ${tkFilter === 'all' ? 'on' : ''}" onclick="tkSet('all')">الكل <b>${items.length}</b></button>` +
-      TG.filter(([g]) => by[g]).map(([g]) => { const m = TGM[g] || ['•', g, 'f']; return `<button type="button" class="tkchip ${tkFilter === g ? 'on' : ''}" onclick="tkSet('${g}')">${m[0]} ${m[1]} <b>${by[g].length}</b></button>`; }).join('');
+      TG.filter(([g]) => by[g]).map(([g]) => { const m = TGM[g] || ['•', g, 'f']; return `<button type="button" class="tkchip ${tkFilter === g ? 'on' : ''}" onclick="tkSet('${jq(g)}')">${m[0]} ${m[1]} <b>${by[g].length}</b></button>`; }).join('');
     const secs = ['u', 'f', 'm'].map(lv => {
       const groups = TG.filter(([g]) => by[g] && (TGM[g] || [0, 0, 'f'])[2] === lv && (tkFilter === 'all' || tkFilter === g)); if (!groups.length) return '';
       return `<div class="tksec"><div class="tksec-h tk-${TLV[lv][3]}"><b>${TLV[lv][0]} ${TLV[lv][1]}</b><span class="c-sub">${TLV[lv][2]}</span></div>` +
         groups.map(([g, title]) => { const list = by[g], shut = tkCol.has(g);
-          return `<div class="card tkgrp ${shut ? 'shut' : ''}"><div class="tkgrp-h" onclick="tkTog('${g}')"><h2>${esc(title)}</h2><span class="chip c-info">${list.length}</span><span class="tkcv">▾</span></div>${shut ? '' : `<div class="tkbody">${list.map(([t, i]) => tkRow(t, i)).join('')}</div>`}</div>`; }).join('') + '</div>';
+          return `<div class="card tkgrp ${shut ? 'shut' : ''}"><div class="tkgrp-h" onclick="tkTog('${jq(g)}')"><h2>${esc(title)}</h2><span class="chip c-info">${list.length}</span><span class="tkcv">▾</span></div>${shut ? '' : `<div class="tkbody">${list.map(([t, i]) => tkRow(t, i)).join('')}</div>`}</div>`; }).join('') + '</div>';
     }).join('');
     box.insertAdjacentHTML('beforeend', `<div class="tk"><div class="tktiles">${tiles}</div><div class="tkchips noprint">${chips}</div>${secs}</div>`);
   };
@@ -4151,6 +4161,15 @@ function plAuto(x){
 }
 function plAutoBk(r){ const q = Math.max(1, +r.qty || 1); plAuto({origin: r.origin, dest: r.destination, trip: r.returnDate ? 'round' : 'one', date: r.travelDate, ret: r.returnDate || '', price: (+r.price || 0) / q, cost: (+r.cost || 0) / q, airline: r.airline, src: 'b'}); }
 function plAutoLead(l){ const q = Math.max(1, +l.pax || 1); plAuto({origin: l.orig, dest: l.dest, trip: l.returnDate ? 'round' : 'one', date: l.travel, ret: l.returnDate || '', price: (+l.quotePrice || 0) / q, cost: 0, airline: l.quoteAirline, src: 'l'}); }
+/* ---------- أمان: تنظيف القيم داخل أزرار HTML + حقن CSV ---------- */
+/* قيمة داخل onclick="f('...')": تُحوَّل الرموز الخطرة إلى \uXXXX فلا تُغلق النص ولا تكسر الخاصية */
+function jq(v){ return String(v == null ? '' : v).replace(/[\\'"`<>&\r\n\u2028\u2029$]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')); }
+/* خلية CSV: تمنع تنفيذ الصيغ في Excel (= + - @) إلا للأرقام وأرقام الهاتف الصريحة */
+function csvCell(v){
+  let t = String(v == null ? '' : v);
+  if (/^[=+\-@\t\r]/.test(t) && !/^[+-]?[\d\s.,-]+$/.test(t)) t = "'" + t;
+  return '"' + t.replace(/"/g, '""') + '"';
+}
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
