@@ -1950,7 +1950,7 @@ function renderProfile(){
   $('pmBody').innerHTML = `
     <div class="ph"><div><h2 style="margin:0">${esc(c.name)} ${tierBadge(c)} ${cl.optout ? '<span class="chip c-gray">🚫 عدم إزعاج</span>' : ''}</h2>
       ${phonesHtml(c)}${c.idNo ? '<div class="c-sub">🪪 ' + esc(c.idNo) + '</div>' : ''}</div>
-      <div class="acts"><button class="sm" onclick="idcOpen(pKey)">🪪 بطاقة العميل</button><button class="sm" onclick="profileNewBooking()">➕ حجز جديد</button><button class="sec sm" onclick="waSend(custAll.find(x=>x.key===pKey).phone,'')">💬 واتساب</button>${c.remaining > 0 ? '<button class="sec sm" onclick="profileBalance()">💰 تذكير بالمتبقي</button>' : ''}</div></div>
+      <div class="acts"><button class="sm" onclick="idcOpen(pKey)">🪪 بطاقة العميل</button><button class="sm" onclick="profileNewBooking()">➕ حجز جديد</button><button class="sec sm" onclick="waSend(custAll.find(x=>x.key===pKey).phone,'')">💬 واتساب</button>${c.remaining > 0 ? '<button class="sec sm" onclick="profileBalance()">💰 تذكير بالمتبقي</button>' : ''}<button class="del sm" onclick="custDelete(pKey)">🗑 حذف العميل</button></div></div>
     ${c.remaining > 0 ? `<div class="debt">⚠️ عليه مبلغ متبقٍ إجمالي <b>${money(c.remaining)}</b> ${esc(office().currency || '')}</div>` : ''}
     <div class="pstats"><div><b>${c.tickets}</b>تذكرة</div><div><b>${c.trips}</b>حجز</div><div><b>${money(c.spent)}</b>إجمالي المدفوع</div>
       <div class="${c.remaining > 0 ? 'bad' : 'good'}"><b>${money(c.remaining)}</b>${c.remaining > 0 ? 'المتبقي عليه' : 'لا يوجد متبقي ✓'}</div>
@@ -2726,7 +2726,7 @@ function trashPermDelete(t){
 }
 function trashRestore(id){
   const t = trash.find(x => x.id === id); if (!t) return; let rec; try { rec = JSON.parse(t.payload); } catch (e) { alert('تعذر قراءة العنصر.'); return; }
-  if (t.kind === 'booking') { if (!data.some(x => x.id === rec.id)) data.push(rec); save(); } else { if (!leads.some(x => x.id === rec.id)) leads.push(rec); saveLeads(); }
+  if (t.kind === 'booking') { if (!data.some(x => x.id === rec.id)) data.push(rec); save(); } else if (t.kind === 'client') { if (!CM.has(rec.id)) { clients.push(rec); CM.set(rec.id, rec); PAd = true; syncList('clients', clients); } } else { if (!leads.some(x => x.id === rec.id)) leads.push(rec); saveLeads(); }
   trash = trash.filter(x => x.id !== id); syncList('trash', trash); render(); renderAcc();
 }
 function trashPurge(id){ const t = trash.find(x => x.id === id); if (!t || !confirm('حذف نهائي؟ لا يمكن التراجع (وتُحذف مرفقاته ودفعاته).')) return; trashPermDelete(t); syncList('trash', trash); renderAcc(); }
@@ -2736,7 +2736,7 @@ function accTrashHtml(){
   const items = trashSorted();
   return `${trashSortBar()}<p class="hint">المحذوفات تبقى هنا 30 يومًا ثم تُحذف نهائيًا.</p>` + (items.length ? `<div class="actions" style="margin:0 0 8px"><button class="del sm" onclick="trashEmpty()">إفراغ السلة</button></div>` + items.map(t => {
     let r = {}; try { r = JSON.parse(t.payload); } catch (e) {}
-    const title = t.kind === 'booking' ? `✈️ حجز: ${esc(r.name)} — ${esc(r.destination || '')} ${fmtPT(r)}` : `🔎 مرجّح: ${esc(r.name)} ${esc(r.dest || '')}`;
+    const title = t.kind === 'client' ? `👤 عميل: ${esc(r.name || '')} ${esc(r.phone || '')}` : t.kind === 'booking' ? `✈️ حجز: ${esc(r.name)} — ${esc(r.destination || '')} ${fmtPT(r)}` : `🔎 مرجّح: ${esc(r.name)} ${esc(r.dest || '')}`;
     return `<div class="supcard"><div><b>${title}</b><div class="c-sub">حُذف ${fmtP(t.deletedAt)} · يُحذف نهائيًا بعد ${Math.max(0, 30 - trashDays(t))} يوم</div></div><div></div>
       <div class="acts"><button class="sm" onclick="trashRestore('${jq(t.id)}')">↩ استرجاع</button><button class="del sm" onclick="trashPurge('${jq(t.id)}')">حذف نهائي</button></div></div>`; }).join('') : '<div class="empty">السلة فارغة.</div>');
 }
@@ -3783,7 +3783,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-22 · 28';
+var APP_VERSION = '2026-11-22 · 29';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -4452,6 +4452,23 @@ setTimeout(autoBkCheck, 2500); autoBkLabel();
     render();
   };
 }
+
+/* ---- v28: حذف العميل ككيان مستقل (إلى سلة المحذوفات، ويمكن استرجاعه) ---- */
+function custDelete(key){
+  const c = (custAll || []).find(x => x.key === key), cl = CM.get(key);
+  const bk = data.filter(r => ckey(r) === key);
+  if (!c && !cl && !bk.length) return;
+  const nm = (c && c.name) || (cl && cl.name) || (bk[0] && bk[0].name) || key;
+  if (!confirm('حذف العميل «' + nm + '» كشخص (بياناته وملفه)؟' + (bk.length ? '\n\nسيُنقل معه ' + bk.length + ' حجز إلى سلة المحذوفات أيضًا.' : '') + '\n\nيمكن استرجاعه من «الحسابات ‏←‏ سلة المحذوفات» خلال 30 يومًا.')) return;
+  bk.forEach(r => trashPut('booking', r));
+  if (bk.length) { data = data.filter(r => ckey(r) !== key); save(); }
+  const rec = Object.assign({id: key, name: nm, phone: (c && c.phone) || (bk[0] && bk[0].phone) || '', idNo: (c && c.idNo) || (bk[0] && bk[0].idNo) || ''}, cl || {});
+  trashPut('client', rec);
+  clients = clients.filter(x => x.id !== key); CM.delete(key); PAd = true; syncList('clients', clients);
+  if (typeof pKey !== 'undefined' && pKey === key) closeProfile();
+  render(); if (typeof renderAcc === 'function') renderAcc();
+}
+acDelete = custDelete;
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
