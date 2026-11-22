@@ -479,6 +479,16 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 .dtp input[type=date]{flex:1.5}
 .dtp input[type=time]{flex:1}
 .tm{display:inline-block;font-size:.85em;font-weight:700;color:var(--pri,#0f6b8f);background:rgba(15,107,143,.1);border-radius:6px;padding:0 6px;white-space:nowrap;direction:ltr}
+
+/* v26: مصروفات الشركة + الإلغاء والاسترداد */
+.pstats div.warn{background:color-mix(in srgb,var(--warn,#d97706) 14%,var(--surface))}.pstats div.warn b{color:var(--warn,#b45309)}
+.pstats div.clk{cursor:pointer}
+.pstats.netb{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.exqk{display:flex;flex-wrap:wrap;gap:6px}
+.exrec .chk{display:flex;gap:8px;align-items:flex-start;line-height:1.7;font-weight:600}.exrec .chk input{width:auto;margin-top:5px}
+.cancelbox{background:color-mix(in srgb,var(--bad) 7%,var(--surface));border:1px dashed color-mix(in srgb,var(--bad) 45%,var(--bd));border-radius:var(--rc,12px);padding:12px 14px}
+.cancelbox h4{margin:0 0 8px;color:var(--bad)}
+.cancel-sum{margin-top:8px;font-size:13.5px;line-height:1.9}.cancel-sum .bad,.cancel-sum b.bad{color:var(--bad)}.cancel-sum .good,.cancel-sum b.good{color:var(--ok)}
 </style>
 </head>
 <body>
@@ -596,6 +606,17 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
           <div><label>انتهاء جواز السفر</label><input type="date" id="passportExpiry"></div>
           <div><label>تاريخ ميلاد العميل</label><input type="date" id="birthday"></div>
           <div><label>عميل أحاله (اختياري)</label><input id="refBy" list="custList" placeholder="من عرّف هذا العميل بالمكتب؟"></div></div></details>
+        <div class="full cancelbox" id="cancelBox" style="display:none">
+          <h4>↩ تفاصيل الإلغاء والاسترداد</h4>
+          <div class="grid">
+            <div><label>تاريخ الإلغاء</label><input type="date" id="cancelDate"></div>
+            <div><label>غرامتك على العميل (تخصمها من مدفوعاته)</label><input type="number" id="cancelFee" min="0" step="any" inputmode="decimal"></div>
+            <div><label>غرامة المورد / شركة الطيران عليك</label><input type="number" id="supPenalty" min="0" step="any" inputmode="decimal"></div>
+            <div><label>المُسترد للعميل فعليًا</label><input type="number" id="refunded" min="0" step="any" inputmode="decimal"></div>
+          </div>
+          <div class="cancel-sum" id="cancelSum"></div>
+          <div class="actions"><button type="button" class="sec sm" onclick="cancelAuto()">املأ «المُسترد» تلقائيًا (المدفوع − الغرامة)</button></div>
+        </div>
         <div class="full"><label>ملاحظات</label><textarea id="notes"></textarea></div>
       </div>
       <div class="actions">
@@ -943,7 +964,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 
   const BOOK_FIELDS = [['id','id'],['name','name'],['phone','phone'],['idNo','id_no'],['origin','origin'],['destination','destination'],
     ['travelDate','travel_date'],['bookingDate','booking_date'],['airline','airline'],['pnr','pnr'],['status','status'],
-    ['qty','qty'],['price','price'],['discount','discount'],['paid','paid'],['refBy','ref_by'],['notes','notes'],['returnDate','return_date'],['cost','cost'],['supplier','supplier'],['departTime','depart_time'],['returnTime','return_time']];
+    ['qty','qty'],['price','price'],['discount','discount'],['paid','paid'],['refBy','ref_by'],['notes','notes'],['returnDate','return_date'],['cost','cost'],['supplier','supplier'],['departTime','depart_time'],['returnTime','return_time'],['cancelFee','cancel_fee'],['supPenalty','sup_penalty'],['refunded','refunded'],['cancelDate','cancel_date']];
   const LEAD_FIELDS = [['id','id'],['name','name'],['phone','phone'],['orig','orig'],['dest','dest'],['travel','travel'],
     ['inquiry','inquiry'],['follow','follow'],['status','status'],['notes','notes'],['pax','pax'],['quotePrice','quote_price'],
     ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date'],['departTime','depart_time'],['returnTime','return_time']];
@@ -955,10 +976,11 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
   const SUP_FIELDS = [['id','id'],['name','name'],['phone','phone'],['notes','notes']];
   const PAY_FIELDS = [['id','id'],['dir','dir'],['booking','booking'],['supplier','supplier'],['amount','amount'],['at','at'],['method','method'],['note','note']];
   const TRASH_FIELDS = [['id','id'],['kind','kind'],['payload','payload'],['deletedAt','deleted_at']];
-  const FIELDS = {bookings: BOOK_FIELDS, leads: LEAD_FIELDS, clients: CLIENT_FIELDS, taskdone: TASK_FIELDS, gifts: GIFT_FIELDS, inquiries: INQ_FIELDS, suppliers: SUP_FIELDS, payments: PAY_FIELDS, trash: TRASH_FIELDS};
-  const NUM = {qty:1, price:1, discount:1, paid:1, pax:1, quotePrice:1, optout:1, cost:1, amount:1};
+  const EXP_FIELDS = [['id','id'],['date','date'],['category','category'],['amount','amount'],['note','note'],['recur','recur'],['until','until']];
+  const FIELDS = {expenses: EXP_FIELDS, bookings: BOOK_FIELDS, leads: LEAD_FIELDS, clients: CLIENT_FIELDS, taskdone: TASK_FIELDS, gifts: GIFT_FIELDS, inquiries: INQ_FIELDS, suppliers: SUP_FIELDS, payments: PAY_FIELDS, trash: TRASH_FIELDS};
+  const NUM = {qty:1, price:1, discount:1, paid:1, pax:1, quotePrice:1, optout:1, cost:1, amount:1, cancelFee:1, supPenalty:1, refunded:1};
   const ONE = {qty:1, pax:1};
-  const DATECOL = new Set(['travel_date','booking_date','return_date','travel','inquiry','follow','quote_until','birthday','passport_expiry','at','deleted_at']);
+  const DATECOL = new Set(['travel_date','booking_date','return_date','travel','inquiry','follow','quote_until','birthday','passport_expiry','at','deleted_at','cancel_date','date','until']);
   const TIMECOL = new Set(['depart_time','return_time']);
   const NULLCOL = new Set([...DATECOL, ...TIMECOL, 'supplier']);
   const toDb = (rec, fields) => { const o = {}; for (const [js, col] of fields) {
@@ -1034,7 +1056,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
       e => { pending--; setSync('err'); alert('⚠ تعذر الحفظ في قاعدة البيانات السحابية:\n' + e.message + '\nتأكد من الإنترنت. آخر تغيير لم يُحفظ بعد، وسيُعاد إرساله مع الحفظ القادم.'); });
   }
   window.addEventListener('beforeunload', e => { if (pending > 0) { e.preventDefault(); e.returnValue = ''; } });
-  const synced = {bookings: new Map(), leads: new Map(), clients: new Map(), taskdone: new Map(), gifts: new Map(), inquiries: new Map(), suppliers: new Map(), payments: new Map(), trash: new Map()};
+  const synced = {bookings: new Map(), leads: new Map(), clients: new Map(), taskdone: new Map(), gifts: new Map(), inquiries: new Map(), suppliers: new Map(), payments: new Map(), trash: new Map(), expenses: new Map()};
   window.initSynced = (kind, arr) => { synced[kind] = new Map(arr.map(x => [x.id, JSON.stringify(x)])); };
   window.syncList = (kind, arr) => queued(async () => {
     const old = synced[kind], now = new Map(arr.map(x => [x.id, JSON.stringify(x)]));
@@ -1042,16 +1064,18 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
     const del = [...old.keys()].filter(id => !now.has(id));
     if (!upsert.length && !del.length) return;
     const fields = FIELDS[kind];
+    if (kind === 'expenses' && window._noExp) return;
     const post = async (flds, chunk) => sb('POST', '/rest/v1/' + kind, {json: chunk.map(r => toDb(r, flds)), headers: UPSERT});
-    const noT = f => f.filter(x => x[1] !== 'depart_time' && x[1] !== 'return_time');
+    const OPT = new Set(['depart_time', 'return_time', 'cancel_fee', 'sup_penalty', 'refunded', 'cancel_date']);
+    const noT = f => f.filter(x => !OPT.has(x[1]));
     for (let i = 0; i < upsert.length; i += 500) {
       const chunk = upsert.slice(i, i + 500);
       if (window._noTimeCols) { await post(noT(fields), chunk); continue; }
       try { await post(fields, chunk); }
       catch (e) {
-        if (!/depart_time|return_time/i.test(e.message)) throw e;
+        if (!/depart_time|return_time|cancel_fee|sup_penalty|refunded|cancel_date/i.test(e.message)) throw e;
         window._noTimeCols = true;
-        alert('⚠ تم حفظ الحجز بدون «ساعة الإقلاع» لأن أعمدة الوقت غير موجودة في قاعدة البيانات.\nافتح Supabase ← SQL Editor ونفّذ سطور الإضافة الموجودة في ملف upgrade.sql (آخر قسم: وقت الإقلاع)، ثم أعد تحميل الصفحة وأعد إدخال الساعة.');
+        alert('⚠ تم الحفظ بدون بعض الحقول الجديدة (ساعة الإقلاع / بيانات الإلغاء) لأن أعمدتها غير موجودة في قاعدة البيانات بعد.\nافتح Supabase ← SQL Editor ونفّذ ملف upgrade_v26.sql، ثم أعد تحميل الصفحة وأعد إدخال هذه الحقول.');
         await post(noT(fields), chunk);
       }
     }
@@ -1075,10 +1099,25 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
   const INLINE = ['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/bmp'];
   const safeCid = c => String(c).replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64);
   const delFiles = paths => sb('DELETE', '/storage/v1/object/tickets', {json: {prefixes: paths}});
+  /* ضغط صور التذاكر: أقصى بُعد 1800 بكسل وجودة JPEG 80% (يوفّر 80–95% من المساحة). ملفات PDF لا تُمسّ */
+  async function compressImg(f){
+    try {
+      if (!/^image\/(jpeg|png|webp|bmp)$/.test(f.type) || f.size < 300 * 1024) return f;
+      const bmp = await createImageBitmap(f), k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+      const w = Math.max(1, Math.round(bmp.width * k)), h = Math.max(1, Math.round(bmp.height * k));
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(bmp, 0, 0, w, h); if (bmp.close) bmp.close();
+      const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.8));
+      if (!blob || blob.size >= f.size) return f;
+      return new File([blob], f.name.replace(/\.[^.]+$/, '') + '.jpg', {type: 'image/jpeg'});
+    } catch (_) { return f; }
+  }
   window.cloudTickets = {
     list: async cid => (await (await sb('GET', '/rest/v1/tickets?select=fid,name,type,size,added,path&order=fid.asc&cid=eq.' + encodeURIComponent(cid))).json()),
     counts: async () => { const c = {}; (await fetchAll('tickets', 'cid', 'fid.asc')).forEach(r => { c[r.cid] = (c[r.cid] || 0) + 1; }); return c; },
-    upload: async (cid, f) => {
+    upload: async (cid, f0) => {
+      const f = await compressImg(f0);
+      if (f.size > 15 * 1024 * 1024) throw new Error('الملف أكبر من 15 ميجا حتى بعد الضغط.');
       const ext = (f.name.match(/\.([A-Za-z0-9]{1,6})$/) || [,''])[1];
       const path = safeCid(cid) + '/' + Date.now() + '_' + Math.random().toString(36).slice(2, 8) + (ext ? '.' + ext.toLowerCase() : '');
       await sb('POST', '/storage/v1/object/tickets/' + path, {body: f, headers: {'Content-Type': f.type || 'application/octet-stream'}});
@@ -1122,20 +1161,21 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
     g('gLogin').style.display = 'none'; g('gSetup').style.display = 'none'; g('gRetry').style.display = 'none';
     g('gSub').textContent = '☁ جارٍ تحميل البيانات من السحابة...'; msg('', true);
     try {
-      const [books, leads, rew, sets, cls, tds, gfs, inqs, sups, pays, trs] = await Promise.all([
+      const [books, leads, rew, sets, cls, tds, gfs, inqs, sups, pays, trs, exps] = await Promise.all([
         fetchAll('bookings', '*', 'created_at.asc,id.asc'), fetchAll('leads', '*', 'created_at.asc,id.asc'),
         fetchAll('rewards', '*', 'key.asc'), fetchAll('settings', '*', 'key.asc'),
         fetchAll('clients', '*', 'id.asc'), fetchAll('taskdone', '*', 'id.asc'), fetchAll('gifts', '*', 'id.asc'), fetchAll('inquiries', '*', 'at.asc,id.asc'),
-        fetchAll('suppliers', '*', 'id.asc'), fetchAll('payments', '*', 'id.asc'), fetchAll('trash', '*', 'id.asc')]);
+        fetchAll('suppliers', '*', 'id.asc'), fetchAll('payments', '*', 'id.asc'), fetchAll('trash', '*', 'id.asc'),
+        fetchAll('expenses', '*', 'id.asc').catch(e => { if (/expenses|relation|schema cache|PGRST20|404/i.test(e.message)) { window._noExp = true; return []; } throw e; })]);
       const rewards = {}; rew.forEach(r => { if (r.given > 0) rewards[r.key] = r.given; });
       const settings = {}; setSaved = {}; sets.forEach(r => { settings[r.key] = r.value; setSaved[r.key] = JSON.stringify(r.value); });
       window.__BOOT = {customers: books.map(r => fromDb(r, BOOK_FIELDS)), leads: leads.map(r => fromDb(r, LEAD_FIELDS)), rewards, settings,
         clients: cls.map(r => fromDb(r, CLIENT_FIELDS)), taskdone: tds.map(r => fromDb(r, TASK_FIELDS)), gifts: gfs.map(r => fromDb(r, GIFT_FIELDS)), inquiries: inqs.map(r => fromDb(r, INQ_FIELDS)),
-        suppliers: sups.map(r => fromDb(r, SUP_FIELDS)), payments: pays.map(r => fromDb(r, PAY_FIELDS)), trash: trs.map(r => fromDb(r, TRASH_FIELDS))};
+        suppliers: sups.map(r => fromDb(r, SUP_FIELDS)), payments: pays.map(r => fromDb(r, PAY_FIELDS)), trash: trs.map(r => fromDb(r, TRASH_FIELDS)), expenses: exps.map(r => fromDb(r, EXP_FIELDS))};
     } catch(e) {
       if (!sess) return;
       g('gSub').textContent = 'تعذر تحميل البيانات';
-      msg(e.message + (/table|schema|relation|column/i.test(e.message) ? '\n\nيبدو أنك لم تنفّذ ملف upgrade.sql (أو setup.sql) بعد في Supabase ‏←‏ SQL Editor (راجع README).' : ''), false);
+      msg(e.message + (/Failed to fetch|NetworkError|Load failed|paused|\b(502|503|504|521|522|540)\b/i.test(e.message) ? '\n\nإن كان الإنترنت يعمل فغالبًا مشروع Supabase المجاني «متوقف مؤقتًا» لعدم النشاط أسبوعًا.\nافتح supabase.com ← مشروعك ← اضغط «Restore project» وانتظر دقيقتين ثم أعد المحاولة. (بياناتك محفوظة ولا تضيع.)' : '') + (/table|schema|relation|column/i.test(e.message) ? '\n\nيبدو أنك لم تنفّذ ملف upgrade.sql (أو setup.sql) بعد في Supabase ‏←‏ SQL Editor (راجع README).' : ''), false);
       g('gRetry').style.display = '';
       return;
     }
@@ -1216,7 +1256,9 @@ $('f').addEventListener('submit', e => {
     price: +$('price').value || 0, paid: +$('paid').value || 0, notes: $('notes').value.trim(),
     qty: Math.max(1, Math.round(+$('qty').value || 1)), discount: +$('discount').value || 0, refBy: $('refBy').value.trim(), idNo: toLat($('idNo').value.trim()),
     returnDate: $('returnDate').value, cost: +$('cost').value || 0, supplier: $('supplier').value,
-    departTime: $('departTime').value, returnTime: $('returnDate').value ? $('returnTime').value : ''
+    departTime: $('departTime').value, returnTime: $('returnDate').value ? $('returnTime').value : '',
+    cancelFee: $('status').value === 'cancelled' ? (+$('cancelFee').value || 0) : 0, supPenalty: $('status').value === 'cancelled' ? (+$('supPenalty').value || 0) : 0,
+    refunded: $('status').value === 'cancelled' ? (+$('refunded').value || 0) : 0, cancelDate: $('status').value === 'cancelled' ? ($('cancelDate').value || todayStr()) : ''
   };
   if (rec.returnDate && rec.returnDate < rec.travelDate && !confirm('تاريخ العودة قبل تاريخ السفر. هل تريد الحفظ رغم ذلك؟')) return;
   if (rec.travelDate < rec.bookingDate && !confirm('تاريخ السفر قبل تاريخ الحجز. هل تريد الحفظ رغم ذلك؟')) return;
@@ -1233,7 +1275,7 @@ $('f').addEventListener('submit', e => {
   plAutoBk(rec);
   if (convertingLeadId) {
     const l = leads.find(x => x.id === convertingLeadId);
-    if (l) { leads = leads.filter(x => x.id !== convertingLeadId); saveLeads(); }
+    if (l) { const _lp = l.phone; leads = leads.filter(x => x.id !== convertingLeadId); saveLeads(); dropInquiriesByPhone(_lp, rec.phone); }
     convertingLeadId = null;
   }
   resetForm(); render();
@@ -1338,7 +1380,7 @@ function exportCSV(){
   const rows = filtered().map(r => [r.name, r.phone, r.idNo||'', r.origin, r.destination, r.travelDate, fmtTm(r.departTime), r.bookingDate, r.airline, r.pnr, (r.qty||1), STATUS[r.status], r.price, (r.discount||0), r.paid, remaining(r), r.refBy||'', r.notes].map(cell).join(','));
   download('عملاء-الطيران-'+todayStr()+'.csv', '\ufeff' + [head.map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
 }
-function backup(){ download('نسخة-احتياطية-'+todayStr()+'.json', JSON.stringify({customers:data, leads:leads, rewards:rewards, settings:settings, clients:clients, gifts:gifts, suppliers:suppliers, payments:payments, trash:trash}), 'application/json'); }
+function backup(){ download('نسخة-احتياطية-'+todayStr()+'.json', JSON.stringify({customers:data, leads:leads, rewards:rewards, settings:settings, clients:clients, gifts:gifts, suppliers:suppliers, payments:payments, trash:trash, expenses:expenses}), 'application/json'); }
 $('restoreFile').addEventListener('change', e => {
   const f = e.target.files[0]; if(!f) return;
   const rd = new FileReader();
@@ -1355,7 +1397,7 @@ $('restoreFile').addEventListener('change', e => {
           rewards = obj.rewards || {}; saveRewards();
           if (obj.clients) { clients = obj.clients; CM = new Map(clients.map(c => [c.id, c])); syncList('clients', clients); }
           if (obj.gifts) { gifts = obj.gifts; syncList('gifts', gifts); }
-          if (obj.suppliers) { suppliers = obj.suppliers; syncList('suppliers', suppliers); } if (obj.payments) { payments = obj.payments; syncList('payments', payments); } if (obj.trash) { trash = obj.trash; syncList('trash', trash); }
+          if (obj.suppliers) { suppliers = obj.suppliers; syncList('suppliers', suppliers); } if (obj.payments) { payments = obj.payments; syncList('payments', payments); } if (obj.trash) { trash = obj.trash; syncList('trash', trash); } if (obj.expenses) { expenses = obj.expenses; syncList('expenses', expenses); }
           if (obj.settings) { settings = Object.assign({threshold:3}, obj.settings); saveSettings(); $('thr').value = settings.threshold; }
         }
         render();
@@ -1399,7 +1441,7 @@ async function rmTicket(i){
 $('tmFile').addEventListener('change', async e => {
   const files = [...e.target.files]; e.target.value = '';
   for (const f of files) {
-    if (f.size > 15*1024*1024) { alert('الملف "' + f.name + '" أكبر من 15 ميجا.'); continue; }
+    if (f.size > (/^image\/(jpeg|png|webp|bmp)$/.test(f.type) ? 40 : 15)*1024*1024) { alert('الملف "' + f.name + '" كبير جدًا (الحد 15 ميجا للـ PDF و40 ميجا للصور).'); continue; }
     try { await cloudTickets.upload(tcid, f); }
     catch(err) { alert('تعذر حفظ الملف: ' + f.name + '\n' + err.message); }
   }
@@ -2141,7 +2183,7 @@ function tripHtml(r){
   if (!cancelled) { if (d === 0) chip = '<span class="chip c-bad">اليوم</span>'; else if (d > 0 && d <= 3) chip = `<span class="chip c-warn">بعد ${d} ${d === 1 ? 'يوم' : 'أيام'}</span>`;
     else if (d > 3 && d <= 30) chip = `<span class="chip c-info">بعد ${d} يوم</span>`; else if (d < 0) chip = '<span class="chip c-gray">انتهى</span>'; }
   const money1 = r.price ? `<b>${money(r.price)}</b> <span class="c-sub">مدفوع ${money(r.paid)}${r.discount ? ' · خصم ' + money(r.discount) : ''}</span> ` +
-    (!cancelled ? (rem > 0 ? `<span class="chip c-bad">متبقي ${money(rem)}</span>` : '<span class="chip c-ok">✓ مسدد</span>') : '') : '<span class="c-sub">—</span>';
+    (!cancelled ? (rem > 0 ? `<span class="chip c-bad">متبقي ${money(rem)}</span>` : '<span class="chip c-ok">✓ مسدد</span>') : cancelChip(r)) : '<span class="c-sub">—</span>';
   return `<div class="trip ${cls}">
     <div class="t-route"><div class="route">${ap(r.origin)}<span class="arr">←</span>${ap(r.destination)}</div></div>
     <div class="t-date"><b>${fmtDT(r)}</b>${r.returnDate ? `<div class="c-sub">↩ عودة ${fmtDR(r)}</div>` : ''}${chip}</div>
@@ -2317,6 +2359,7 @@ function peopleCSV(){
 let suppliers = BOOT.suppliers || []; initSynced('suppliers', suppliers);
 let payments = BOOT.payments || []; initSynced('payments', payments);
 let trash = BOOT.trash || []; initSynced('trash', trash);
+let expenses = BOOT.expenses || []; initSynced('expenses', expenses);
 const uid = () => String(Date.now()) + Math.random().toString(36).slice(2, 6);
 const cur3 = () => office().currency || '';
 const netPrice = r => Math.max(0, (+r.price || 0) - (+r.discount || 0));
@@ -2449,7 +2492,7 @@ function receiptPrint(pid){
 function supStats(sid){
   const mine = data.filter(b => b.supplier === sid), ids = new Set(mine.map(b => b.id));
   const bks = mine.filter(b => b.status !== 'cancelled');
-  const bought = bks.reduce((s, b) => s + (+b.cost || 0), 0);
+  const bought = r2(bks.reduce((s, b) => s + (+b.cost || 0), 0) + mine.filter(b => b.status === 'cancelled').reduce((s, b) => s + (+b.supPenalty || 0), 0));
   const paidOut = payments.filter(p => p.dir === 'out' && p.supplier === sid && (!p.booking || ids.has(p.booking))).reduce((s, p) => s + p.amount, 0);
   return {mine, bks, bought, paidOut, owed: r2(bought - paidOut)};
 }
@@ -2490,7 +2533,22 @@ function sumProfit(rows){
   o.missing = o.n - o.nc; return o;
 }
 const monthRows = m => data.filter(b => b.status !== 'cancelled' && monthOf(b) === m);
-const monthProfit = () => sumProfit(monthRows(todayStr().slice(0, 7))).prof;
+const cancelMonth = b => String(b.cancelDate || b.bookingDate || '').slice(0, 7);
+const cancelRows = m => data.filter(b => b.status === 'cancelled' && ((+b.cancelFee || 0) || (+b.supPenalty || 0)) && cancelMonth(b) === m);
+const cancelNet = m => r2(cancelRows(m).reduce((s, b) => s + (+b.cancelFee || 0) - (+b.supPenalty || 0), 0));
+const cancelRefundDue = b => b.status === 'cancelled' ? r2((+b.paid || 0) - (+b.refunded || 0) - (+b.cancelFee || 0)) : 0;
+function expForMonth(m){
+  const L = [];
+  expenses.forEach(e => {
+    const em = String(e.date || '').slice(0, 7); if (!em) return;
+    if (e.recur === 'monthly') { if (m >= em && (!e.until || m <= String(e.until).slice(0, 7))) L.push({e, rep: em !== m}); }
+    else if (em === m) L.push({e, rep: false});
+  });
+  return L.sort((a, b) => String(b.e.date).localeCompare(String(a.e.date)));
+}
+const expTotalM = m => r2(expForMonth(m).reduce((s, x) => s + (+x.e.amount || 0), 0));
+const netMonth = m => r2(sumProfit(monthRows(m)).prof + cancelNet(m) - expTotalM(m));
+const monthProfit = () => r2(sumProfit(monthRows(todayStr().slice(0, 7))).prof + cancelNet(todayStr().slice(0, 7)));
 const MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 const monthLabel = m => { const [y, mo] = m.split('-'); return MONTHS_AR[+mo - 1] + ' ' + y; };
 function groupBy(rows, fn){
@@ -2500,23 +2558,26 @@ function groupBy(rows, fn){
 }
 const grpTbl = (title, g) => g.length ? `<div class="sgrp"><h3>${title}</h3><table class="ptbl"><thead><tr><th></th><th>حجوزات</th><th>المبيعات</th><th>عمولتك</th></tr></thead><tbody>${g.slice(0, 12).map(x => `<tr><td>${esc(x.k)}</td><td>${x.n}</td><td>${money(x.sales)}</td><td><b>${x.nc ? money(x.prof) : '—'}</b></td></tr>`).join('')}</tbody></table></div>` : '';
 let accTab = 'profit', accMonth = '', supSel = null, plEdit = -1;
-function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
+function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); data.forEach(b => { if (b.status === 'cancelled' && cancelMonth(b)) s.add(cancelMonth(b)); }); expenses.forEach(e => { if (e.date) s.add(String(e.date).slice(0, 7)); }); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
 function exportMonth(){
   const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
   const head = ['التاريخ', 'العميل', 'الوجهة', 'شركة الطيران', 'المكتب المورد', 'سعر البيع (بعد الخصم)', 'سعر الشراء', 'العمولة'];
   const rows = monthRows(m).map(b => [b.bookingDate, b.name, b.destination, b.airline, supName(b.supplier), netPrice(b), hasCost(b) ? b.cost : '', hasCost(b) ? commOf(b) : ''].map(cell).join(','));
+  cancelRows(m).forEach(b => rows.push([b.cancelDate || b.bookingDate, 'إلغاء: ' + b.name, b.destination, b.airline, supName(b.supplier), +b.cancelFee || 0, +b.supPenalty || 0, r2((+b.cancelFee || 0) - (+b.supPenalty || 0))].map(cell).join(',')));
+  expForMonth(m).forEach(x => rows.push([x.e.date, 'مصروف: ' + x.e.category, x.e.note || '', '', '', '', x.e.amount, -x.e.amount].map(cell).join(',')));
   download('أرباح-' + m + '.csv', '﻿' + [head.map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
 }
 function accProfitHtml(){
   const months = accMonths(); if (!accMonth || !months.includes(accMonth)) accMonth = months[0];
   const rows = monthRows(accMonth), t = sumProfit(rows), c = esc(cur3());
   const owedCust = data.filter(b => b.status !== 'cancelled').reduce((s, b) => s + remaining(b), 0), owedSup = totalOwed();
-  const hist = months.slice(0, 12).reverse().map(m => ({m, p: sumProfit(monthRows(m)).prof})), mx = Math.max(1, ...hist.map(h => Math.abs(h.p)));
+  const hist = months.slice(0, 12).reverse().map(m => ({m, p: netMonth(m)})), mx = Math.max(1, ...hist.map(h => Math.abs(h.p)));
   return `<div class="acc-bar"><select id="accMonth">${months.map(m => `<option value="${m}"${m === accMonth ? ' selected' : ''}>${monthLabel(m)}</option>`).join('')}</select><button class="sec sm" onclick="exportMonth()">تصدير Excel</button></div>
     <div class="pstats"><div><b>${t.n}</b>حجز</div><div><b>${money(t.sales)}</b>المبيعات ${c}</div><div><b>${money(t.cost)}</b>سعر الشراء</div><div class="${t.prof < 0 ? 'bad' : 'good'}"><b>${money(t.prof)}</b>صافي عمولتك</div></div>
     ${t.missing ? `<div class="debt" style="background:var(--warn-soft,#fff4d6)">⚠ ${t.missing} حجز بدون «سعر الشراء» لم يدخل في حساب العمولة. أضف سعر الشراء من «تعديل» الحجز.</div>` : ''}
-    <div class="pstats"><div class="${owedCust > 0 ? 'bad' : ''}"><b>${money(owedCust)}</b>متبقٍ على العملاء (الإجمالي)</div><div class="${owedSup > 0 ? 'bad' : ''}"><b>${money(owedSup)}</b>مستحق للمكاتب (الإجمالي)</div></div>
-    <div class="sgrp"><h3>آخر 12 شهرًا</h3><div class="bars">${hist.map(h => `<div class="barrow"><span class="bl">${monthLabel(h.m)}</span><span class="bt"><i class="${h.p < 0 ? 'neg' : ''}" style="width:${Math.round(Math.abs(h.p) / mx * 100)}%"></i></span><b>${money(h.p)}</b></div>`).join('')}</div></div>
+    ${netBlockHtml(accMonth, t)}
+    <div class="pstats"><div class="${owedCust > 0 ? 'bad' : ''}"><b>${money(owedCust)}</b>متبقٍ على العملاء (الإجمالي)</div><div class="${owedSup > 0 ? 'bad' : ''}"><b>${money(owedSup)}</b>مستحق للمكاتب (الإجمالي)</div>${refundDueAll() > 0 ? `<div class="bad"><b>${money(refundDueAll())}</b>مستحق ردّه للعملاء (إلغاءات)</div>` : ''}</div>
+    <div class="sgrp"><h3>صافي آخر 12 شهرًا (بعد المصروفات)</h3><div class="bars">${hist.map(h => `<div class="barrow"><span class="bl">${monthLabel(h.m)}</span><span class="bt"><i class="${h.p < 0 ? 'neg' : ''}" style="width:${Math.round(Math.abs(h.p) / mx * 100)}%"></i></span><b>${money(h.p)}</b></div>`).join('')}</div></div>
     ${grpTbl('حسب الوجهة', groupBy(rows, b => b.destination))}${grpTbl('حسب المكتب المورّد', groupBy(rows, b => supName(b.supplier)))}${grpTbl('حسب شركة الطيران', groupBy(rows, b => b.airline))}`;
 }
 function accSupHtml(){
@@ -2619,9 +2680,9 @@ function accTrashHtml(){
 /* ---------- صفحة الحسابات ---------- */
 function renderAcc(){
   const box = $('tabAcc'); if (!box || box.style.display === 'none') return;
-  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['prices', '💲 قائمة الأسعار'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
+  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['exp', '💸 المصروفات'], ['prices', '💲 قائمة الأسعار'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
   $('accNav').innerHTML = tabs.map(([k, l]) => `<button class="${accTab === k ? 'on' : ''}" onclick="accTab='${jq(k)}';renderAcc()">${l}</button>`).join('');
-  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'prices' ? accPricesHtml() : accTrashHtml();
+  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'exp' ? accExpHtml() : accTab === 'prices' ? accPricesHtml() : accTrashHtml();
   const am = $('accMonth'); if (am) am.onchange = () => { accMonth = am.value; renderAcc(); };
 }
 function render3(){ refreshSupSel(); renderAcc(); }
@@ -3251,7 +3312,7 @@ function sbBuild(){
   var h = '<div class="sb-brand"><span>✈</span><b>' + esc(office().name || 'مكتب حجز الطيران') + '</b></div><button type="button" class="sb-add" onclick="sbClose();acOpen()">➕ إضافة عميل</button><nav class="sb-nav" aria-label="الصفحات">';
   G.forEach(function(g){ if (g.g) h += '<div class="sb-g">' + g.g + '</div>'; g.i.forEach(function(it){ h += '<button type="button" class="sb-i" data-t="' + it[0] + '" onclick="sbGo(\'' + jq(it[0]) + '\')"><i>' + it[1] + '</i><span>' + it[2] + '</span><em class="sb-bd" id="sbBd_' + it[0] + '"></em></button>'; }); });
   h += '<div class="sb-g">أدوات</div>';
-  [['⚙️', 'الإعدادات', 'openSettings()'], ['🎨', 'المظهر والألوان', "openSettings();setPane('look')"], ['💾', 'نسخة احتياطية', 'backup()'], ['📊', 'تصدير Excel', 'exportCSV()'], ['🔄', 'تحديث البيانات', 'location.reload()'], ['🖨', 'طباعة', 'window.print()'], ['♻', 'استرجاع نسخة', "document.getElementById('restoreFile').click()"], ['❓', 'دليل سريع', 'helpOpen()'], ['🚪', 'تسجيل الخروج', 'cloudLogout()']]
+  [['⚙️', 'الإعدادات', 'openSettings()'], ['🎨', 'المظهر والألوان', "openSettings();setPane('look')"], ['💾', 'نسخة احتياطية', 'backup()'], ['⏱', 'نسخة تلقائية أسبوعية', 'autoBkToggle()'], ['📊', 'تصدير Excel', 'exportCSV()'], ['🔄', 'تحديث البيانات', 'location.reload()'], ['🖨', 'طباعة', 'window.print()'], ['♻', 'استرجاع نسخة', "document.getElementById('restoreFile').click()"], ['❓', 'دليل سريع', 'helpOpen()'], ['🚪', 'تسجيل الخروج', 'cloudLogout()']]
     .forEach(function(x){ h += '<button type="button" class="sb-i tool" onclick="sbClose();' + x[2] + '"><i>' + x[0] + '</i><span>' + x[1] + '</span></button>'; });
   $('sidebar').innerHTML = h + '</nav>';
 }
@@ -3282,6 +3343,7 @@ function renderDash(){
     '<div class="dh-a noprint"><button onclick="newBooking()">✈️ حجز جديد</button><button class="sec" onclick="newLead()">🔎 مرجّح جديد</button><button class="sec" onclick="showTab(\'c\')">📣 حملة</button></div></div>';
   var K = function(ic, l, v, sub, js, cls){ return '<div class="kp ' + (cls || '') + '" onclick="' + js + '"><i>' + ic + '</i><div><small>' + l + '</small><b>' + v + '</b>' + (sub ? '<em>' + sub + '</em>' : '') + '</div></div>'; };
   var kpis = K('🎫', 'حجوزات ' + monthLabel(m), sm.n, '', "showTab('b')") + K('💰', 'مبيعات الشهر', money(sm.sales), c, "showTab('s')") + K('💼', 'عمولة الشهر', money(sm.prof), sm.missing ? sm.missing + ' بدون سعر شراء' : c, "showTab('s')", sm.prof < 0 ? 'bad' : 'ok') +
+    K('💸', 'مصروفات الشهر', money(expTotalM(m)), c, "accTab='exp';showTab('s')", '') + K('📈', 'صافي الشهر', money(netMonth(m)), 'بعد المصروفات والإلغاءات', "accTab='profit';showTab('s')", netMonth(m) < 0 ? 'bad' : 'ok') +
     K('⚠️', 'متبقٍ على العملاء', money(owedCust), debtors.length + ' عميل', "showTab('a');$('pType').value='debt';renderPeople()", owedCust > 0 ? 'bad' : 'ok') +
     K('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') + K('🔎', 'مرجّحون مفتوحون', openN, lateL.length ? lateL.length + ' متابعة متأخرة' : '', "showTab('l')", lateL.length ? 'warn' : '') +
     K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('a');$('pType').value='inq';renderPeople()", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
@@ -3289,6 +3351,7 @@ function renderDash(){
     return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + jq(r.id) + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
   var need = '';
   lateL.slice(0, 4).forEach(function(l){ need += dashRow('🔎 ' + esc(l.name), esc(routeTxt(l.orig, l.dest)) + ' · متابعة ' + fmtP(l.follow), '<span class="chip c-bad">متأخر</span>', "showTab('l');editLead('" + jq(l.id) + "')"); });
+  data.filter(function(r){ return cancelRefundDue(r) > 0; }).slice(0, 4).forEach(function(r){ need += dashRow('↩️ ردّ مبلغ: ' + esc(r.name), 'حجز ملغي — مستحق ردّه للعميل', '<span class="chip c-bad">' + money(cancelRefundDue(r)) + '</span>', "openProfileB('" + jq(r.id) + "')"); });
   debtors.slice(0, 4).forEach(function(x){ need += dashRow('💰 ' + esc(x.name), 'متبقٍ عليه', '<span class="chip c-bad">' + money(x.remaining) + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); });
   custAll.forEach(function(x){ var cl = x.client || {}; if (cl.passportExpiry) { var d = daysUntil(cl.passportExpiry); if (d <= 60 && x.nextTrip) need += dashRow('🛂 ' + esc(x.name), 'انتهاء الجواز ' + fmtP(cl.passportExpiry), '<span class="chip ' + (d < 0 ? 'c-bad' : 'c-warn') + '">' + (d < 0 ? 'منتهٍ' : 'بعد ' + d + ' يوم') + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); } });
   custAll.forEach(function(x){ var cl = x.client || {}; if (cl.birthday) { var b = idcNextBd(cl.birthday); if (b !== '' && b <= 7) need += dashRow('🎂 ' + esc(x.name), 'عيد ميلاده ' + (b === 0 ? 'اليوم' : 'بعد ' + b + ' يوم'), '', "openProfile('" + jq(esc(x.key)) + "')"); } });
@@ -3656,7 +3719,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-20 · 25';
+var APP_VERSION = '2026-11-22 · 26';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -4183,6 +4246,134 @@ function csvCell(v){
   if (/^[=+\-@\t\r]/.test(t) && !/^[+-]?[\d\s.,-]+$/.test(t)) t = "'" + t;
   return '"' + t.replace(/"/g, '""') + '"';
 }
+/* ---------- تحويل مرجّح إلى حجز: يُلغى الاستفسار ويُزال العميل من المرجّحين ---------- */
+function phKey(p){ return String(typeof toLat === 'function' ? toLat(p || '') : (p || '')).replace(/\D/g, '').slice(-9); }
+function dropInquiriesByPhone(){
+  const keys = Array.prototype.slice.call(arguments).map(phKey).filter(k => k.length >= 7); if (!keys.length) return 0;
+  const before = inquiries.length;
+  inquiries = inquiries.filter(q => !String(q.phone || '').split(/[\/,،;\s]+/).some(x => keys.indexOf(phKey(x)) >= 0) && keys.indexOf(phKey(q.phone)) < 0);
+  const n = before - inquiries.length; if (n) syncList('inquiries', inquiries); return n;
+}
+/* اختيار «تحول لحجز» من القائمة المنسدلة يفتح نموذج الحجز بدل ترك المرجّح معلّقًا */
+{ const ls = ldStatus; ldStatus = function(id, s){ if (s === 'converted') { render(); convertLead(id); return; } return ls.apply(this, arguments); }; }
+document.querySelectorAll('#lstatus option[value=converted], #lfStatus option[value=converted]').forEach(o => o.remove());
+if (typeof L_STATUS !== 'undefined') L_STATUS = L_STATUS.filter(x => x[0] !== 'converted');
+/* تنظيف المرجّحين القدامى الذين حالتهم «تحول لحجز» (مرة واحدة بعد التأكيد) */
+setTimeout(() => {
+  try {
+    const old = leads.filter(l => l.status === 'converted'); if (!old.length) return;
+    if (!confirm('يوجد ' + old.length + ' مرجّح قديم حالته «تحول لحجز». هل تحذفهم من قائمة المرجّحين؟ (حجوزاتهم لا تتأثر)')) return;
+    leads = leads.filter(l => l.status !== 'converted'); saveLeads(); render();
+  } catch (e) { console.warn(e); }
+}, 1200);
+
+/* ================= v26: مصروفات الشركة، الإلغاء والاسترداد، نسخة أسبوعية تلقائية ================= */
+
+/* ---------- مصروفات الشركة ---------- */
+const EXP_CATS = [['كهرباء', '💡'], ['مياه', '🚰'], ['غاز', '🔥'], ['إيجار', '🏢'], ['إنترنت وتليفون', '📶'], ['رواتب وأجور', '👥'], ['مواصلات', '🚗'], ['دعاية وإعلان', '📣'], ['صيانة ونظافة', '🧹'], ['ضرائب ورسوم', '🧾'], ['اشتراكات وبرامج', '💻'], ['أخرى', '📦']];
+const expIcon = c => (EXP_CATS.find(x => x[0] === c) || [0, '📦'])[1];
+function refundDueAll(){ return r2(data.reduce((s, b) => s + Math.max(0, cancelRefundDue(b)), 0)); }
+function netBlockHtml(m, t){
+  const cn = cancelNet(m), ex = expTotalM(m), net = r2(t.prof + cn - ex), c = esc(cur3());
+  return `<div class="pstats netb"><div><b>${money(t.prof)}</b>عمولة الحجوزات</div>${cn ? `<div class="${cn < 0 ? 'bad' : ''}"><b>${money(cn)}</b>صافي الإلغاءات (غرامات)</div>` : ''}<div class="${ex > 0 ? 'warn' : ''} clk" onclick="accTab='exp';renderAcc()"><b>${money(ex)}</b>مصروفات الشركة ›</div><div class="${net < 0 ? 'bad' : 'good'}"><b>${money(net)}</b>صافي ربح الشهر ${c}</div></div>`;
+}
+function accExpHtml(){
+  const months = accMonths(); if (!accMonth || !months.includes(accMonth)) accMonth = months[0];
+  const L = expForMonth(accMonth), tot = expTotalM(accMonth), c = esc(cur3());
+  const comm = r2(sumProfit(monthRows(accMonth)).prof + cancelNet(accMonth)), net = r2(comm - tot);
+  const by = new Map(); L.forEach(x => { const k = x.e.category || 'أخرى'; by.set(k, r2((by.get(k) || 0) + (+x.e.amount || 0))); });
+  const cats = [...by.entries()].sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...cats.map(x => x[1]));
+  const warn = window._noExp ? `<div class="debt">⚠ جدول المصروفات غير موجود في قاعدة البيانات بعد. افتح Supabase ‏←‏ SQL Editor ونفّذ ملف <b>upgrade_v26.sql</b> (راجع الشرح في README) ثم أعد تحميل الصفحة. لن يمكنك تسجيل مصروفات قبل ذلك.</div>` : '';
+  return `${warn}<div class="acc-bar"><select id="accMonth">${months.map(m => `<option value="${m}"${m === accMonth ? ' selected' : ''}>${monthLabel(m)}</option>`).join('')}</select><button class="sec sm" onclick="expCSV()">تصدير Excel</button></div>
+    <div class="pstats"><div class="${tot > 0 ? 'warn' : ''}"><b>${money(tot)}</b>مصروفات ${monthLabel(accMonth)} ${c}</div><div><b>${money(comm)}</b>عمولة وغرامات الشهر</div><div class="${net < 0 ? 'bad' : 'good'}"><b>${money(net)}</b>الصافي بعد المصروفات</div></div>
+    <div class="sgrp" id="expForm"><h3 id="exTitle">تسجيل مصروف</h3><input type="hidden" id="exId"><div class="grid">
+      <div><label>التاريخ</label><input type="date" id="exDate" value="${todayStr()}"></div>
+      <div><label>نوع المصروف *</label><input id="exCat" list="expCats" placeholder="مثال: كهرباء" autocomplete="off"><datalist id="expCats">${EXP_CATS.map(x => `<option value="${esc(x[0])}">`).join('')}</datalist></div>
+      <div><label>المبلغ *</label><input type="number" id="exAmt" min="0" step="any" inputmode="decimal"></div>
+      <div><label>ملاحظة (اختياري)</label><input id="exNote" placeholder="مثال: فاتورة أكتوبر"></div>
+      <div class="full exqk">${EXP_CATS.map(x => `<button type="button" class="sec sm" data-c="${esc(x[0])}" onclick="$('exCat').value=this.dataset.c">${x[1]} ${esc(x[0])}</button>`).join('')}</div>
+      <div class="full exrec"><label class="chk"><input type="checkbox" id="exRecur" onchange="$('exUntilBox').style.display=this.checked?'':'none'"> 🔁 مصروف شهري ثابت (يُحسب تلقائيًا كل شهر من تاريخه، مثل الإيجار والراتب)</label></div>
+      <div id="exUntilBox" style="display:none"><label>يتوقف بعد شهر (اختياري)</label><input type="date" id="exUntil"></div></div>
+      <div class="actions"><button onclick="expSave()">💾 حفظ المصروف</button><button class="sec" onclick="expReset()">مسح</button></div></div>
+    ${cats.length ? `<div class="sgrp"><h3>حسب النوع</h3><div class="bars">${cats.map(([k, v]) => `<div class="barrow"><span class="bl">${expIcon(k)} ${esc(k)}</span><span class="bt"><i style="width:${Math.round(v / mx * 100)}%"></i></span><b>${money(v)}</b></div>`).join('')}</div></div>` : ''}
+    <div class="sgrp"><h3>مصروفات ${monthLabel(accMonth)} (${L.length})</h3>${L.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th></th></tr></thead><tbody>${L.map(x => `<tr><td>${fmtD(x.e.date)}</td><td>${expIcon(x.e.category)} ${esc(x.e.category)}${x.e.recur === 'monthly' ? ' <span class="chip c-info">🔁 شهري</span>' : ''}${x.e.note ? `<div class="c-sub">${esc(x.e.note)}</div>` : ''}</td><td><b>${money(x.e.amount)}</b></td><td class="noprint"><button class="sec sm" onclick="expEdit('${jq(x.e.id)}')">تعديل</button> <button class="del sm" onclick="expDel('${jq(x.e.id)}')">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">لا توجد مصروفات في هذا الشهر. سجّل الكهرباء والمياه والإيجار… ليظهر صافي ربحك الحقيقي.</div>'}</div>`;
+}
+function expReset(){ renderAcc(); }
+function expSave(){
+  if (window._noExp) { alert('جدول المصروفات غير موجود في قاعدة البيانات بعد.\nنفّذ ملف upgrade_v26.sql في Supabase ثم أعد تحميل الصفحة.'); return; }
+  const date = $('exDate').value || todayStr(), cat = $('exCat').value.trim(), amt = r2($('exAmt').value);
+  if (!cat) { alert('اختر نوع المصروف أو اكتبه.'); return; }
+  if (!(amt > 0)) { alert('اكتب المبلغ.'); return; }
+  const recur = $('exRecur').checked ? 'monthly' : '', until = recur ? $('exUntil').value : '';
+  if (until && until < date) { alert('تاريخ التوقف قبل تاريخ البداية.'); return; }
+  const id = $('exId').value, rec = {id: id || uid(), date, category: cat, amount: amt, note: $('exNote').value.trim(), recur, until};
+  const i = expenses.findIndex(x => x.id === rec.id); if (i >= 0) expenses[i] = rec; else expenses.push(rec);
+  syncList('expenses', expenses); accMonth = date.slice(0, 7); render(); renderAcc(); toast('✓ سُجّل المصروف', 'ok');
+}
+function expEdit(id){
+  const e = expenses.find(x => x.id === id); if (!e) return;
+  $('exId').value = e.id; $('exDate').value = e.date; $('exCat').value = e.category; $('exAmt').value = e.amount; $('exNote').value = e.note || '';
+  $('exRecur').checked = e.recur === 'monthly'; $('exUntilBox').style.display = $('exRecur').checked ? '' : 'none'; $('exUntil').value = e.until || '';
+  $('exTitle').textContent = 'تعديل مصروف'; $('expForm').scrollIntoView({block: 'center'});
+}
+function expDel(id){
+  const e = expenses.find(x => x.id === id); if (!e) return;
+  if (!confirm('حذف مصروف «' + e.category + '» بمبلغ ' + money(e.amount) + '؟' + (e.recur === 'monthly' ? '\nهذا مصروف شهري: سيُحذف من كل الأشهر. (لإيقافه من شهر معيّن عدّله وحدّد «يتوقف بعد شهر».)' : ''))) return;
+  expenses = expenses.filter(x => x.id !== id); syncList('expenses', expenses); render(); renderAcc(); toast('🗑 حُذف المصروف', 'ok');
+}
+function expCSV(){
+  const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
+  const rows = expForMonth(m).map(x => [x.e.date, x.e.category, x.e.amount, x.e.recur === 'monthly' ? 'شهري' : '', x.e.note || ''].map(cell).join(','));
+  rows.push(['', 'الإجمالي', expTotalM(m), '', ''].map(cell).join(','));
+  download('مصروفات-' + m + '.csv', '﻿' + [['التاريخ', 'النوع', 'المبلغ', 'تكرار', 'ملاحظة'].map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
+}
+
+/* ---------- الإلغاء والاسترداد ---------- */
+function cancelChip(r){
+  const f = +r.cancelFee || 0, due = cancelRefundDue(r); let h = '';
+  if (f) h += `<span class="chip c-warn">غرامة ${money(f)}</span> `;
+  if (due > 0) h += `<span class="chip c-bad">ردّ للعميل ${money(due)}</span>`;
+  else if (due < 0) h += `<span class="chip c-bad">على العميل ${money(-due)}</span>`;
+  else if ((+r.paid || 0) > 0 || f) h += '<span class="chip c-ok">✓ تمت التسوية</span>';
+  return h;
+}
+function cancelBoxUpdate(){
+  const box = $('cancelBox'); if (!box) return; const on = $('status').value === 'cancelled';
+  box.style.display = on ? '' : 'none'; if (!on) return;
+  if (!$('cancelDate').value) $('cancelDate').value = todayStr();
+  const paid = +$('paid').value || 0, fee = +$('cancelFee').value || 0, pen = +$('supPenalty').value || 0, ref = +$('refunded').value || 0, cost = +$('cost').value || 0, c = esc(cur3());
+  const due = r2(paid - fee), left = r2(due - ref), gain = r2(fee - pen); const L = [];
+  L.push(`المدفوع من العميل <b>${money(paid)}</b> − غرامتك عليه <b>${money(fee)}</b> = المفروض يُردّ له <b>${money(Math.max(0, due))}</b> ${c}`);
+  if (due < 0) L.push(`<span class="bad">العميل عليه ${money(-due)} (الغرامة أكبر مما دفعه)</span>`);
+  else if (left > 0) L.push(`<span class="bad">لم يُردّ له بعد: ${money(left)}</span> — اكتب «المُسترد فعليًا» عند ردّه`);
+  else if (left < 0) L.push(`<span class="bad">المُسترد أكبر من المفروض بـ ${money(-left)}</span>`);
+  else L.push('<span class="good">✓ تمت التسوية مع العميل</span>');
+  if (pen > 0 && cost > 0 && pen > cost) L.push(`<span class="bad">غرامة المورد أكبر من سعر الشراء (${money(cost)})</span>`);
+  L.push(`ربحك من الإلغاء: <b class="${gain < 0 ? 'bad' : 'good'}">${money(gain)}</b> (غرامة العميل − غرامة المورد)`);
+  $('cancelSum').innerHTML = L.join('<br>');
+}
+function cancelAuto(){ const due = r2((+$('paid').value || 0) - (+$('cancelFee').value || 0)); $('refunded').value = due > 0 ? due : 0; cancelBoxUpdate(); }
+['paid', 'cancelFee', 'supPenalty', 'refunded', 'cost'].forEach(id => { const e = $(id); if (e) e.addEventListener('input', cancelBoxUpdate); });
+$('status').addEventListener('change', cancelBoxUpdate);
+{ const e22 = edit; edit = function(id){ e22.apply(this, arguments); const r = data.find(x => x.id === id); if (!r) return;
+    $('cancelFee').value = +r.cancelFee || ''; $('supPenalty').value = +r.supPenalty || ''; $('refunded').value = +r.refunded || ''; $('cancelDate').value = r.cancelDate || ''; cancelBoxUpdate(); }; }
+{ const rf22 = resetForm; resetForm = function(){ rf22.apply(this, arguments); ['cancelFee', 'supPenalty', 'refunded', 'cancelDate'].forEach(k => { $(k).value = ''; }); cancelBoxUpdate(); }; }
+cancelBoxUpdate();
+
+/* ---------- نسخة احتياطية أسبوعية تلقائية ---------- */
+const autoBkOn = () => lsGet('office_auto_backup', '1') !== '0';
+function autoBkLabel(){ const t = '⏱ نسخة أسبوعية تلقائية: ' + (autoBkOn() ? 'مفعّلة ✓' : 'متوقفة'); document.querySelectorAll('#autoBkBtn').forEach(b => { b.textContent = t; }); return t; }
+function autoBkToggle(){ lsSet('office_auto_backup', autoBkOn() ? '0' : '1'); toast(autoBkLabel(), 'ok'); }
+function autoBkCheck(){
+  try {
+    if (!autoBkOn() || navigator.webdriver) return;
+    if (!data.length && !leads.length) return;
+    const last = +lsGet('office_last_backup', 0), days = last ? (Date.now() - last) / 86400000 : 99;
+    if (days < 7) return;
+    backup(); toast('💾 نُزّلت نسخة احتياطية أسبوعية تلقائيًا (راجع مجلد التنزيلات)', 'ok');
+  } catch (e) {}
+}
+setTimeout(autoBkCheck, 2500); autoBkLabel();
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
