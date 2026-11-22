@@ -489,6 +489,70 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 .cancelbox{background:color-mix(in srgb,var(--bad) 7%,var(--surface));border:1px dashed color-mix(in srgb,var(--bad) 45%,var(--bd));border-radius:var(--rc,12px);padding:12px 14px}
 .cancelbox h4{margin:0 0 8px;color:var(--bad)}
 .cancel-sum{margin-top:8px;font-size:13.5px;line-height:1.9}.cancel-sum .bad,.cancel-sum b.bad{color:var(--bad)}.cancel-sum .good,.cancel-sum b.good{color:var(--ok)}
+
+/* ===== v27: توحيد شكل الحقول والأزرار وترتيب النماذج ===== */
+/* نموذج الحجز - الكمبيوتر: صفوف متناسقة على 12 عمودًا */
+@media(min-width:701px){
+#f>.grid>div:has(#name){grid-column:span 5}
+#f>.grid>.phbox,#f>.grid>div:has(#phone){grid-column:span 4}
+#f>.grid>div:has(#gender){grid-column:span 3}
+#f>.grid>div:has(#travelDate),#f>.grid>div:has(#departTime),#f>.grid>div:has(#returnDate),#f>.grid>div:has(#returnTime){grid-column:span 3}
+#f>.grid>div:has(#airline),#f>.grid>div:has(#pnr),#f>.grid>div:has(#status),#f>.grid>div:has(#bookingDate){grid-column:span 3}
+#f>.grid>div:has(#supplier),#f>.grid>div:has(#cost),#f>.grid>div:has(#commission){grid-column:span 4}
+}
+/* نموذج الحجز - الهاتف: حقلان في السطر للحقول القصيرة */
+@media(max-width:700px){
+#f>.grid{grid-template-columns:1fr 1fr!important;gap:14px 12px}
+#f>.grid>*{grid-column:1/-1;min-width:0}
+#f>.grid>div:has(#travelDate),#f>.grid>div:has(#departTime),#f>.grid>div:has(#returnDate),#f>.grid>div:has(#returnTime),
+#f>.grid>div:has(#airline),#f>.grid>div:has(#pnr),#f>.grid>div:has(#status),#f>.grid>div:has(#bookingDate),
+#f>.grid>div:has(#qty),#f>.grid>div:has(#price),#f>.grid>div:has(#discount),#f>.grid>div:has(#paid),
+#f>.grid>div:has(#cost),#f>.grid>div:has(#commission){grid-column:auto}
+#f label{font-size:12px}
+}
+/* شريط الحفظ ثابت أسفل النموذج على الهاتف */
+@media(max-width:700px){
+#f .actions{position:sticky;bottom:0;z-index:6;margin:16px -14px -14px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(6px);border-top:1px solid var(--bd);border-radius:0 0 var(--r) var(--r);gap:8px}
+#f .actions button[type=submit],#f #saveBtn{flex:1;min-width:0}
+}
+/* الحقول: ارتفاع موحد وشكل واضح */
+input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),select{min-height:var(--ch,42px)}
+input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--mut) 70%,transparent);font-weight:400}
+select{text-overflow:ellipsis}
+label{font-weight:700;letter-spacing:0}
+.fsec{box-shadow:inset -4px 0 0 var(--pri)}
+/* الأزرار: ثلاث درجات واضحة (رئيسي / ثانوي / حذف) */
+button.sec{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--bd);color:var(--txt)}
+button.sec:hover{box-shadow:inset 0 0 0 1.5px var(--pri);background:var(--pri-soft)}
+button.del{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}
+.actions button{min-width:110px}
+/* أشرطة الفلاتر */
+.toolbar{align-items:stretch}
+.toolbar>button{white-space:nowrap}
+@media(max-width:700px){
+.toolbar,.toolbar.l{grid-template-columns:1fr 1fr!important;gap:10px}
+.toolbar>input:first-child,.toolbar>input[type=search]{grid-column:1/-1}
+.toolbar>button.sec:last-child{grid-column:1/-1}
+.toolbar>*{min-width:0}
+.pstats{grid-template-columns:1fr 1fr!important}
+.pstats>div:last-child:nth-child(odd){grid-column:1/-1}
+#ldKpis{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;margin-inline:-14px;padding:0 14px 4px}
+#ldKpis .lpill{flex:0 0 auto;white-space:nowrap}
+.sgrp .grid{grid-template-columns:1fr 1fr!important}
+.sgrp .grid>*{min-width:0}
+.sgrp .grid>.full,.sgrp .grid>.actions{grid-column:1/-1}
+#expForm .grid>*{order:5}
+#expForm .grid>div:has(#exCat){grid-column:1/-1;order:0}
+#expForm .grid>div:has(#exDate){order:1}
+#expForm .grid>div:has(#exAmt){order:2}
+#expForm .grid>div:has(#exNote){grid-column:1/-1;order:3}
+#expForm .grid>div:has(#exUntil){grid-column:1/-1}
+.exqk{gap:6px}
+}
+.acc-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.acc-bar select{flex:1;min-width:150px}
+/* مربعات التأشير: صف واحد متناسق */
+label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
 </style>
 </head>
 <body>
@@ -580,7 +644,6 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
         <div><label>⏰ ساعة الإقلاع</label><input type="time" id="departTime"></div>
         <div><label>تاريخ العودة (إن وُجد)</label><input type="date" id="returnDate"></div>
         <div><label>⏰ ساعة إقلاع العودة</label><input type="time" id="returnTime"></div>
-        <div><label>تاريخ الحجز *</label><input type="date" id="bookingDate" required></div>
         <div class="full fsec">🎫 تفاصيل الحجز</div>
 <div><label>شركة الطيران</label><input id="airline" list="airlines" placeholder="اختر من القائمة أو اكتب"></div>
         <div><label>رقم الحجز / التذكرة (PNR)</label><input id="pnr" dir="ltr" style="text-align:right"></div>
@@ -591,6 +654,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
             <option value="issued">تم الإصدار</option>
             <option value="cancelled">ملغي</option>
           </select></div>
+        <div><label>تاريخ الحجز *</label><input type="date" id="bookingDate" required></div>
         <div class="full fsec">💳 الأسعار والدفع</div>
 <div><label>عدد التذاكر في هذا الحجز</label><input type="number" id="qty" min="1" step="1" value="1"></div>
         <div><label>سعر الحجز (الإجمالي)</label><input type="number" id="price" min="0" step="any"></div>
@@ -3719,7 +3783,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-22 · 26';
+var APP_VERSION = '2026-11-22 · 27';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
