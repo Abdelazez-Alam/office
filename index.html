@@ -1357,7 +1357,7 @@ function edit(id){
 }
 function del(id){
   const r = data.find(x => x.id === id);
-  if (r && confirm('نقل حجز "'+r.name+'" إلى سلة المحذوفات؟ (يمكن استرجاعه خلال 30 يومًا)')) { trashPut('booking', r); data = data.filter(x => x.id !== id); save(); render(); }
+  if (r && confirm('نقل حجز "'+r.name+'" إلى سلة المحذوفات؟ (يمكن استرجاعه خلال 30 يومًا)\nتبقى بيانات العميل محفوظة ولا تُحذف.')) { trashPut('booking', r); data = data.filter(x => x.id !== id); save(); render(); }
 }
 function waLink(phone){ return 'https://wa.me/' + waNum(phone); }
 
@@ -3783,7 +3783,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-22 · 27';
+var APP_VERSION = '2026-11-22 · 28';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -4438,6 +4438,20 @@ function autoBkCheck(){
   } catch (e) {}
 }
 setTimeout(autoBkCheck, 2500); autoBkLabel();
+
+/* ---- v27: حذف الحجز لا يحذف العميل: يبقى «مسجّلًا بدون حجز» بكل بياناته ---- */
+{ const _delBooking = del;
+  del = function(id){
+    const r = data.find(x => x.id === id); if (!r) return;
+    const n0 = data.length; _delBooking(id);
+    if (data.length >= n0) return;                       // أُلغي الحذف من نافذة التأكيد
+    const k = ckey(r);
+    if (!k || data.some(x => ckey(x) === k)) return;     // للعميل حجوزات أخرى: يبقى ظاهرًا بها
+    const cl = CM.get(k) || {};
+    patchClient(k, {name: cl.name || r.name || '', phone: cl.phone || r.phone || '', idNo: cl.idNo || r.idNo || '', added: cl.added || todayStr()});
+    render();
+  };
+}
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
