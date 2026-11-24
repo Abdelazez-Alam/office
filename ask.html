@@ -22,6 +22,10 @@
   #msg{margin-top:12px;color:var(--bad);font-size:14px;line-height:1.7;white-space:pre-wrap}
   .done{text-align:center;padding:16px 4px}.done b{font-size:40px;display:block}
   .hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+  details.more{margin-top:14px;border:1px dashed var(--bd);border-radius:12px;padding:0 12px;background:#f8fafc}
+  details.more summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--pri);font-size:14px}
+  details.more[open] summary{border-bottom:1px solid var(--bd);margin-bottom:4px}
+  details.more .hint{font-size:12.5px;color:var(--mut);margin:4px 0 8px;line-height:1.7}
   .foot{text-align:center;color:var(--mut);font-size:13px;margin-top:14px}
 </style>
 </head>
@@ -31,6 +35,14 @@
   <form id="f" autocomplete="on">
     <label>الاسم *</label><input id="name" required maxlength="80" autocomplete="name">
     <label>رقم الهاتف / واتساب *</label><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right" maxlength="25" autocomplete="tel">
+    <details class="more"><summary>ليس لديك واتساب، أو واتسابك على رقم آخر؟ (اختياري)</summary>
+      <div class="hint">اكتب هنا ما يسهّل علينا الوصول إليك، وكلها اختيارية.</div>
+      <label>طريقة التواصل التي تفضّلها</label><select id="cpref"><option value="">— لا فرق —</option><option value="wa">واتساب</option><option value="call">اتصال عادي</option><option value="mail">بريد إلكتروني</option></select>
+      <label>رقم واتساب (إن كان مختلفًا عن رقم الهاتف)</label><input id="wa" inputmode="tel" dir="ltr" style="text-align:right" maxlength="25" autocomplete="off">
+      <label>رقم في بلد السفر (إن وُجد)</label><input id="abroad" inputmode="tel" dir="ltr" style="text-align:right" maxlength="25" autocomplete="off">
+      <label>البريد الإلكتروني</label><input id="email" type="email" dir="ltr" style="text-align:right" maxlength="100" autocomplete="email">
+      <div style="height:10px"></div>
+    </details>
     <label>الجنس (اختياري)</label><select id="gender"><option value="">— اختر —</option><option value="m">ذكر</option><option value="f">أنثى</option></select>
     <div class="row"><div><label>من (مدينة الإقلاع)</label><input id="origin" maxlength="80" placeholder="القاهرة"></div>
       <div><label>إلى (الوجهة) *</label><input id="destination" required maxlength="80" placeholder="الرياض"></div></div>
@@ -71,6 +83,11 @@
     if (!BASE || !KEY) { m.textContent = 'الصفحة غير مُعدّة بعد (config.js).'; return; }
     const phone = toLat($('phone').value.trim());
     if (phone.replace(/\D/g, '').length < 7) { m.textContent = 'اكتب رقم هاتف صحيح.'; return; }
+    const wa = toLat($('wa').value.trim()), abroad = toLat($('abroad').value.trim()), email = $('email').value.trim(), cpref = $('cpref').value;
+    if (wa && wa.replace(/\D/g, '').length < 7) { m.textContent = 'رقم الواتساب غير صحيح.'; return; }
+    if (abroad && abroad.replace(/\D/g, '').length < 7) { m.textContent = 'الرقم في بلد السفر غير صحيح.'; return; }
+    if (email && !/^[^\s@<>"'`]+@[^\s@<>"'`]+\.[^\s@<>"'`]+$/.test(email)) { m.textContent = 'اكتب بريدًا إلكترونيًا صحيحًا أو اتركه فارغًا.'; return; }
+    if (cpref === 'mail' && !email) { m.textContent = 'اخترت التواصل بالبريد، اكتب بريدك الإلكتروني.'; return; }
     let last = 0; try { last = +localStorage.getItem('ask_last') || 0; } catch(_) {}
     if (Date.now() - last < 30000) { m.textContent = 'تم إرسال طلب منذ لحظات، انتظر قليلًا.'; return; }
     if (TS && !capToken) { m.textContent = 'أكمل التحقق «أنا لست روبوتًا» أولًا.'; return; }
@@ -85,9 +102,16 @@
         if (!a.ok || !aj.access_token) { capReset(); throw new Error('captcha:' + (aj.msg || aj.error_description || aj.message || aj.error || ('HTTP ' + a.status))); }
         auth = {apikey: KEY, Authorization: 'Bearer ' + aj.access_token};
       }
-      const r = await fetch(BASE + '/rest/v1/inquiries', {method: 'POST', headers: Object.assign({'Content-Type': 'application/json', Prefer: 'return=minimal'}, auth),
-        body: JSON.stringify({name: $('name').value.trim(), phone, origin: $('origin').value.trim(), destination: $('destination').value.trim(),
-          travel: $('travel').value || null, pax: Math.min(50, Math.max(1, Math.round(+$('pax').value || 1))), notes: $('notes').value.trim(), ref_code: toLat($('ref').value.trim()).toUpperCase(), gender: $('gender').value})});
+      const base = {name: $('name').value.trim(), phone, origin: $('origin').value.trim(), destination: $('destination').value.trim(),
+        travel: $('travel').value || null, pax: Math.min(50, Math.max(1, Math.round(+$('pax').value || 1))), notes: $('notes').value.trim(), ref_code: toLat($('ref').value.trim()).toUpperCase(), gender: $('gender').value};
+      const extra = {contact_pref: cpref, wa_phone: wa, abroad_phone: abroad, email};
+      const send = body => fetch(BASE + '/rest/v1/inquiries', {method: 'POST', headers: Object.assign({'Content-Type': 'application/json', Prefer: 'return=minimal'}, auth), body: JSON.stringify(body)});
+      let r = await send(Object.assign({}, base, extra));
+      if (!r.ok && r.status === 400 && (wa || abroad || email || cpref)) {
+        /* قاعدة البيانات لم تُحدَّث بعد (أعمدة التواصل غير موجودة): نحفظ الطلب وندمج بيانات التواصل في الملاحظات حتى لا تضيع */
+        const tail = '\n[تواصل] ' + [cpref ? 'المفضّل: ' + ({wa: 'واتساب', call: 'اتصال', mail: 'بريد'}[cpref] || '') : '', wa ? 'واتساب: ' + wa : '', abroad ? 'بلد السفر: ' + abroad : '', email ? 'بريد: ' + email : ''].filter(Boolean).join(' | ');
+        r = await send(Object.assign({}, base, {notes: (base.notes + tail).slice(0, 500)}));
+      }
       if (!r.ok) throw new Error('HTTP ' + r.status);
       try { localStorage.setItem('ask_last', String(Date.now())); } catch(_) {}
       $('f').style.display = 'none'; $('ok').style.display = '';

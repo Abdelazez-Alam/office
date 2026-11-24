@@ -553,6 +553,14 @@ button.del{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transpa
 .acc-bar select{flex:1;min-width:150px}
 /* مربعات التأشير: صف واحد متناسق */
 label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
+
+/* ===== v29: بيانات التواصل الإضافية ===== */
+.cinfo{margin-top:2px;line-height:1.9}
+.xmcnote{background:var(--pri-soft);border-radius:8px;padding:7px 10px;margin-bottom:8px;font-weight:600}
+@media(min-width:701px){
+#f>.grid>div:has(#cPref){grid-column:span 4}
+#f>.grid>div:has(#cEmail){grid-column:span 8}
+}
 </style>
 </head>
 <body>
@@ -635,6 +643,8 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
         <div class="phbox"><label>رقم الهاتف *</label><div class="phrow"><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر للعميل" onclick="phxAdd('phones')">＋</button></div><div class="phx" id="phones_ui"></div></div>
         <textarea id="phones" hidden></textarea>
         <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="gender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select><div id="genderHint" class="c-sub" style="margin-top:4px"></div></div>
+        <div><label>طريقة التواصل المفضلة</label><select id="cPref"><option value="">— غير محدد —</option><option value="wa">واتساب</option><option value="call">اتصال عادي</option><option value="mail">بريد إلكتروني</option></select></div>
+        <div><label>البريد الإلكتروني (اختياري)</label><input type="email" id="cEmail" dir="ltr" maxlength="100" autocomplete="off" style="text-align:right" placeholder="name@example.com"></div>
         <div class="full" id="dupBox" style="display:none"></div>
         <div class="full" id="dupBk" style="display:none"></div>
         <div class="full fsec">✈️ الرحلة</div>
@@ -873,11 +883,12 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
 
 <div id="xm" class="modal" style="display:none" onclick="if(event.target===this)xmClose()">
   <div class="mbox"><h2 id="xmTitle"></h2>
+    <div id="xmCNote" class="c-sub xmcnote" style="display:none"></div>
     <div id="xmPhoneBox" style="display:none"><label>إلى رقم</label><select id="xmPhoneSel" onchange="xmPhone=this.value"></select></div>
     <label>القالب</label><select id="xmSel"></select>
     <div id="xmGen" class="xmgen" style="display:none"></div>
     <label style="margin-top:10px">نص الرسالة (يمكنك تعديله قبل الإرسال)</label><textarea id="xmText" rows="9"></textarea>
-    <div class="actions"><button onclick="xmSend()">💬 فتح واتساب</button><button class="sec" onclick="xmCopy()">نسخ</button><button class="sec" onclick="xmClose()">إغلاق</button></div></div>
+    <div class="actions"><button onclick="xmSend()">💬 فتح واتساب</button><button id="xmMail" class="sec" style="display:none" onclick="xmMail()">📧 بريد</button><button class="sec" onclick="xmCopy()">نسخ</button><button class="sec" onclick="xmClose()">إغلاق</button></div></div>
 </div>
 
 <div id="sm" class="modal" style="display:none" onclick="if(event.target===this)closeSettings()">
@@ -1031,12 +1042,12 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     ['qty','qty'],['price','price'],['discount','discount'],['paid','paid'],['refBy','ref_by'],['notes','notes'],['returnDate','return_date'],['cost','cost'],['supplier','supplier'],['departTime','depart_time'],['returnTime','return_time'],['cancelFee','cancel_fee'],['supPenalty','sup_penalty'],['refunded','refunded'],['cancelDate','cancel_date']];
   const LEAD_FIELDS = [['id','id'],['name','name'],['phone','phone'],['orig','orig'],['dest','dest'],['travel','travel'],
     ['inquiry','inquiry'],['follow','follow'],['status','status'],['notes','notes'],['pax','pax'],['quotePrice','quote_price'],
-    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date'],['departTime','depart_time'],['returnTime','return_time']];
+    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date'],['departTime','depart_time'],['returnTime','return_time'],['contactPref','contact_pref'],['waPhone','wa_phone'],['abroadPhone','abroad_phone'],['email','email']];
   const CLIENT_FIELDS = [['id','id'],['birthday','birthday'],['passportExpiry','passport_expiry'],['prefAirline','pref_airline'],['prefSeat','pref_seat'],
-    ['prefMeal','pref_meal'],['companions','companions'],['notes','notes'],['optout','optout'],['gender','gender'],['phones','phones'],['name','name'],['phone','phone'],['added','added'],['idNo','id_no']];
+    ['prefMeal','pref_meal'],['companions','companions'],['notes','notes'],['optout','optout'],['gender','gender'],['phones','phones'],['name','name'],['phone','phone'],['added','added'],['idNo','id_no'],['contactPref','contact_pref'],['email','email']];
   const TASK_FIELDS = [['id','id'],['at','at']];
   const GIFT_FIELDS = [['id','id'],['client','client'],['tier','tier'],['gift','gift'],['at','at'],['note','note']];
-  const INQ_FIELDS = [['id','id'],['name','name'],['phone','phone'],['origin','origin'],['destination','destination'],['travel','travel'],['pax','pax'],['notes','notes'],['refCode','ref_code'],['at','at'],['gender','gender']];
+  const INQ_FIELDS = [['id','id'],['name','name'],['phone','phone'],['origin','origin'],['destination','destination'],['travel','travel'],['pax','pax'],['notes','notes'],['refCode','ref_code'],['at','at'],['gender','gender'],['contactPref','contact_pref'],['waPhone','wa_phone'],['abroadPhone','abroad_phone'],['email','email']];
   const SUP_FIELDS = [['id','id'],['name','name'],['phone','phone'],['notes','notes']];
   const PAY_FIELDS = [['id','id'],['dir','dir'],['booking','booking'],['supplier','supplier'],['amount','amount'],['at','at'],['method','method'],['note','note']];
   const TRASH_FIELDS = [['id','id'],['kind','kind'],['payload','payload'],['deletedAt','deleted_at']];
@@ -1130,16 +1141,16 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     const fields = FIELDS[kind];
     if (kind === 'expenses' && window._noExp) return;
     const post = async (flds, chunk) => sb('POST', '/rest/v1/' + kind, {json: chunk.map(r => toDb(r, flds)), headers: UPSERT});
-    const OPT = new Set(['depart_time', 'return_time', 'cancel_fee', 'sup_penalty', 'refunded', 'cancel_date']);
+    const OPT = new Set(['depart_time', 'return_time', 'cancel_fee', 'sup_penalty', 'refunded', 'cancel_date', 'contact_pref', 'wa_phone', 'abroad_phone', 'email']);
     const noT = f => f.filter(x => !OPT.has(x[1]));
     for (let i = 0; i < upsert.length; i += 500) {
       const chunk = upsert.slice(i, i + 500);
       if (window._noTimeCols) { await post(noT(fields), chunk); continue; }
       try { await post(fields, chunk); }
       catch (e) {
-        if (!/depart_time|return_time|cancel_fee|sup_penalty|refunded|cancel_date/i.test(e.message)) throw e;
+        if (!/depart_time|return_time|cancel_fee|sup_penalty|refunded|cancel_date|contact_pref|wa_phone|abroad_phone|'email'/i.test(e.message)) throw e;
         window._noTimeCols = true;
-        alert('⚠ تم الحفظ بدون بعض الحقول الجديدة (ساعة الإقلاع / بيانات الإلغاء) لأن أعمدتها غير موجودة في قاعدة البيانات بعد.\nافتح Supabase ← SQL Editor ونفّذ ملف upgrade_v26.sql، ثم أعد تحميل الصفحة وأعد إدخال هذه الحقول.');
+        alert('⚠ تم الحفظ بدون بعض الحقول الجديدة (ساعة الإقلاع / الإلغاء / طرق التواصل) لأن أعمدتها غير موجودة في قاعدة البيانات بعد.\nافتح Supabase ← SQL Editor ونفّذ ملف upgrade_v26.sql، ثم أعد تحميل الصفحة وأعد إدخال هذه الحقول.');
         await post(noT(fields), chunk);
       }
     }
@@ -1335,6 +1346,7 @@ $('f').addEventListener('submit', e => {
   { const pp = $('passportExpiry').value, bd = $('birthday').value, patch = {}; if (pp) patch.passportExpiry = pp; if (bd) patch.birthday = bd;
     const ck = CM.get(ckey(rec)); if ((pp && (!ck || ck.passportExpiry !== pp)) || (bd && (!ck || ck.birthday !== bd))) patchClient(ckey(rec), patch); }
   { const ck0 = ckey(rec), m = mergePhones(ck0, (CM.get(ck0) || {}).phones || '', $('phones').value); if (m.rejected.length) alert(m.rejected.join('\n')); if (m.text !== ((CM.get(ck0) || {}).phones || '')) patchClient(ck0, {phones: m.text}); }
+  { const ck1 = ckey(rec), c1 = CM.get(ck1) || {}, ce = $('cEmail').value.trim(), cp = $('cPref').value; if ((ce !== (c1.email || '') || cp !== (c1.contactPref || '')) && (ce || cp || c1.email || c1.contactPref)) patchClient(ck1, {email: ce, contactPref: cp}); }
   { const gv = $('gender').value; if (gv) { const c2 = CM.get(ckey(rec)); if (!c2 || c2.gender !== gv) patchClient(ckey(rec), {gender: gv}); } }
   plAutoBk(rec);
   if (convertingLeadId) {
@@ -1545,6 +1557,7 @@ $('lf').addEventListener('submit', e => {
   { const old = leads.find(x => x.id === rec.id); rec.refBy = (old && old.refBy) || ''; }
   { const dm = !rec.id || !leads.some(x => x.id === rec.id) ? leadDup(rec) : ''; if (dm && !confirm('⚠ ' + dm + '\nهل تريد الحفظ رغم ذلك؟')) return; }
   const i = leads.findIndex(x => x.id === rec.id);
+  if (i >= 0) ['contactPref', 'waPhone', 'abroadPhone', 'email'].forEach(k => { if (leads[i][k]) rec[k] = leads[i][k]; });
   if (i >= 0) leads[i] = rec; else leads.push(rec);
   saveLeads(); plAutoLead(rec); resetLeadForm(); render();
 });
@@ -3783,7 +3796,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-22 · 29';
+var APP_VERSION = '2026-11-24 · 30';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -4469,6 +4482,79 @@ function custDelete(key){
   render(); if (typeof renderAcc === 'function') renderAcc();
 }
 acDelete = custDelete;
+
+
+/* ---- v29: طرق تواصل إضافية للعميل (لمن ليس عنده واتساب أو واتساب على رقم آخر) ---- */
+const CPREF = {wa: 'واتساب', call: 'اتصال عادي', mail: 'بريد إلكتروني'};
+const emailOk = e => { e = String(e || ''); return e.length <= 100 && /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[^\s@<>"'`]+$/.test(e); };
+
+/* يجمع بيانات التواصل المعروفة لرقم ما من: ملف العميل، المرجّح، الطلب الوارد */
+function contactFor(phone){
+  const k = ckp(phone), cl = k ? CM.get(k) : null;
+  const l = k ? leads.find(x => ckp(x.phone) === k) : null, q = k ? inquiries.find(x => ckp(x.phone) === k) : null;
+  const src = [cl, l, q].filter(Boolean), pick = f => { for (const o of src) if (o[f]) return String(o[f]); return ''; };
+  return {main: phone, pref: CPREF[pick('contactPref')] ? pick('contactPref') : '', email: pick('email'), wa: pick('waPhone'), abroad: pick('abroadPhone')};
+}
+function contactHtml(phone){
+  const c = contactFor(phone), b = [];
+  if (c.pref) b.push('<span class="chip c-info">المفضّل: ' + CPREF[c.pref] + '</span>');
+  if (c.wa) b.push('واتساب: <span dir="ltr">' + esc(c.wa) + '</span> <a class="wa noprint" target="_blank" onclick="event.stopPropagation()" href="' + esc(waLink(c.wa)) + '">فتح</a>');
+  if (c.abroad) b.push('في بلد السفر: <span dir="ltr">' + esc(c.abroad) + '</span>');
+  if (c.email) b.push('✉️ ' + (emailOk(c.email) ? '<a class="noprint" onclick="event.stopPropagation()" href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' : esc(c.email)));
+  return b.length ? '<div class="c-sub cinfo">' + b.join(' · ') + '</div>' : '';
+}
+
+/* سطر التواصل الإضافي يظهر تحت الهاتف في كل القوائم (الحجوزات، المرجّحون، العملاء، الطلبات الواردة) */
+{ const _pb = phonesBlock; phonesBlock = function(phone, o){ return _pb.apply(this, arguments) + ((o && o.nowa) ? '' : contactHtml(phone)); }; }
+
+/* الطلب الوارد -> مرجّح: تنتقل بيانات التواصل معه */
+function inqToLead(id){
+  const q = inquiries.find(x => x.id === id); if (!q) return;
+  leads.push({id: 'L' + Date.now(), name: q.name, phone: q.phone, orig: q.origin || '', dest: q.destination || '', travel: q.travel || '', inquiry: todayStr(), follow: todayStr(), status: 'new',
+    notes: '[من صفحة العملاء] ' + (q.notes || ''), pax: q.pax || 1, quotePrice: 0, quoteAirline: '', quoteUntil: '', quoteInfo: '', refBy: q.refCode || '', gender: q.gender || '',
+    contactPref: q.contactPref || '', waPhone: q.waPhone || '', abroadPhone: q.abroadPhone || '', email: q.email || ''});
+  inquiries = inquiries.filter(x => x.id !== id); saveLeads(); syncList('inquiries', inquiries); render();
+}
+
+/* نموذج الحجز: تعبئة وتفريغ حقلي التواصل */
+function fillContactFields(key){ const c = key ? CM.get(key) : null; $('cPref').value = (c && c.contactPref) || ''; $('cEmail').value = (c && c.email) || ''; }
+{ const _rf = resetForm; resetForm = function(){ _rf.apply(this, arguments); $('cPref').value = ''; $('cEmail').value = ''; }; }
+{ const _ed = edit; edit = function(id){ _ed.apply(this, arguments); const r = data.find(x => x.id === id); if (r) fillContactFields(ckey(r)); }; }
+{ const _du = window.dupUse; window.dupUse = function(){ _du.apply(this, arguments); if (typeof dupKey !== 'undefined') fillContactFields(dupKey); }; }
+{ const _ab = acBookFor; acBookFor = function(key){ _ab.apply(this, arguments); fillContactFields(key); }; }
+{ const _cl = convertLead; convertLead = function(id){
+    _cl.apply(this, arguments); const l = leads.find(x => x.id === id); if (!l) return;
+    if (l.contactPref) $('cPref').value = l.contactPref; if (l.email) $('cEmail').value = l.email;
+    const add = []; if (l.waPhone && pkey(l.waPhone) !== pkey(l.phone)) add.push(l.waPhone + ' واتساب'); if (l.abroadPhone && pkey(l.abroadPhone) !== pkey(l.phone)) add.push(l.abroadPhone + ' في بلد السفر');
+    if (add.length) $('phones').value = [$('phones').value.trim()].concat(add).filter(Boolean).join('\n');
+  }; }
+
+/* نافذة الرسائل: أرقام إضافية + البريد + طريقة التواصل المفضلة */
+{ const _xo = xmOpen; xmOpen = function(title, phone, opts, sel){
+    const c = contactFor(phone); window._xmC = c;
+    if (c.pref === 'wa' && c.wa) phone = c.wa;                    // يفضّل واتساب على رقم آخر
+    _xo.call(this, title, phone, opts, sel); xmContactUI(c);
+  }; }
+{ const _pu = xmPhoneUI; xmPhoneUI = function(){
+    _pu(); const box = $('xmPhoneBox'), s = $('xmPhoneSel'), c = window._xmC; if (!box || !s || !c) return;
+    const cur = box.style.display === 'none' ? [] : Array.from(s.options).map(o => ({num: o.value, text: o.textContent}));
+    const add = (num, label) => { if (num && !cur.some(x => pkey(x.num) === pkey(num))) cur.push({num: num, text: num + (label ? ' — ' + label : '')}); };
+    add(c.main, ''); add(c.wa, 'واتساب'); add(c.abroad, 'في بلد السفر');
+    if (cur.length < 2) return;
+    s.innerHTML = cur.map(x => `<option value="${esc(x.num)}">${esc(x.text)}</option>`).join(''); s.value = xmPhone; box.style.display = '';
+  }; }
+function xmContactUI(c){
+  const m = $('xmMail'), n = $('xmCNote'); if (!m || !n) return;
+  m.style.display = emailOk(c.email) ? '' : 'none'; m.classList.toggle('sec', c.pref !== 'mail');
+  const t = []; if (c.pref) t.push('طريقة التواصل المفضلة لدى العميل: ' + CPREF[c.pref] + (c.pref === 'mail' && !emailOk(c.email) ? ' (لم يُسجَّل بريده)' : ''));
+  if (c.abroad) t.push('رقمه في بلد السفر: ' + c.abroad);
+  n.textContent = t.join(' — '); n.style.display = t.length ? '' : 'none';
+}
+function xmMail(){
+  const c = window._xmC; if (!c || !emailOk(c.email)) return;
+  const subj = (office().name || 'مكتب السفر') + ' — ' + ($('xmTitle').textContent || '');
+  location.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent($('xmText').value);
+}
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
