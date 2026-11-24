@@ -208,7 +208,6 @@
   #commission.neg,.prof.neg{color:var(--bad,#c0392b)}.prof{color:var(--ok,#1b7f4b)}
   .dup{background:#fff4d6;border:1px solid #f0d27a;color:#6b5200;border-radius:10px;padding:8px 12px;margin-top:4px}.dup.info{background:var(--pri-soft);border-color:var(--bd);color:var(--txt)}
   [data-mode=dark] .dup{background:#4a3d12;border-color:#7a6420;color:#ffe9a8}
-  #priceHint,#lpriceHint{background:var(--pri-soft);border-radius:10px;padding:8px 12px}
   .accnav{display:flex;gap:6px;overflow-x:auto;margin:0 0 14px;padding-bottom:2px;scrollbar-width:none}.accnav button{background:var(--pri-soft);color:var(--txt);white-space:nowrap;flex:0 0 auto}.accnav button.on{background:var(--pri);color:var(--on-pri)}
   .acc-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.acc-bar select{max-width:220px}
   .ptbl{width:100%;border-collapse:collapse;margin:6px 0 10px;min-width:0;table-layout:auto}.ptbl th,.ptbl td{padding:7px 6px;border-bottom:1px solid var(--bd);text-align:right;font-size:14px;vertical-align:middle}.ptbl th{color:var(--mut);font-weight:700;font-size:12px}
@@ -353,8 +352,7 @@ th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable::afte
 .optrow{display:flex;gap:8px;align-items:center;color:var(--txt)}.optrow input{width:auto}
 #lm .sgrp,#acm .sgrp{margin-bottom:12px}
 
-/* v15: قائمة الأسعار */
-.plgh{margin:14px 0 4px;font-size:14.5px;color:var(--pri)}.ptbl tr.plold td{opacity:.55}.ptbl .plact{white-space:nowrap;text-align:left}.ptbl .plact button{padding:4px 7px;margin-inline-start:3px}
+/* v15 */
 .ptbl td .good{color:var(--ok);font-weight:700}.ptbl td .bad{color:var(--bad);font-weight:700}
 
 /* ===== v17: تصميم مريح وجذاب ===== */
@@ -431,7 +429,7 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 @media(min-width:701px){
 #f>.grid{grid-template-columns:repeat(12,1fr)}
 #f>.grid>*{grid-column:span 4;min-width:0}
-#f>.grid>.full,#f>.grid>.fsec,#f>.grid>#dupBox,#f>.grid>#dupBk,#f>.grid>#priceHint,#f>.grid>.moreBox,#f>.grid>.phones,#f>.grid>.pickbox,#f>.grid>.costbox{grid-column:1/-1}
+#f>.grid>.full,#f>.grid>.fsec,#f>.grid>#dupBox,#f>.grid>#dupBk,#f>.grid>.moreBox,#f>.grid>.phones,#f>.grid>.pickbox,#f>.grid>.costbox{grid-column:1/-1}
 #f>.grid>div:has(#origin),#f>.grid>div:has(#destination){grid-column:span 6}
 #f>.grid>div:has(#qty),#f>.grid>div:has(#price),#f>.grid>div:has(#discount),#f>.grid>div:has(#paid){grid-column:span 3}
 }
@@ -553,14 +551,6 @@ button.del{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transpa
 .acc-bar select{flex:1;min-width:150px}
 /* مربعات التأشير: صف واحد متناسق */
 label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
-
-/* ===== v29: بيانات التواصل الإضافية ===== */
-.cinfo{margin-top:2px;line-height:1.9}
-.xmcnote{background:var(--pri-soft);border-radius:8px;padding:7px 10px;margin-bottom:8px;font-weight:600}
-@media(min-width:701px){
-#f>.grid>div:has(#cPref){grid-column:span 4}
-#f>.grid>div:has(#cEmail){grid-column:span 8}
-}
 </style>
 </head>
 <body>
@@ -643,8 +633,6 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
         <div class="phbox"><label>رقم الهاتف *</label><div class="phrow"><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر للعميل" onclick="phxAdd('phones')">＋</button></div><div class="phx" id="phones_ui"></div></div>
         <textarea id="phones" hidden></textarea>
         <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="gender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select><div id="genderHint" class="c-sub" style="margin-top:4px"></div></div>
-        <div><label>طريقة التواصل المفضلة</label><select id="cPref"><option value="">— غير محدد —</option><option value="wa">واتساب</option><option value="call">اتصال عادي</option><option value="mail">بريد إلكتروني</option></select></div>
-        <div><label>البريد الإلكتروني (اختياري)</label><input type="email" id="cEmail" dir="ltr" maxlength="100" autocomplete="off" style="text-align:right" placeholder="name@example.com"></div>
         <div class="full" id="dupBox" style="display:none"></div>
         <div class="full" id="dupBk" style="display:none"></div>
         <div class="full fsec">✈️ الرحلة</div>
@@ -670,7 +658,6 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
         <div><label>سعر الحجز (الإجمالي)</label><input type="number" id="price" min="0" step="any"></div>
         <div><label>خصم ممنوح للعميل (مبلغ)</label><input type="number" id="discount" min="0" step="any"></div>
         <div><label>المبلغ المدفوع</label><input type="number" id="paid" min="0" step="any"></div>
-        <div class="full" id="priceHint" style="display:none"></div>
         <div class="full costbox"><b>💼 حسابك (لا يظهر للعميل)</b></div>
         <div><label>المكتب المورّد</label><div class="supsel"><select id="supplier"></select><button type="button" class="sec sm" onclick="quickSupplier()" title="إضافة مكتب جديد">＋</button></div></div>
         <div><label>سعر الشراء (التكلفة الإجمالية)</label><input type="number" id="cost" min="0" step="any"></div>
@@ -825,7 +812,6 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
         <div><label>السعر المعروض (الإجمالي)</label><input type="number" id="lquotePrice" min="0" step="any"></div>
         <div><label>شركة الطيران المقترحة</label><input id="lquoteAirline" list="airlines" placeholder="اختر من القائمة أو اكتب"></div>
         <div><label>العرض ساري حتى</label><input type="date" id="lquoteUntil"></div>
-        <div class="full" id="lpriceHint" style="display:none"></div>
         <div class="full"><label>تفاصيل العرض (توقيت، أمتعة، توقف...)</label><input id="lquoteInfo"></div>
       </div></div>
       <div class="sgrp"><h3>📝 ملاحظات</h3><div class="grid"><div class="full"><textarea id="lnotes" rows="2"></textarea></div></div></div>
@@ -883,12 +869,11 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
 
 <div id="xm" class="modal" style="display:none" onclick="if(event.target===this)xmClose()">
   <div class="mbox"><h2 id="xmTitle"></h2>
-    <div id="xmCNote" class="c-sub xmcnote" style="display:none"></div>
     <div id="xmPhoneBox" style="display:none"><label>إلى رقم</label><select id="xmPhoneSel" onchange="xmPhone=this.value"></select></div>
     <label>القالب</label><select id="xmSel"></select>
     <div id="xmGen" class="xmgen" style="display:none"></div>
     <label style="margin-top:10px">نص الرسالة (يمكنك تعديله قبل الإرسال)</label><textarea id="xmText" rows="9"></textarea>
-    <div class="actions"><button onclick="xmSend()">💬 فتح واتساب</button><button id="xmMail" class="sec" style="display:none" onclick="xmMail()">📧 بريد</button><button class="sec" onclick="xmCopy()">نسخ</button><button class="sec" onclick="xmClose()">إغلاق</button></div></div>
+    <div class="actions"><button onclick="xmSend()">💬 فتح واتساب</button><button class="sec" onclick="xmCopy()">نسخ</button><button class="sec" onclick="xmClose()">إغلاق</button></div></div>
 </div>
 
 <div id="sm" class="modal" style="display:none" onclick="if(event.target===this)closeSettings()">
@@ -1042,12 +1027,12 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     ['qty','qty'],['price','price'],['discount','discount'],['paid','paid'],['refBy','ref_by'],['notes','notes'],['returnDate','return_date'],['cost','cost'],['supplier','supplier'],['departTime','depart_time'],['returnTime','return_time'],['cancelFee','cancel_fee'],['supPenalty','sup_penalty'],['refunded','refunded'],['cancelDate','cancel_date']];
   const LEAD_FIELDS = [['id','id'],['name','name'],['phone','phone'],['orig','orig'],['dest','dest'],['travel','travel'],
     ['inquiry','inquiry'],['follow','follow'],['status','status'],['notes','notes'],['pax','pax'],['quotePrice','quote_price'],
-    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date'],['departTime','depart_time'],['returnTime','return_time'],['contactPref','contact_pref'],['waPhone','wa_phone'],['abroadPhone','abroad_phone'],['email','email']];
+    ['quoteAirline','quote_airline'],['quoteUntil','quote_until'],['quoteInfo','quote_info'],['refBy','ref_by'],['gender','gender'],['returnDate','return_date'],['departTime','depart_time'],['returnTime','return_time']];
   const CLIENT_FIELDS = [['id','id'],['birthday','birthday'],['passportExpiry','passport_expiry'],['prefAirline','pref_airline'],['prefSeat','pref_seat'],
-    ['prefMeal','pref_meal'],['companions','companions'],['notes','notes'],['optout','optout'],['gender','gender'],['phones','phones'],['name','name'],['phone','phone'],['added','added'],['idNo','id_no'],['contactPref','contact_pref'],['email','email']];
+    ['prefMeal','pref_meal'],['companions','companions'],['notes','notes'],['optout','optout'],['gender','gender'],['phones','phones'],['name','name'],['phone','phone'],['added','added'],['idNo','id_no']];
   const TASK_FIELDS = [['id','id'],['at','at']];
   const GIFT_FIELDS = [['id','id'],['client','client'],['tier','tier'],['gift','gift'],['at','at'],['note','note']];
-  const INQ_FIELDS = [['id','id'],['name','name'],['phone','phone'],['origin','origin'],['destination','destination'],['travel','travel'],['pax','pax'],['notes','notes'],['refCode','ref_code'],['at','at'],['gender','gender'],['contactPref','contact_pref'],['waPhone','wa_phone'],['abroadPhone','abroad_phone'],['email','email']];
+  const INQ_FIELDS = [['id','id'],['name','name'],['phone','phone'],['origin','origin'],['destination','destination'],['travel','travel'],['pax','pax'],['notes','notes'],['refCode','ref_code'],['at','at'],['gender','gender']];
   const SUP_FIELDS = [['id','id'],['name','name'],['phone','phone'],['notes','notes']];
   const PAY_FIELDS = [['id','id'],['dir','dir'],['booking','booking'],['supplier','supplier'],['amount','amount'],['at','at'],['method','method'],['note','note']];
   const TRASH_FIELDS = [['id','id'],['kind','kind'],['payload','payload'],['deletedAt','deleted_at']];
@@ -1141,16 +1126,16 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     const fields = FIELDS[kind];
     if (kind === 'expenses' && window._noExp) return;
     const post = async (flds, chunk) => sb('POST', '/rest/v1/' + kind, {json: chunk.map(r => toDb(r, flds)), headers: UPSERT});
-    const OPT = new Set(['depart_time', 'return_time', 'cancel_fee', 'sup_penalty', 'refunded', 'cancel_date', 'contact_pref', 'wa_phone', 'abroad_phone', 'email']);
+    const OPT = new Set(['depart_time', 'return_time', 'cancel_fee', 'sup_penalty', 'refunded', 'cancel_date']);
     const noT = f => f.filter(x => !OPT.has(x[1]));
     for (let i = 0; i < upsert.length; i += 500) {
       const chunk = upsert.slice(i, i + 500);
       if (window._noTimeCols) { await post(noT(fields), chunk); continue; }
       try { await post(fields, chunk); }
       catch (e) {
-        if (!/depart_time|return_time|cancel_fee|sup_penalty|refunded|cancel_date|contact_pref|wa_phone|abroad_phone|'email'/i.test(e.message)) throw e;
+        if (!/depart_time|return_time|cancel_fee|sup_penalty|refunded|cancel_date/i.test(e.message)) throw e;
         window._noTimeCols = true;
-        alert('⚠ تم الحفظ بدون بعض الحقول الجديدة (ساعة الإقلاع / الإلغاء / طرق التواصل) لأن أعمدتها غير موجودة في قاعدة البيانات بعد.\nافتح Supabase ← SQL Editor ونفّذ ملف upgrade_v26.sql، ثم أعد تحميل الصفحة وأعد إدخال هذه الحقول.');
+        alert('⚠ تم الحفظ بدون بعض الحقول الجديدة (ساعة الإقلاع / بيانات الإلغاء) لأن أعمدتها غير موجودة في قاعدة البيانات بعد.\nافتح Supabase ← SQL Editor ونفّذ ملف upgrade_v26.sql، ثم أعد تحميل الصفحة وأعد إدخال هذه الحقول.');
         await post(noT(fields), chunk);
       }
     }
@@ -1346,9 +1331,7 @@ $('f').addEventListener('submit', e => {
   { const pp = $('passportExpiry').value, bd = $('birthday').value, patch = {}; if (pp) patch.passportExpiry = pp; if (bd) patch.birthday = bd;
     const ck = CM.get(ckey(rec)); if ((pp && (!ck || ck.passportExpiry !== pp)) || (bd && (!ck || ck.birthday !== bd))) patchClient(ckey(rec), patch); }
   { const ck0 = ckey(rec), m = mergePhones(ck0, (CM.get(ck0) || {}).phones || '', $('phones').value); if (m.rejected.length) alert(m.rejected.join('\n')); if (m.text !== ((CM.get(ck0) || {}).phones || '')) patchClient(ck0, {phones: m.text}); }
-  { const ck1 = ckey(rec), c1 = CM.get(ck1) || {}, ce = $('cEmail').value.trim(), cp = $('cPref').value; if ((ce !== (c1.email || '') || cp !== (c1.contactPref || '')) && (ce || cp || c1.email || c1.contactPref)) patchClient(ck1, {email: ce, contactPref: cp}); }
   { const gv = $('gender').value; if (gv) { const c2 = CM.get(ckey(rec)); if (!c2 || c2.gender !== gv) patchClient(ckey(rec), {gender: gv}); } }
-  plAutoBk(rec);
   if (convertingLeadId) {
     const l = leads.find(x => x.id === convertingLeadId);
     if (l) { const _lp = l.phone; leads = leads.filter(x => x.id !== convertingLeadId); saveLeads(); dropInquiriesByPhone(_lp, rec.phone); }
@@ -1557,9 +1540,8 @@ $('lf').addEventListener('submit', e => {
   { const old = leads.find(x => x.id === rec.id); rec.refBy = (old && old.refBy) || ''; }
   { const dm = !rec.id || !leads.some(x => x.id === rec.id) ? leadDup(rec) : ''; if (dm && !confirm('⚠ ' + dm + '\nهل تريد الحفظ رغم ذلك؟')) return; }
   const i = leads.findIndex(x => x.id === rec.id);
-  if (i >= 0) ['contactPref', 'waPhone', 'abroadPhone', 'email'].forEach(k => { if (leads[i][k]) rec[k] = leads[i][k]; });
   if (i >= 0) leads[i] = rec; else leads.push(rec);
-  saveLeads(); plAutoLead(rec); resetLeadForm(); render();
+  saveLeads(); resetLeadForm(); render();
 });
 function editLead(id){
   const l = leads.find(x => x.id === id); if(!l) return;
@@ -1832,7 +1814,6 @@ function leadVars(l){
   return Object.assign(baseVars(), {gender: gKnown(l.gender) ? l.gender : genderByPhone(l.phone), name: l.name, origin: l.orig || '', dest: l.dest || '', date: fmtPT(l), pax: l.pax || 1, airline: l.quoteAirline || '',
     price: moneyP(l.quotePrice), until: fmtP(l.quoteUntil), info: l.quoteInfo || '', code: refCode(pkey(l.phone) || ('n:' + l.name)), refLink: refLinkOf(refCode(pkey(l.phone) || ('n:' + l.name)))});
 }
-function waSend(phone, text){ window.open(waLink(phone) + '?text=' + encodeURIComponent(text), '_blank'); }
 
 /* ---------- المهام المنجزة ---------- */
 const doneIds = () => new Set(taskdone.map(x => x.id));
@@ -2066,7 +2047,6 @@ function renderCampaigns(){
       <td class="noprint"><div class="acts"><button class="sm" onclick="campSend(${i})">💬 واتساب</button>${isDone ? '' : `<button class="sec sm" onclick="markDone(cgList[${i}].id)">✓ أرسلت</button>`}</div></td></tr>`; }).join('')
     : '<tr><td class="empty" colspan="5">لا يوجد عملاء في هذه الفئة</td></tr>';
 }
-function campSend(i){ const x = cgList[i]; if (!x) return; waSend(x.c.phone, fillTpl($('cgText').value, custVars(x.c))); }
 const campAll = () => segmentList().filter(c => !(c.client && c.client.optout)).map(c => ({c}));
 function campCSV(){
   const cell = csvCell;
@@ -2135,17 +2115,10 @@ function previewVars(){
     payLine:'\n💰 المتبقي للسداد: 4,000 ' + cur, currency:cur, code:'K7F2Q9X', refLink: askUrl() + '?ref=K7F2Q9X', tickets:5, trips:3, tier:'فضي', gift:o.giftSilver || 'خصم 5%',
     passport:'12/03/2027', pax:2, until:'30/11/2026', info:'رحلة مباشرة · أمتعة 23 كجم', refReward:o.refReward || 'خصم على حجزك القادم', birthdayGift:o.birthdayGift || 'خصم خاص', offer:o.offer || 'خصم خاص'});
 }
-function tplPreview(){ $('sTplPrev').textContent = fillTpl($('sTplText').value, previewVars()); }
-function tplStore(){ const k = tplCur; if (k) { const v = $('sTplText').value; if (v.trim() === TPL[k].text.trim() || !v.trim()) delete tplDraft[k]; else tplDraft[k] = v; } }
-function tplList(){
-  $('sTplList').innerHTML = Object.entries(TPL).map(([k, v]) => `<button type="button" class="${k === tplCur ? 'on' : ''}" onclick="tplSelect('${jq(k)}')">${v.label}${tplDraft[k] ? ' <i title="معدّل">●</i>' : ''}</button>`).join('');
-}
-function tplSelect(k){ tplStore(); tplCur = k; $('sTplText').value = tplDraft[k] || TPL[k].text; $('sTplName').textContent = TPL[k].label; tplList(); tplPreview(); }
 function tplInsert(k){ const t = $('sTplText'), a = t.selectionStart == null ? t.value.length : t.selectionStart, e = t.selectionEnd == null ? a : t.selectionEnd, v = '{' + k + '}';
   t.value = t.value.slice(0, a) + v + t.value.slice(e); t.focus(); t.selectionStart = t.selectionEnd = a + v.length; tplPreview(); }
 $('sTplText').addEventListener('input', tplPreview);
 ['sName','sPhone','sAddr','sCur','sRefReward','sBdayGift','sOffer','sGiftSilver'].forEach(id => $(id).addEventListener('input', tplPreview));
-function tplReset(){ delete tplDraft[tplCur]; $('sTplText').value = TPL[tplCur].text; tplList(); tplPreview(); }
 function openSettings(){
   const o = office(); tplDraft = Object.assign({}, settings.templates || {}); logoDraft = settings.logo || '';
   const set = (id, v) => { $(id).value = v == null ? '' : v; };
@@ -2199,15 +2172,6 @@ $('xmSel').addEventListener('change', () => { $('xmText').value = xmOpts[+$('xmS
 function xmSend(){ waSend(xmPhone, $('xmText').value); }
 function xmCopy(){ if (navigator.clipboard) navigator.clipboard.writeText($('xmText').value).then(() => alert('تم النسخ')); }
 function xmClose(){ $('xm').style.display = 'none'; }
-function bkMsg(id){
-  const r = data.find(x => x.id === id); if (!r) return;
-  const keys = ['confirm', 'remind', 'bonvoyage', 'return', 'payment', 'passport', 'feedback'], v = bookingVars(r), d = daysUntil(r.travelDate);
-  xmOpen('رسالة إلى ' + r.name, r.phone, keys.map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), v)})), d >= 0 && d <= 3 ? 1 : d < 0 ? 6 : 0);
-}
-function leadMsg(id){
-  const l = leads.find(x => x.id === id); if (!l) return; const v = leadVars(l);
-  xmOpen('رسالة إلى ' + l.name, l.phone, [{label: TPL.leadfollow.label, text: fillTpl(tplText('leadfollow'), v)}, {label: TPL.quote.label, text: fillTpl(tplText('quote'), v)}], 0);
-}
 
 /* ---------- رقم واتساب ---------- */
 function waNum(phone){
@@ -2223,19 +2187,6 @@ function waNum(phone){
 
 /* ---------- المظهر (يُحفظ على هذا الجهاز فقط) ---------- */
 const THEMES = {sky:['#0e7490','سماوي'], teal:['#0f766e','أخضر'], blue:['#2255c4','أزرق'], violet:['#6d3fd0','بنفسجي'], orange:['#c2570c','برتقالي'], rose:['#c0264f','وردي'], navy:['#243b63','كحلي']};
-function themeGet(){ try { return Object.assign({p:'sky', m:'auto'}, JSON.parse(localStorage.getItem('office_theme') || 'null') || {}); } catch(e) { return {p:'sky', m:'auto'}; } }
-function themeApply(t){
-  const dark = t.m === 'dark' || (t.m === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches), r = document.documentElement;
-  r.dataset.theme = t.p; r.dataset.mode = dark ? 'dark' : 'light';
-  try { localStorage.setItem('office_theme', JSON.stringify(t)); } catch(e) {}
-  const tc = document.querySelector('meta[name=theme-color]'); if (tc) tc.content = dark ? '#0a0f18' : '#14213d';
-  if ($('sSwatches')) themeSwatches();
-}
-function themeSwatches(){
-  const t = themeGet();
-  $('sSwatches').innerHTML = Object.entries(THEMES).map(([k, v]) => `<button type="button" title="${v[1]}" class="${k === t.p ? 'on' : ''}" style="background:${v[0]}" onclick="themeApply({p:'${jq(k)}',m:themeGet().m})"></button>`).join('');
-  $('sMode').value = t.m;
-}
 
 /* ---------- عرض الحجوزات حسب العميل (كل بيانات العميل في بطاقة واحدة) ---------- */
 let grpItems = [], grpLimit = 40, grpMore = new Set();
@@ -2458,7 +2409,6 @@ function comm3(){
   const c = $('cost').value;
   $('commission').value = c === '' ? '' : r2((+$('price').value || 0) - (+$('discount').value || 0) - (+c || 0));
   $('commission').classList.toggle('neg', c !== '' && +$('commission').value < 0);
-  priceHint();
 }
 ['price', 'discount', 'cost'].forEach(id => $(id).addEventListener('input', comm3));
 $('commission').addEventListener('input', () => {
@@ -2472,7 +2422,7 @@ function quickSupplier(){
   if (!s) { s = {id: uid(), name, phone: '', notes: ''}; suppliers.push(s); syncList('suppliers', suppliers); }
   refreshSupSel(); $('supplier').value = s.id;
 }
-function formReset3(){ $('commission').value = ''; $('commission').classList.remove('neg'); if ($('dupBox')) { $('dupBox').style.display = 'none'; } if ($('priceHint')) $('priceHint').style.display = 'none'; }
+function formReset3(){ $('commission').value = ''; $('commission').classList.remove('neg'); if ($('dupBox')) { $('dupBox').style.display = 'none'; } }
 
 /* ---------- الربح في الجداول ---------- */
 function profitLine(r){
@@ -2590,12 +2540,6 @@ function supDel(id){
   payments = payments.filter(p => p.supplier !== id); syncList('payments', payments);
   if (supSel === id) supSel = null; render(); renderAcc();
 }
-function supStatement(sid){
-  const s = supById(sid); if (!s) return; const st = supStats(sid), c = cur3();
-  const lines = st.bks.slice().sort((a, b) => String(a.bookingDate).localeCompare(String(b.bookingDate))).map(b => `• ${fmtP(b.bookingDate)} ${b.name} — ${b.destination}: ${moneyP(b.cost)}`);
-  const text = `كشف حساب — ${office().name || ''}\nالمكتب: ${s.name}\n\n${lines.join('\n') || '(لا توجد حجوزات)'}\n\nإجمالي المشتريات: ${moneyP(st.bought)} ${c}\nالمسدد: ${moneyP(st.paidOut)} ${c}\nالمتبقي: ${moneyP(Math.max(0, st.owed))} ${c}`;
-  xmOpen('كشف حساب إلى ' + s.name, s.phone, [{label: 'كشف حساب', text}], 0);
-}
 function supPay(sid){
   const amt = r2($('spAmt').value); if (!(amt > 0)) { alert('اكتب المبلغ.'); return; }
   addPayRec({dir: 'out', booking: '', supplier: sid, amount: amt, at: $('spAt').value || todayStr(), method: $('spMethod').value, note: $('spNote').value.trim()});
@@ -2634,7 +2578,7 @@ function groupBy(rows, fn){
   return [...m.values()].sort((a, b) => b.prof - a.prof || b.sales - a.sales);
 }
 const grpTbl = (title, g) => g.length ? `<div class="sgrp"><h3>${title}</h3><table class="ptbl"><thead><tr><th></th><th>حجوزات</th><th>المبيعات</th><th>عمولتك</th></tr></thead><tbody>${g.slice(0, 12).map(x => `<tr><td>${esc(x.k)}</td><td>${x.n}</td><td>${money(x.sales)}</td><td><b>${x.nc ? money(x.prof) : '—'}</b></td></tr>`).join('')}</tbody></table></div>` : '';
-let accTab = 'profit', accMonth = '', supSel = null, plEdit = -1;
+let accTab = 'profit', accMonth = '', supSel = null;
 function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); data.forEach(b => { if (b.status === 'cancelled' && cancelMonth(b)) s.add(cancelMonth(b)); }); expenses.forEach(e => { if (e.date) s.add(String(e.date).slice(0, 7)); }); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
 function exportMonth(){
   const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
@@ -2682,53 +2626,6 @@ function accSupHtml(){
       : '<div class="empty">لم تسجّل أي مكتب بعد. أضف المكاتب التي تشتري منها لتتبع حساب كل مكتب.</div>'}`;
 }
 
-/* ---------- قائمة الأسعار الثابتة ---------- */
-const PL = () => Array.isArray(settings.priceList) ? settings.priceList : [];
-const codeOf = s => ((String(s || '').match(/\(([A-Za-z]{3})\)\s*$/) || [])[1] || '').toUpperCase();
-const sameAp = (a, b) => { a = String(a || '').trim().toLowerCase(); b = String(b || '').trim().toLowerCase(); if (!a || !b) return false; const ca = codeOf(a), cb = codeOf(b); return (ca && cb) ? ca === cb : (a === b || a.includes(b) || b.includes(a)); };
-function plFind(origin, dest){
-  const L = PL().filter(e => sameAp(e.dest, dest)); if (!L.length) return null;
-  return L.find(e => e.origin && sameAp(e.origin, origin)) || L.find(e => !e.origin) || L[0];
-}
-let plCur = null;
-function priceHint(){
-  const box = $('priceHint'); if (!box) return;
-  const e = plFind($('origin').value, $('destination').value), q = Math.max(1, Math.round(+$('qty').value || 1));
-  if (!e || $('id').value || (+$('price').value > 0)) { box.style.display = 'none'; plCur = null; return; }
-  plCur = e; box.style.display = '';
-  box.innerHTML = `💡 سعر معتاد لـ <b>${esc(e.dest)}</b>: بيع ${money(e.price)}${+e.cost ? ' / شراء ' + money(e.cost) : ''} للتذكرة${q > 1 ? ' × ' + q : ''}${e.airline ? ' · ' + esc(e.airline) : ''} <button type="button" class="sm" onclick="priceApply()">تطبيق</button>${e.note ? `<div class="c-sub">${esc(e.note)}</div>` : ''}`;
-}
-function priceApply(){
-  const e = plCur; if (!e) return; const q = Math.max(1, Math.round(+$('qty').value || 1));
-  $('price').value = r2((+e.price || 0) * q); if (+e.cost) $('cost').value = r2(+e.cost * q); if (e.airline && !$('airline').value) $('airline').value = e.airline;
-  comm3(); $('priceHint').style.display = 'none';
-}
-['origin', 'destination', 'qty'].forEach(id => $(id).addEventListener('input', priceHint));
-function leadPriceHint(){
-  const box = $('lpriceHint'); if (!box) return; const e = plFind($('lorig').value, $('ldest').value), q = Math.max(1, Math.round(+$('lpax').value || 1));
-  if (!e || (+$('lquotePrice').value > 0)) { box.style.display = 'none'; return; }
-  box.style.display = ''; box.innerHTML = `💡 سعر معتاد لـ <b>${esc(e.dest)}</b>: ${money(e.price)} للتذكرة${q > 1 ? ' → ' + money(e.price * q) + ' لـ ' + q : ''} <button type="button" class="sm" onclick="$('lquotePrice').value=${r2((+e.price || 0) * q)};${e.airline ? `if(!$('lquoteAirline').value)$('lquoteAirline').value=${JSON.stringify(e.airline).replace(/"/g, '&quot;')};` : ''}leadPriceHint()">تطبيق</button>`;
-}
-['lorig', 'ldest', 'lpax', 'lquotePrice'].forEach(id => $(id).addEventListener('input', leadPriceHint));
-function plSave(){
-  const dest = $('plDest').value.trim(); if (!dest) { alert('اكتب الوجهة.'); return; }
-  const e = {origin: $('plOrig').value.trim(), dest, price: +$('plPrice').value || 0, cost: +$('plCost').value || 0, airline: $('plAir').value.trim(), note: $('plNote').value.trim()};
-  const L = PL().slice(); if (plEdit >= 0 && L[plEdit]) L[plEdit] = e; else L.push(e);
-  settings.priceList = L; saveSettings(); plEdit = -1; renderAcc();
-}
-function plDel(i){ if (!confirm('حذف هذا السعر؟')) return; settings.priceList = PL().filter((_, k) => k !== i); saveSettings(); plEdit = -1; renderAcc(); }
-function plLoad(i){ plEdit = i; renderAcc(); }
-function accPricesHtml(){
-  const e = plEdit >= 0 ? PL()[plEdit] || {} : {};
-  return `<p class="hint">سجّل الأسعار المعتادة للوجهات الأكثر طلبًا (للتذكرة الواحدة). عند اختيار الوجهة في الحجز أو عرض السعر يظهر لك السعر لتطبّقه بضغطة.</p>
-    <div class="sgrp"><h3>${plEdit >= 0 ? 'تعديل سعر' : 'إضافة سعر'}</h3><div class="grid">
-      <div><label>الوجهة *</label><input id="plDest" list="airports" value="${esc(e.dest || '')}"></div><div><label>من (اختياري)</label><input id="plOrig" list="airports" value="${esc(e.origin || '')}"></div>
-      <div><label>سعر البيع للتذكرة</label><input type="number" id="plPrice" min="0" step="any" value="${e.price || ''}"></div><div><label>سعر الشراء المعتاد (اختياري)</label><input type="number" id="plCost" min="0" step="any" value="${e.cost || ''}"></div>
-      <div><label>شركة الطيران</label><input id="plAir" list="airlines" value="${esc(e.airline || '')}"></div><div><label>ملاحظة</label><input id="plNote" value="${esc(e.note || '')}"></div></div>
-      <div class="actions"><button onclick="plSave()">${plEdit >= 0 ? 'حفظ التعديل' : '＋ إضافة'}</button>${plEdit >= 0 ? '<button class="sec" onclick="plEdit=-1;renderAcc()">إلغاء</button>' : ''}</div></div>
-    ${PL().length ? `<table class="ptbl"><thead><tr><th>الوجهة</th><th>بيع</th><th>شراء</th><th>الشركة</th><th></th></tr></thead><tbody>${PL().map((x, i) => `<tr><td>${x.origin ? esc(x.origin) + ' ‏←‏ ' : ''}${esc(x.dest)}</td><td><b>${money(x.price)}</b></td><td>${x.cost ? money(x.cost) : '—'}</td><td>${esc(x.airline)}</td><td class="acts"><button class="sec sm" onclick="plLoad(${i})">تعديل</button><button class="del sm" onclick="plDel(${i})">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">لا توجد أسعار مسجلة.</div>'}`;
-}
-
 /* ---------- سلة المحذوفات ---------- */
 function trashPut(kind, rec){ trash.push({id: uid(), kind, payload: JSON.stringify(rec), deletedAt: todayStr()}); syncList('trash', trash); }
 const trashDays = t => -daysUntil(t.deletedAt);
@@ -2757,9 +2654,9 @@ function accTrashHtml(){
 /* ---------- صفحة الحسابات ---------- */
 function renderAcc(){
   const box = $('tabAcc'); if (!box || box.style.display === 'none') return;
-  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['exp', '💸 المصروفات'], ['prices', '💲 قائمة الأسعار'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
+  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['exp', '💸 المصروفات'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
   $('accNav').innerHTML = tabs.map(([k, l]) => `<button class="${accTab === k ? 'on' : ''}" onclick="accTab='${jq(k)}';renderAcc()">${l}</button>`).join('');
-  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'exp' ? accExpHtml() : accTab === 'prices' ? accPricesHtml() : accTrashHtml();
+  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'exp' ? accExpHtml() : accTrashHtml();
   const am = $('accMonth'); if (am) am.onchange = () => { accMonth = am.value; renderAcc(); };
 }
 function render3(){ refreshSupSel(); renderAcc(); }
@@ -2790,9 +2687,6 @@ function dupUse(){
   dupCheck();
 }
 ['phone', 'name'].forEach(id => $(id).addEventListener('input', dupCheck));
-function dupBooking(rec){
-  return data.find(x => x.id !== rec.id && x.status !== 'cancelled' && ckey(x) === ckey(rec) && x.travelDate === rec.travelDate && String(x.destination).trim().toLowerCase() === String(rec.destination).trim().toLowerCase());
-}
 function leadDup(rec){
   const k = ckp(rec.phone); if (k.length < 8) return '';
   const c = custAll.find(x => x.key === k); if (c) return 'هذا الرقم لعميل حجز عندك سابقًا: ' + c.name + ' (' + c.trips + ' حجز).';
@@ -2916,20 +2810,17 @@ wrapToast('trashRestore', () => trash.length, '↩ تم الاسترجاع');
 wrapToast('addPayIn', () => payments.length, '✓ سُجّلت الدفعة');
 wrapToast('addPayOut', () => payments.length, '✓ سُجّلت دفعة المكتب');
 wrapToast('supSave', () => JSON.stringify(suppliers), '✓ تم حفظ المكتب');
-wrapToast('plSave', () => JSON.stringify(settings.priceList || []), '✓ تم حفظ السعر');
 $('f').addEventListener('submit', () => { setTimeout(() => { if (!$('name').value && !$('id').value) toast('✓ تم حفظ الحجز', 'ok'); }, 50); });
 $('lf').addEventListener('submit', () => { setTimeout(() => { if (!$('lname').value) toast('✓ تم حفظ المرجّح', 'ok'); }, 50); });
 { const f = window.saveSettingsUI; if (typeof f === 'function') window.saveSettingsUI = function(){ const r = f.apply(this, arguments); toast('✓ تم حفظ الإعدادات', 'ok'); return r; }; }
 { const f = window.backup; if (typeof f === 'function') window.backup = function(){ const r = f.apply(this, arguments); lsSet('office_last_backup', String(Date.now())); toast('💾 تم تنزيل النسخة الاحتياطية', 'ok'); renderTasks(); return r; }; }
 
 /* ---------- التنقل: قائمة المزيد + شريط سفلي للجوال + اختصارات ---------- */
-function menuToggle(e){ e.stopPropagation(); const m = $('hmenu'); if (!m) return; m.style.display = m.style.display === 'none' ? '' : 'none'; }
 document.addEventListener('click', e => { const m = $('hmenu'); if (m && !e.target.closest('.menu')) m.style.display = 'none'; if (m && e.target.closest('.menu-list button')) m.style.display = 'none'; });
 function sheetOpen(html){ $('sheetBox').innerHTML = html; $('sheet').style.display = 'flex'; }
 function sheetClose(){ $('sheet').style.display = 'none'; }
 const sbtn = (ic, t, js) => `<button type="button" class="sb" onclick="sheetClose();${js}"><i>${ic}</i><span>${t}</span></button>`;
 function newBooking(){ sheetClose(); resetForm(); showTab('n'); window.scrollTo({top: 0}); setTimeout(() => $('name').focus(), 250); }
-function newLead(){ sheetClose(); showTab('l'); $('lf').scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(() => $('lname').focus(), 250); }
 function quickAddOpen(){
   sheetOpen(`<div class="sh-t">إضافة سريعة</div><div class="sgrid3">${sbtn('🧑‍💼', 'إضافة عميل', 'acOpen()')}${sbtn('✈️', 'حجز جديد', 'newBooking()')}${sbtn('🔎', 'عميل مرجّح', 'newLead()')}${sbtn('🏢', 'مكتب مورّد', "accTab='sup';showTab('s')")}${sbtn('🔍', 'بحث شامل', "$('gs').focus();window.scrollTo({top:0,behavior:'smooth'})")}</div>`);
 }
@@ -3796,7 +3687,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-24 · 30';
+var APP_VERSION = '2026-11-24 · 31';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3878,140 +3769,6 @@ function phxInit(taId){
 {
   var _rp = renderProfile;
   renderProfile = function(){ _rp.apply(this, arguments); var t = $('pfPhones'); if (t) { t.__phx = false; phxInit('pfPhones'); } };
-}
-
-/* ================= المرحلة 15: قائمة أسعار محسّنة (تاريخ، ذهاب/عودة، تصنيف) ================= */
-var PL_CATS = ['سياحة', 'عمرة', 'حج', 'عمل', 'دراسة', 'علاج', 'زيارة عائلية', 'أخرى'];
-var PL_CABIN = {eco: 'اقتصادية', biz: 'رجال أعمال', first: 'أولى'};
-var PL_TRIP = {one: '→ ذهاب فقط', round: '⇄ ذهاب وعودة'};
-var plF = {trip: '', cat: '', q: '', sort: 'date', rev: false, group: 'trip', hideOld: false};
-function plOld(e){ return !!(e.date && e.date < todayStr()); }
-
-/* مطابقة أفضل سعر: الوجهة + (الإقلاع) + نوع الرحلة + التاريخ، مع تجاهل المنتهي إن وُجد بديل */
-function plFind(origin, dest, o){
-  o = o || {}; var best = null, bs = -1e9;
-  PL().forEach(function(e){
-    if (!sameAp(e.dest, dest)) return;
-    var s = 0;
-    s += e.origin ? (sameAp(e.origin, origin) ? 4 : -3) : 1;
-    if (e.trip) s += ((e.trip === 'round') === !!o.round) ? 3 : -2;
-    if (e.date) { if (o.date && e.date === o.date) s += 4; else if (plOld(e)) s -= 6; else if (o.date) s -= 1; }
-    if (s > bs) { bs = s; best = e; }
-  });
-  return best;
-}
-function plChips(e){
-  return (e.trip ? '<span class="chip c-info">' + PL_TRIP[e.trip] + '</span> ' : '') + (e.date ? '<span class="chip ' + (plOld(e) ? 'c-gray' : 'c-ok') + '">' + fmtP(e.date) + (e.ret ? ' ⇄ ' + fmtP(e.ret) : '') + (plOld(e) ? ' · منتهي' : '') + '</span> ' : '') + (e.cabin ? '<span class="chip c-gray">' + PL_CABIN[e.cabin] + '</span>' : '');
-}
-var plCurL = null;
-var _ph0 = priceHint, _lph0 = leadPriceHint;
-priceHint = function(){
-  var box = $('priceHint'); if (!box) return;
-  var q = Math.max(1, Math.round(+$('qty').value || 1)), e = plFind($('origin').value, $('destination').value, {round: !!$('returnDate').value, date: $('travelDate').value});
-  if (!e || $('id').value || (+$('price').value > 0)) { box.style.display = 'none'; plCur = null; return; }
-  plCur = e; box.style.display = '';
-  box.innerHTML = '💡 سعر معتاد لـ <b>' + esc(e.dest) + '</b> ' + plChips(e) + ': بيع ' + money(e.price) + (+e.cost ? ' / شراء ' + money(e.cost) : '') + ' للتذكرة' + (q > 1 ? ' × ' + q : '') + (e.airline ? ' · ' + esc(e.airline) : '') + ' <button type="button" class="sm" onclick="priceApply()">تطبيق</button>';
-};
-leadPriceHint = function(){
-  var box = $('lpriceHint'); if (!box) return;
-  var q = Math.max(1, Math.round(+$('lpax').value || 1)), e = plFind($('lorig').value, $('ldest').value, {round: lTripType === 'round', date: $('ltravel').value});
-  if (!e || (+$('lquotePrice').value > 0)) { box.style.display = 'none'; plCurL = null; return; }
-  plCurL = e; box.style.display = '';
-  box.innerHTML = '💡 سعر معتاد لـ <b>' + esc(e.dest) + '</b> ' + plChips(e) + ': ' + money(e.price) + ' للتذكرة' + (q > 1 ? ' ‏←‏ ' + money(e.price * q) + ' لـ ' + q : '') + ' <button type="button" class="sm" onclick="plApplyLead()">تطبيق</button>';
-};
-function plApplyLead(){
-  var e = plCurL; if (!e) return; var q = Math.max(1, Math.round(+$('lpax').value || 1));
-  $('lquotePrice').value = r2((+e.price || 0) * q); if (e.airline && !$('lquoteAirline').value) $('lquoteAirline').value = e.airline; $('lpriceHint').style.display = 'none';
-}
-['origin', 'destination', 'qty'].forEach(function(id){ $(id).removeEventListener('input', _ph0); });
-['origin', 'destination', 'qty', 'travelDate', 'returnDate'].forEach(function(id){ $(id).addEventListener('input', priceHint); $(id).addEventListener('change', priceHint); });
-['lorig', 'ldest', 'lpax', 'lquotePrice'].forEach(function(id){ $(id).removeEventListener('input', _lph0); });
-['lorig', 'ldest', 'lpax', 'lquotePrice', 'ltravel', 'lreturn'].forEach(function(id){ $(id).addEventListener('input', leadPriceHint); $(id).addEventListener('change', leadPriceHint); });
-document.querySelectorAll('#lTrip button').forEach(function(b){ b.addEventListener('click', function(){ leadPriceHint(); }); });
-
-/* ---------- حفظ / تعديل / نسخ ---------- */
-function plSave(){
-  var dest = $('plDest').value.trim(); if (!dest) { alert('اكتب الوجهة.'); return; }
-  var trip = $('plTrip').value, date = $('plDate').value, ret = trip === 'round' ? $('plRet').value : '';
-  if (trip === 'round' && date && ret && ret < date) { alert('تاريخ العودة قبل تاريخ السفر.'); return; }
-  var e = {origin: $('plOrig').value.trim(), dest: dest, trip: trip, date: date, ret: ret, cabin: $('plCabin').value, cat: $('plCat').value, price: +$('plPrice').value || 0, cost: +$('plCost').value || 0, airline: $('plAir').value.trim(), note: $('plNote').value.trim()};
-  var L = PL().slice(); if (plEdit >= 0 && L[plEdit]) L[plEdit] = e; else L.push(e);
-  settings.priceList = L; saveSettings(); plEdit = -1; renderAcc();
-}
-function plDup(i){ var L = PL().slice(); if (!L[i]) return; L.splice(i + 1, 0, Object.assign({}, L[i])); settings.priceList = L; saveSettings(); plEdit = i + 1; renderAcc(); }
-function plTripChg(){ var r = $('plTrip').value === 'round'; $('plRetBox').style.display = r ? '' : 'none'; if (!r) $('plRet').value = ''; }
-function plSetQ(v){ plF.q = v; renderAcc(); var el = $('plQ'); if (el) { el.focus(); el.setSelectionRange(v.length, v.length); } }
-function plSet(k, v){ plF[k] = v; renderAcc(); }
-
-function plList(){
-  var q = plF.q.trim().toLowerCase();
-  var L = PL().map(function(e, i){ return {e: e, i: i}; }).filter(function(x){
-    var e = x.e;
-    if (plF.trip && (e.trip || '') !== (plF.trip === 'any' ? '' : plF.trip)) return false;
-    if (plF.cat && (e.cat || '') !== plF.cat) return false;
-    if (plF.hideOld && plOld(e)) return false;
-    if (q && !((e.dest || '') + ' ' + (e.origin || '') + ' ' + (e.airline || '') + ' ' + (e.note || '') + ' ' + (e.cat || '')).toLowerCase().includes(q)) return false;
-    return true;
-  });
-  var k = plF.sort, A = function(x){ return x.e; };
-  L.sort(function(a, b){
-    var x = A(a), y = A(b), c = 0;
-    if (k === 'date') { var dx = x.date || '9999', dy = y.date || '9999'; c = dx.localeCompare(dy); }
-    else if (k === 'price') c = (+x.price || 0) - (+y.price || 0);
-    else if (k === 'profit') c = ((+x.price || 0) - (+x.cost || 0)) - ((+y.price || 0) - (+y.cost || 0));
-    else if (k === 'cat') c = String(x.cat || 'ي').localeCompare(String(y.cat || 'ي'), 'ar');
-    else c = String(x.dest || '').localeCompare(String(y.dest || ''), 'ar');
-    if (!c) c = String(x.dest || '').localeCompare(String(y.dest || ''), 'ar');
-    return plF.rev ? -c : c;
-  });
-  return L;
-}
-function plRowHtml(x){
-  var e = x.e, i = x.i, profit = (+e.cost) ? (+e.price || 0) - (+e.cost) : null;
-  return '<tr class="' + (plOld(e) ? 'plold' : '') + '"><td><b>' + (e.origin ? esc(e.origin) + ' ‏←‏ ' : '') + esc(e.dest) + '</b>' + (e.note ? '<div class="c-sub">' + esc(e.note) + '</div>' : '') + '</td>' +
-    '<td>' + (e.date ? fmtP(e.date) + (e.ret ? '<div class="c-sub">↩ ' + fmtP(e.ret) + '</div>' : '') + (plOld(e) ? '<div><span class="chip c-gray">منتهي</span></div>' : '') : '<span class="c-sub">أي تاريخ</span>') + '</td>' +
-    '<td>' + (e.cabin ? PL_CABIN[e.cabin] : '<span class="c-sub">—</span>') + '</td><td>' + (e.cat ? '<span class="chip c-info">' + esc(e.cat) + '</span>' : '<span class="c-sub">—</span>') + '</td>' +
-    '<td><b>' + money(e.price) + '</b></td><td>' + (e.cost ? money(e.cost) : '—') + '</td><td>' + (profit === null ? '—' : '<span class="' + (profit < 0 ? 'bad' : 'good') + '">' + money(profit) + '</span>') + '</td><td>' + esc(e.airline || '—') + '</td>' +
-    '<td class="plact"><button class="sec sm" onclick="plLoad(' + i + ')" title="تعديل">✏️</button><button class="sec sm" onclick="plDup(' + i + ')" title="نسخ">⧉</button><button class="del sm" onclick="plDel(' + i + ')" title="حذف">🗑</button></td></tr>';
-}
-function plGroups(list){
-  var g = plF.group, key = function(e){ return g === 'trip' ? (e.trip || '') : g === 'cat' ? (e.cat || '') : g === 'dest' ? (e.dest || '') : 'all'; };
-  var title = function(k){ return g === 'trip' ? (k ? PL_TRIP[k] : 'نوع الرحلة غير محدد') : g === 'cat' ? (k || 'بدون تصنيف') : g === 'dest' ? k : 'كل الأسعار'; };
-  var order = [], map = {};
-  list.forEach(function(x){ var k = key(x.e); if (!(k in map)) { map[k] = []; order.push(k); } map[k].push(x); });
-  if (g === 'trip') order.sort(function(a, b){ var o = {round: 0, one: 1, '': 2}; return o[a] - o[b]; });
-  return order.map(function(k){ return {title: title(k), items: map[k]}; });
-}
-function accPricesHtml(){
-  var e = plEdit >= 0 ? PL()[plEdit] || {} : {}, all = PL(), list = plList();
-  var cnt = function(t){ return all.filter(function(x){ return t === '' ? true : t === 'any' ? !x.trip : x.trip === t; }).length; };
-  var pill = function(v, l){ return '<button type="button" class="' + (plF.trip === v ? 'on' : '') + '" onclick="plSet(\'trip\',\'' + jq(v) + '\')">' + l + ' (' + cnt(v) + ')</button>'; };
-  var form = '<div class="sgrp"><h3>' + (plEdit >= 0 ? '✏️ تعديل سعر' : '➕ إضافة سعر') + '</h3>' +
-    '<div class="fsec">✈️ الرحلة</div><div class="grid">' +
-    '<div><label>نوع الرحلة</label><select id="plTrip" onchange="plTripChg()"><option value="one"' + (e.trip === 'one' ? ' selected' : '') + '>→ ذهاب فقط</option><option value="round"' + (e.trip === 'round' ? ' selected' : '') + '>⇄ ذهاب وعودة</option><option value=""' + (plEdit >= 0 && !e.trip ? ' selected' : '') + '>غير محدد</option></select></div>' +
-    '<div><label>الوجهة *</label><input id="plDest" list="airports" value="' + esc(e.dest || '') + '"></div><div><label>من (اختياري)</label><input id="plOrig" list="airports" value="' + esc(e.origin || '') + '"></div>' +
-    '<div><label>تاريخ السفر (اختياري)</label><input type="date" id="plDate" value="' + esc(e.date || '') + '"></div><div id="plRetBox" style="' + (e.trip === 'round' ? '' : 'display:none') + '"><label>تاريخ العودة</label><input type="date" id="plRet" value="' + esc(e.ret || '') + '"></div></div>' +
-    '<div class="fsec">🏷 التصنيف</div><div class="grid">' +
-    '<div><label>التصنيف</label><select id="plCat"><option value="">— بدون —</option>' + PL_CATS.map(function(c){ return '<option' + (e.cat === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div>' +
-    '<div><label>درجة السفر</label><select id="plCabin"><option value="">— غير محددة —</option>' + Object.keys(PL_CABIN).map(function(k){ return '<option value="' + k + '"' + (e.cabin === k ? ' selected' : '') + '>' + PL_CABIN[k] + '</option>'; }).join('') + '</select></div>' +
-    '<div><label>شركة الطيران</label><input id="plAir" list="airlines" value="' + esc(e.airline || '') + '"></div></div>' +
-    '<div class="fsec">💰 الأسعار (للتذكرة الواحدة)</div><div class="grid">' +
-    '<div><label>سعر البيع</label><input type="number" id="plPrice" min="0" step="any" value="' + (e.price || '') + '"></div><div><label>سعر الشراء المعتاد (اختياري)</label><input type="number" id="plCost" min="0" step="any" value="' + (e.cost || '') + '"></div>' +
-    '<div class="full"><label>ملاحظة</label><input id="plNote" value="' + esc(e.note || '') + '"></div></div>' +
-    '<div class="actions"><button onclick="plSave()">' + (plEdit >= 0 ? '💾 حفظ التعديل' : '＋ إضافة') + '</button>' + (plEdit >= 0 ? '<button class="sec" onclick="plEdit=-1;renderAcc()">إلغاء</button>' : '') + '</div></div>';
-  var sel = function(k, opts, cur){ return '<select onchange="plSet(\'' + jq(k) + '\',this.value)">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; };
-  var bar = all.length ? '<div class="sgrp"><h3>💲 الأسعار المسجلة (' + list.length + ' من ' + all.length + ')</h3>' +
-    '<div class="seg" style="margin-bottom:8px">' + pill('', 'الكل') + pill('one', 'ذهاب فقط') + pill('round', 'ذهاب وعودة') + (cnt('any') ? pill('any', 'غير محدد') : '') + '</div>' +
-    '<div class="toolbar noprint"><input id="plQ" placeholder="🔍 بحث: وجهة، شركة، ملاحظة" value="' + esc(plF.q) + '" oninput="plSetQ(this.value)" style="max-width:230px">' +
-    sel('cat', [['', 'كل التصنيفات']].concat(PL_CATS.map(function(c){ return [c, c]; })), plF.cat) +
-    '<span class="c-sub">تجميع:</span>' + sel('group', [['trip', 'نوع الرحلة'], ['cat', 'التصنيف'], ['dest', 'الوجهة'], ['none', 'بدون تجميع']], plF.group) +
-    '<span class="c-sub">ترتيب:</span>' + sel('sort', [['date', 'تاريخ الرحلة'], ['dest', 'الوجهة'], ['price', 'السعر'], ['profit', 'الربح'], ['cat', 'التصنيف']], plF.sort) +
-    '<button type="button" class="sec sm revbtn' + (plF.rev ? ' on' : '') + '" onclick="plSet(\'rev\',!plF.rev)">⇅ عكس</button>' +
-    '<label class="optrow" style="margin:0"><input type="checkbox" ' + (plF.hideOld ? 'checked' : '') + ' onchange="plSet(\'hideOld\',this.checked)"> إخفاء المنتهية</label></div>' : '';
-  var body = '';
-  if (all.length) body = (list.length ? plGroups(list).map(function(g){
-    return '<h4 class="plgh">' + esc(g.title) + ' <span class="c-sub">(' + g.items.length + ')</span></h4><div class="tbl"><table class="ptbl noSort"><thead><tr><th>الرحلة</th><th>التاريخ</th><th>الدرجة</th><th>التصنيف</th><th>بيع</th><th>شراء</th><th>الربح</th><th>الشركة</th><th></th></tr></thead><tbody>' + g.items.map(plRowHtml).join('') + '</tbody></table></div>'; }).join('') : '<div class="empty">لا نتائج مطابقة للفلاتر.</div>') + '</div>';
-  return '<p class="hint">سجّل الأسعار المعتادة (للتذكرة الواحدة) وحدّد نوع الرحلة وتاريخها وتصنيفها. عند إدخال الوجهة في الحجز أو عرض السعر يظهر السعر الأنسب (حسب ذهاب/عودة والتاريخ) لتطبّقه بضغطة.</p>' + form + bar + body;
 }
 
 /* v16: ملف العميل A4 */
@@ -4298,22 +4055,6 @@ VARS.push(['time', 'ساعة الإقلاع'], ['returnTime', 'ساعة إقلا
 /* نسخة مضغوطة للجداول: التاريخ ثم الساعة تحته */
 function fmtHT(r){ const d = _dOf(r), t = fmtTm(r && r.departTime); return fmtP(d) + (d && t ? '<br><small class="tm">⏰ ' + t + '</small>' : ''); }
 function fmtHR(r){ const t = fmtTm(r && r.returnTime); return fmtP(r && r.returnDate) + (r && r.returnDate && t ? '<br><small class="tm">⏰ ' + t + '</small>' : ''); }
-/* ---------- تسجيل تلقائي في قائمة الأسعار ---------- */
-function plAuto(x){
-  try {
-    const price = r2(+x.price || 0); if (!x.dest || !String(x.dest).trim() || price <= 0) return;
-    const air = String(x.airline || '').trim(), cost = r2(+x.cost || 0);
-    const L = PL().slice();
-    const same = e => sameAp(e.dest, x.dest) && (!!e.origin === !!x.origin) && (!x.origin || sameAp(e.origin, x.origin)) && (e.trip || 'one') === x.trip && (e.date || '') === (x.date || '') && (e.ret || '') === (x.ret || '') && String(e.airline || '').trim().toLowerCase() === air.toLowerCase();
-    const i = L.findIndex(same);
-    if (i >= 0) { if (L[i].price === price && (!cost || L[i].cost === cost)) return; L[i] = Object.assign({}, L[i], {price: price, cost: cost || L[i].cost || 0}); }
-    else L.push({origin: String(x.origin || '').trim(), dest: String(x.dest).trim(), trip: x.trip, date: x.date || '', ret: x.ret || '', cabin: '', cat: '', price: price, cost: cost, airline: air, note: x.src === 'l' ? 'سُجل تلقائيًا من مرجّح' : 'سُجل تلقائيًا من حجز', auto: true});
-    settings.priceList = L; saveSettings();
-    if (typeof toast === 'function') toast('💲 سُجل السعر في قائمة الأسعار', 'ok');
-  } catch (e) { console.warn('plAuto', e); }
-}
-function plAutoBk(r){ const q = Math.max(1, +r.qty || 1); plAuto({origin: r.origin, dest: r.destination, trip: r.returnDate ? 'round' : 'one', date: r.travelDate, ret: r.returnDate || '', price: (+r.price || 0) / q, cost: (+r.cost || 0) / q, airline: r.airline, src: 'b'}); }
-function plAutoLead(l){ const q = Math.max(1, +l.pax || 1); plAuto({origin: l.orig, dest: l.dest, trip: l.returnDate ? 'round' : 'one', date: l.travel, ret: l.returnDate || '', price: (+l.quotePrice || 0) / q, cost: 0, airline: l.quoteAirline, src: 'l'}); }
 /* ---------- أمان: تنظيف القيم داخل أزرار HTML + حقن CSV ---------- */
 /* قيمة داخل onclick="f('...')": تُحوَّل الرموز الخطرة إلى \uXXXX فلا تُغلق النص ولا تكسر الخاصية */
 function jq(v){ return String(v == null ? '' : v).replace(/[\\'"`<>&\r\n\u2028\u2029$]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')); }
@@ -4482,79 +4223,6 @@ function custDelete(key){
   render(); if (typeof renderAcc === 'function') renderAcc();
 }
 acDelete = custDelete;
-
-
-/* ---- v29: طرق تواصل إضافية للعميل (لمن ليس عنده واتساب أو واتساب على رقم آخر) ---- */
-const CPREF = {wa: 'واتساب', call: 'اتصال عادي', mail: 'بريد إلكتروني'};
-const emailOk = e => { e = String(e || ''); return e.length <= 100 && /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[^\s@<>"'`]+$/.test(e); };
-
-/* يجمع بيانات التواصل المعروفة لرقم ما من: ملف العميل، المرجّح، الطلب الوارد */
-function contactFor(phone){
-  const k = ckp(phone), cl = k ? CM.get(k) : null;
-  const l = k ? leads.find(x => ckp(x.phone) === k) : null, q = k ? inquiries.find(x => ckp(x.phone) === k) : null;
-  const src = [cl, l, q].filter(Boolean), pick = f => { for (const o of src) if (o[f]) return String(o[f]); return ''; };
-  return {main: phone, pref: CPREF[pick('contactPref')] ? pick('contactPref') : '', email: pick('email'), wa: pick('waPhone'), abroad: pick('abroadPhone')};
-}
-function contactHtml(phone){
-  const c = contactFor(phone), b = [];
-  if (c.pref) b.push('<span class="chip c-info">المفضّل: ' + CPREF[c.pref] + '</span>');
-  if (c.wa) b.push('واتساب: <span dir="ltr">' + esc(c.wa) + '</span> <a class="wa noprint" target="_blank" onclick="event.stopPropagation()" href="' + esc(waLink(c.wa)) + '">فتح</a>');
-  if (c.abroad) b.push('في بلد السفر: <span dir="ltr">' + esc(c.abroad) + '</span>');
-  if (c.email) b.push('✉️ ' + (emailOk(c.email) ? '<a class="noprint" onclick="event.stopPropagation()" href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' : esc(c.email)));
-  return b.length ? '<div class="c-sub cinfo">' + b.join(' · ') + '</div>' : '';
-}
-
-/* سطر التواصل الإضافي يظهر تحت الهاتف في كل القوائم (الحجوزات، المرجّحون، العملاء، الطلبات الواردة) */
-{ const _pb = phonesBlock; phonesBlock = function(phone, o){ return _pb.apply(this, arguments) + ((o && o.nowa) ? '' : contactHtml(phone)); }; }
-
-/* الطلب الوارد -> مرجّح: تنتقل بيانات التواصل معه */
-function inqToLead(id){
-  const q = inquiries.find(x => x.id === id); if (!q) return;
-  leads.push({id: 'L' + Date.now(), name: q.name, phone: q.phone, orig: q.origin || '', dest: q.destination || '', travel: q.travel || '', inquiry: todayStr(), follow: todayStr(), status: 'new',
-    notes: '[من صفحة العملاء] ' + (q.notes || ''), pax: q.pax || 1, quotePrice: 0, quoteAirline: '', quoteUntil: '', quoteInfo: '', refBy: q.refCode || '', gender: q.gender || '',
-    contactPref: q.contactPref || '', waPhone: q.waPhone || '', abroadPhone: q.abroadPhone || '', email: q.email || ''});
-  inquiries = inquiries.filter(x => x.id !== id); saveLeads(); syncList('inquiries', inquiries); render();
-}
-
-/* نموذج الحجز: تعبئة وتفريغ حقلي التواصل */
-function fillContactFields(key){ const c = key ? CM.get(key) : null; $('cPref').value = (c && c.contactPref) || ''; $('cEmail').value = (c && c.email) || ''; }
-{ const _rf = resetForm; resetForm = function(){ _rf.apply(this, arguments); $('cPref').value = ''; $('cEmail').value = ''; }; }
-{ const _ed = edit; edit = function(id){ _ed.apply(this, arguments); const r = data.find(x => x.id === id); if (r) fillContactFields(ckey(r)); }; }
-{ const _du = window.dupUse; window.dupUse = function(){ _du.apply(this, arguments); if (typeof dupKey !== 'undefined') fillContactFields(dupKey); }; }
-{ const _ab = acBookFor; acBookFor = function(key){ _ab.apply(this, arguments); fillContactFields(key); }; }
-{ const _cl = convertLead; convertLead = function(id){
-    _cl.apply(this, arguments); const l = leads.find(x => x.id === id); if (!l) return;
-    if (l.contactPref) $('cPref').value = l.contactPref; if (l.email) $('cEmail').value = l.email;
-    const add = []; if (l.waPhone && pkey(l.waPhone) !== pkey(l.phone)) add.push(l.waPhone + ' واتساب'); if (l.abroadPhone && pkey(l.abroadPhone) !== pkey(l.phone)) add.push(l.abroadPhone + ' في بلد السفر');
-    if (add.length) $('phones').value = [$('phones').value.trim()].concat(add).filter(Boolean).join('\n');
-  }; }
-
-/* نافذة الرسائل: أرقام إضافية + البريد + طريقة التواصل المفضلة */
-{ const _xo = xmOpen; xmOpen = function(title, phone, opts, sel){
-    const c = contactFor(phone); window._xmC = c;
-    if (c.pref === 'wa' && c.wa) phone = c.wa;                    // يفضّل واتساب على رقم آخر
-    _xo.call(this, title, phone, opts, sel); xmContactUI(c);
-  }; }
-{ const _pu = xmPhoneUI; xmPhoneUI = function(){
-    _pu(); const box = $('xmPhoneBox'), s = $('xmPhoneSel'), c = window._xmC; if (!box || !s || !c) return;
-    const cur = box.style.display === 'none' ? [] : Array.from(s.options).map(o => ({num: o.value, text: o.textContent}));
-    const add = (num, label) => { if (num && !cur.some(x => pkey(x.num) === pkey(num))) cur.push({num: num, text: num + (label ? ' — ' + label : '')}); };
-    add(c.main, ''); add(c.wa, 'واتساب'); add(c.abroad, 'في بلد السفر');
-    if (cur.length < 2) return;
-    s.innerHTML = cur.map(x => `<option value="${esc(x.num)}">${esc(x.text)}</option>`).join(''); s.value = xmPhone; box.style.display = '';
-  }; }
-function xmContactUI(c){
-  const m = $('xmMail'), n = $('xmCNote'); if (!m || !n) return;
-  m.style.display = emailOk(c.email) ? '' : 'none'; m.classList.toggle('sec', c.pref !== 'mail');
-  const t = []; if (c.pref) t.push('طريقة التواصل المفضلة لدى العميل: ' + CPREF[c.pref] + (c.pref === 'mail' && !emailOk(c.email) ? ' (لم يُسجَّل بريده)' : ''));
-  if (c.abroad) t.push('رقمه في بلد السفر: ' + c.abroad);
-  n.textContent = t.join(' — '); n.style.display = t.length ? '' : 'none';
-}
-function xmMail(){
-  const c = window._xmC; if (!c || !emailOk(c.email)) return;
-  const subj = (office().name || 'مكتب السفر') + ' — ' + ($('xmTitle').textContent || '');
-  location.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent($('xmText').value);
-}
 
 const _render = render;
 render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
