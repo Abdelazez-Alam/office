@@ -8,6 +8,9 @@
 <meta name="theme-color" content="#14213d">
 <script>(function(){try{var t=JSON.parse(localStorage.getItem("office_theme")||"null")||{p:"sky",m:"auto"},d=t.m==="dark"||(t.m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),r=document.documentElement;r.dataset.theme=t.p;r.dataset.mode=d?"dark":"light"}catch(e){}})()</script>
 <title>نظام مكتب الطيران</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <style>
   /* ===== المظهر: ألوان قابلة للتبديل (⚙ الإعدادات ‏←‏ المظهر) ===== */
   :root{--pri:#0e7490;--ok:#15803d;--warn:#b45309;--bad:#c2303a;
@@ -3421,7 +3424,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-25 · 33';
+var APP_VERSION = '2026-11-25 · 34';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
