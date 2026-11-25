@@ -566,21 +566,21 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-off
 details>summary{cursor:pointer;font-weight:700;padding:8px 0}
 
 /* v33: حركات هادئة (تتوقف تلقائيًا لمن فعّل «تقليل الحركة» في جهازه) */
-@keyframes nrFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes nrFade{from{opacity:0}to{opacity:1}}
 @keyframes nrPop{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
 @keyframes nrBack{from{opacity:0}to{opacity:1}}
 @keyframes nrSlide{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 @keyframes nrRow{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-#tabDash,#tabTasks,#tabBookings,#tabAll,#tabLeads,#tabAcc,#tabNew{animation:nrFade .32s ease-out both}
+#tabDash,#tabTasks,#tabBookings,#tabAll,#tabLeads,#tabAcc,#tabNew{animation:nrFade .3s ease-out backwards}
 .modal[style*="flex"],.modal[style*="block"]{animation:nrBack .2s ease-out both}
 .modal[style*="flex"] .mbox,.modal[style*="block"] .mbox{animation:nrPop .28s cubic-bezier(.2,.9,.3,1.1) both}
 .sheet-bg[style*="flex"] .sheet{animation:nrPop .25s ease-out both}
 .toast{transition:opacity .25s ease,transform .25s ease}
 .kp,.lcard,.cust,.trip,.supcard{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-.kp:hover,.lcard:hover,.supcard:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.1)}
+.kp:hover,.lcard:hover,.supcard:hover{box-shadow:0 8px 22px rgba(0,0,0,.12);border-color:var(--pri)}
 button{transition:transform .12s ease,filter .15s ease,background-color .15s ease,box-shadow .15s ease}
 button:not(:disabled):hover{filter:brightness(1.06)}
-button:not(:disabled):active{transform:scale(.96)}
+button:not(:disabled):not(.amb):active{transform:scale(.96)}
 .sb-i{transition:background-color .18s ease,transform .18s ease,color .18s ease}
 .sb-i:hover{transform:translateX(-3px)}
 .sidebar{transition:transform .28s ease}
@@ -3634,8 +3634,8 @@ var AM_OPEN = null, AM_T = 0;
 function amClose(){ if (!AM_OPEN) return; AM_OPEN.classList.remove('open'); const l = AM_OPEN.querySelector('.amlist'); if (l) l.style.cssText = ''; AM_OPEN = null; }
 function amToggle(btn){
   const w = btn.closest('.amenu'); if (!w) return; if (AM_OPEN === w) { amClose(); return; } amClose();
-  w.classList.add('open'); AM_OPEN = w; AM_T = Date.now(); const l = w.querySelector('.amlist'), r = btn.getBoundingClientRect();
-  l.style.cssText = 'position:fixed;visibility:hidden;display:flex'; const lw = l.offsetWidth, lh = l.offsetHeight, W = document.documentElement.clientWidth, H = window.innerHeight;
+  const l = w.querySelector('.amlist'); l.style.cssText = 'position:fixed;visibility:hidden;display:flex';
+  w.classList.add('open'); AM_OPEN = w; AM_T = Date.now(); const r = btn.getBoundingClientRect(); const lw = l.offsetWidth, lh = l.offsetHeight, W = document.documentElement.clientWidth, H = window.innerHeight;
   let left = Math.min(Math.max(r.right - lw, 8), W - lw - 8), top = r.bottom + 6; if (top + lh > H - 8 && r.top - 6 - lh > 8) top = r.top - 6 - lh;
   l.style.cssText = 'position:fixed;display:flex;left:' + left + 'px;top:' + top + 'px';
 }
