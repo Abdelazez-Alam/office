@@ -551,6 +551,25 @@ button.del{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transpa
 .acc-bar select{flex:1;min-width:150px}
 /* مربعات التأشير: صف واحد متناسق */
 label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
+.ld-sec{font-weight:800;font-size:14px;margin:14px 2px 8px;color:var(--pri-d,#154aa6)}
+.sugs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* v32: جداول وفورم أكثر تنظيمًا */
+#accNav{display:none!important}
+table{border-collapse:separate;border-spacing:0}
+thead th{position:sticky;top:0;z-index:1;text-align:right;white-space:nowrap;border-bottom:2px solid var(--pri)!important}
+tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--pri-soft) 35%,transparent)}
+tbody tr:hover td{background:var(--pri-soft)}
+td{vertical-align:middle}
+td .c-name{font-weight:700}
+td .acts{display:flex;gap:6px;flex-wrap:wrap}
+td .acts button,td button.sm{padding:5px 10px;font-size:.85em}
+.card table{border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+label{font-weight:700;font-size:.92em;margin-bottom:4px;display:block}
+.grid>div,.form-grid>div{display:flex;flex-direction:column}
+input,select,textarea{border-radius:8px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:0}
+details>summary{cursor:pointer;font-weight:700;padding:8px 0}
 </style>
 </head>
 <body>
@@ -572,46 +591,24 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     <button id="tabBtnD" class="on" onclick="showTab('d')">🏠 الرئيسية</button>
     <button id="tabBtnT" onclick="showTab('t')">📋 مهام اليوم <span id="taskCount"></span></button>
     <button id="tabBtnB" onclick="showTab('b')">الحجوزات</button>
+    <button id="tabBtnS" onclick="showTab('s')">💼 الحسابات والأرباح</button>
     <button id="tabBtnA" onclick="showTab('a')">👥 جميع العملاء</button>
     <button id="tabBtnL" onclick="showTab('l')">العملاء المرجحون (استفسارات) <span id="leadCount"></span></button>
-    <button id="tabBtnR" onclick="showTab('r')">⭐ الولاء والإحالات</button>
-    <button id="tabBtnC" onclick="showTab('c')">📣 حملات العروض</button>
-    <button id="tabBtnS" onclick="showTab('s')">💼 الحسابات والأرباح</button>
   </div>
 
 <div id="tabDash" style="display:none"><div id="dashHello"></div><div id="dashStatsHost"></div><div id="dashBox"></div></div>
 <div id="tabTasks" style="display:none"><div id="tasksBox"></div></div>
 
-<div id="tabCamp" style="display:none">
-  <div class="card">
-    <h2>📣 حملات العروض</h2>
-    <div class="c-sub" style="line-height:1.8;margin-bottom:12px">اختر فئة العملاء واكتب الرسالة، ثم اضغط «واتساب» أمام كل عميل (يفتح واتساب برسالة جاهزة باسمه وتضغط إرسال بنفسك). لا يُرسل شيء تلقائيًا، ويُستبعد تلقائيًا من علّمتهم «عدم الإزعاج».</div>
-    <div class="gridc">
-      <div><label>الفئة</label><select id="cgSeg"></select></div>
-      <div id="cgMonthsBox" style="display:none"><label>غائبون منذ (أشهر)</label><input type="number" id="cgMonths" min="1" value="6"></div>
-      <div id="cgDestBox" style="display:none"><label>الوجهة</label><select id="cgDest"></select></div>
-      <div><label>اسم الحملة (لتتبّع من أُرسل له — اختياري)</label><input id="cgName" placeholder="مثال: عرض رمضان"></div>
-      <div><label>قالب الرسالة</label><select id="cgTpl"></select></div>
-      <div class="full" style="grid-column:1/-1"><label>نص الرسالة للذكور (عدّله كما تشاء — يُستبدل {name} باسم كل عميل)</label><textarea id="cgText" rows="6"></textarea><label style="margin-top:8px">نص الرسالة للإناث (إن تركته فارغًا يُرسل نص الذكور للجميع)</label><textarea id="cgTextF" rows="6"></textarea><div class="c-sub" id="cgVars" style="margin-top:4px"></div></div>
-    </div>
-    <div class="actions"><button class="sec" onclick="campCSV()">تصدير القائمة Excel</button><button class="sec" onclick="campCopy()">نسخ الأرقام</button></div>
-  </div>
-  <div class="card">
-    <h2>العملاء المستهدفون</h2><div id="cgStat" class="c-sub" style="margin-bottom:8px"></div>
-    <div class="tbl"><table class="rec"><thead><tr><th>العميل</th><th>التذاكر</th><th>آخر نشاط</th><th>الحالة</th><th class="noprint">إجراءات</th></tr></thead><tbody id="cgRows"></tbody></table></div>
-  </div>
-</div>
-
 <div id="tabAll" style="display:none">
   <div class="card">
     <h2>👥 جميع العملاء</h2>
-    <div class="c-sub" style="margin-bottom:10px">كل من تعاملت معه في مكان واحد: من حجز، ومن سأل ولم يحجز (المرجّحون والطلبات الواردة من صفحة العملاء).</div>
+    <div class="c-sub" style="margin-bottom:10px">كل عملائك المسجّلين: افتح ملف أي عميل للتعديل أو الحجز أو الحذف.</div>
     <div class="pp-stats" id="ppStats"></div>
     <div class="toolbar noprint">
       <input id="pq" placeholder="بحث بالاسم أو الهاتف أو الوجهة...">
-      <select id="pType"><option value="">الكل</option><option value="booked">✅ حجزوا</option><option value="prospect">🔎 لم يحجزوا بعد (مرجّحون وطلبات)</option><option value="lead">مرجّحون فقط</option><option value="inq">طلبات جديدة من الصفحة</option><option value="client">📝 مسجّلون فقط (بدون حجز)</option><option value="debt">💰 عليهم متبقي</option><option value="vip">🎁 مؤهلون لعرض</option></select>
-      <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option><option value="kind">حسب النوع</option></select>
-      <button class="sec" onclick="peopleCSV()">تصدير Excel</button>
+      <select id="pType"><option value="">كل العملاء</option><option value="debt">💰 عليهم متبقي</option></select>
+      <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option></select>
+      <button onclick="acOpen()">➕ إضافة عميل</button>
     </div>
     <div class="tbl"><table class="rec"><thead><tr><th data-pk="name">العميل</th><th data-pk="kind">الحالة</th><th data-pk="trips">التفاصيل</th><th data-pk="debt">المتبقي</th><th data-pk="recent">آخر نشاط</th><th class="noprint">إجراءات</th></tr></thead><tbody id="ppRows"></tbody></table></div>
   </div>
@@ -665,8 +662,7 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
         <details class="full more" id="moreBox"><summary>＋ بيانات إضافية: الهوية، الجواز، الميلاد، من أحاله</summary><div class="grid" style="margin-top:10px">
           <div><label>رقم البطاقة / الهوية</label><input id="idNo" dir="ltr" style="text-align:right" inputmode="numeric"></div>
           <div><label>انتهاء جواز السفر</label><input type="date" id="passportExpiry"></div>
-          <div><label>تاريخ ميلاد العميل</label><input type="date" id="birthday"></div>
-          <div><label>عميل أحاله (اختياري)</label><input id="refBy" list="custList" placeholder="من عرّف هذا العميل بالمكتب؟"></div></div></details>
+          <div><label>تاريخ ميلاد العميل</label><input type="date" id="birthday"></div></div></details>
         <div class="full cancelbox" id="cancelBox" style="display:none">
           <h4>↩ تفاصيل الإلغاء والاسترداد</h4>
           <div class="grid">
@@ -725,46 +721,11 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
   </div>
 </div>
 
-<div id="tabLoyalty" style="display:none">
-  <div class="card">
-    <h2>⭐ الولاء والإحالات</h2>
-    <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
-      <div><label>يُعتبر العميل مؤهلًا لعرض إذا حجز أكثر من (عدد التذاكر)</label><input type="number" id="thr" min="1" value="3" style="width:120px"></div>
-      <div class="c-sub" style="max-width:560px;line-height:1.7">
-        • التذاكر تُحسب من الحجوزات غير الملغاة (حسب خانة «عدد التذاكر» في كل حجز)، ويُجمَّع العميل برقم هاتفه.<br>
-        • الإحالة: اكتب في الحجز خانة «عميل أحاله»، وتُستحق للعميل المُحيل خصم عن كل عميل أحاله وحجز فعلًا. اضغط «منح خصم إحالة» بعد أن تعطيه الخصم.<br>
-        • خصم أي عميل (مُحيل أو مُحال) تسجله في خانة «خصم ممنوح» داخل الحجز.<br>• المستويات: <span id="tierLegend"></span> (تعديلها من ⚙ الإعدادات). اضغط اسم العميل لفتح ملفه وإحالاته وهداياه.
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <h2>قائمة العملاء</h2>
-    <div class="toolbar l noprint">
-      <input id="rq" placeholder="بحث بالاسم أو الرقم...">
-      <select id="rfView">
-        <option value="">كل العملاء</option>
-        <option value="vip">المؤهلون لعرض 🎁</option>
-        <option value="near">قريبون من العرض</option>
-        <option value="refs">لديهم عملاء أحالوهم</option>
-        <option value="referred">عملاء تابعون لعميل آخر</option>
-        <option value="gold">🥇 ذهبيون</option><option value="silver">🥈 فضيون</option><option value="gift">لديهم هدية مستحقة</option>
-      </select>
-      <button class="sec" onclick="$('rq').value='';$('rfView').value='';render()">مسح الفلاتر</button>
-    </div>
-    <div class="tbl">
-      <table class="rec">
-        <thead><tr><th>العميل</th><th>عدد التذاكر</th><th>إجمالي المدفوع</th><th>آخر سفر</th><th>تابع لـ (من أحاله)</th><th>العملاء التابعون له</th><th>مكافأة الإحالة</th><th class="noprint">إجراءات</th></tr></thead>
-        <tbody id="rrows"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
 <div id="tabAcc" style="display:none"><div class="card"><h2>💼 الحسابات والأرباح</h2><div class="accnav" id="accNav"></div><div id="accBody"></div></div></div>
 <div id="tabLeads" style="display:none">
   <div class="card">
-    <div class="ld-head"><div><h2>🔎 العملاء المرجحون</h2><div class="c-sub">من سأل عن رحلة ولم يحجز بعد — تابعهم حتى يحجزوا. <b id="ldCount"></b></div></div>
-      <div class="ld-hact noprint"><button onclick="newLead()">➕ مرجّح جديد</button><div class="seg" id="ldView"><button type="button" data-v="cards" onclick="ldSetView('cards')">▦ بطاقات</button><button type="button" data-v="table" onclick="ldSetView('table')">☰ جدول</button></div></div></div>
+    <div class="ld-head"><div><h2>🔎 استفسارات</h2><div class="c-sub">من سأل عن رحلة ولم يحجز بعد (من صفحة «اسأل» أو سجّلته بنفسك) — تابعهم حتى يحجزوا. <b id="ldCount"></b></div></div>
+      <div class="ld-hact noprint"><button onclick="newLead()">➕ استفسار جديد</button><div class="seg" id="ldView"><button type="button" data-v="cards" onclick="ldSetView('cards')">▦ بطاقات</button><button type="button" data-v="table" onclick="ldSetView('table')">☰ جدول</button></div></div></div>
     <div class="ld-pills noprint" id="ldKpis"></div>
     <div class="toolbar noprint">
       <input id="lq" placeholder="بحث بالاسم أو الرقم أو الوجهة أو الملاحظات...">
@@ -882,7 +843,6 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
     <div class="set-body">
       <nav class="snav" id="sNav">
         <button type="button" data-p="office" class="on">🏢 بيانات المكتب</button>
-        <button type="button" data-p="loyal">⭐ الولاء والهدايا</button>
         <button type="button" data-p="msgs">💬 الرسائل الجاهزة</button>
         <button type="button" data-p="ask">🌐 صفحة العملاء</button>
         <button type="button" data-p="look">🎨 المظهر</button>
@@ -897,23 +857,9 @@ label.chk,.exrec .chk{display:flex;gap:10px;align-items:flex-start}
             <div><label>رمز الدولة لواتساب</label><input id="sCC" dir="ltr" style="text-align:right" placeholder="20"><div class="hint">الأرقام التي تبدأ بصفر تُعامل كأرقام هذه الدولة. أرقام الدول الأخرى اكتبها بصيغة +966…</div></div>
             <div><label>العملة</label><input id="sCur" placeholder="جنيه"></div>
             <div class="full"><label>ملاحظة أسفل عرض السعر</label><input id="sQuoteFooter"></div>
+            <div class="full"><label>نسخة احتياطية</label><button type="button" class="sec" id="autoBkBtn" onclick="autoBkToggle()"></button></div>
             <div class="full"><label>شعار المكتب (يظهر أعلى عرض السعر)</label>
               <div class="logo-row"><img id="sLogoImg" alt="" style="display:none"><input type="file" id="sLogoFile" accept="image/*"><button type="button" class="sec sm" onclick="logoRemove()">إزالة الشعار</button></div></div>
-          </div>
-        </section>
-        <section class="spane" id="pane-loyal" style="display:none">
-          <h3>مستويات الولاء</h3><p class="hint">يُحسب المستوى من عدد التذاكر التي حجزها العميل (الحجوزات الملغاة لا تُحتسب). العروض والهدايا تبدأ من المستوى الفضي.</p>
-          <div class="tiers">
-            <div class="tier t-bronze"><div class="tier-h">🥉 برونزي</div><label>يبدأ من (تذكرة)</label><input type="number" id="sBronze" min="1"><label>الهدية</label><input id="sGiftBronze" placeholder="بدون"></div>
-            <div class="tier t-silver"><div class="tier-h">🥈 فضي</div><label>يبدأ من (تذكرة)</label><input type="number" id="sSilver" min="2"><label>الهدية</label><input id="sGiftSilver" placeholder="مثال: خصم 5%"></div>
-            <div class="tier t-gold"><div class="tier-h">🥇 ذهبي</div><label>يبدأ من (تذكرة)</label><input type="number" id="sGoldFrom" min="3"><label>الهدية</label><input id="sGiftGold" placeholder="مثال: خصم 10%"></div>
-          </div>
-          <div class="ladder" id="sLadder"></div>
-          <h3 style="margin-top:22px">عروض ومكافآت</h3>
-          <div class="sgrid">
-            <div><label>مكافأة الإحالة (لمن يُحيل عميلًا جديدًا)</label><input id="sRefReward"></div>
-            <div><label>هدية عيد الميلاد</label><input id="sBdayGift"></div>
-            <div class="full"><label>عرض «افتقدناكم» للعملاء الغائبين</label><input id="sOffer"></div>
           </div>
         </section>
         <section class="spane" id="pane-msgs" style="display:none">
@@ -1314,7 +1260,7 @@ $('f').addEventListener('submit', e => {
     bookingDate: $('bookingDate').value, airline: $('airline').value.trim(),
     pnr: $('pnr').value.trim(), status: $('status').value,
     price: +$('price').value || 0, paid: +$('paid').value || 0, notes: $('notes').value.trim(),
-    qty: Math.max(1, Math.round(+$('qty').value || 1)), discount: +$('discount').value || 0, refBy: $('refBy').value.trim(), idNo: toLat($('idNo').value.trim()),
+    qty: Math.max(1, Math.round(+$('qty').value || 1)), discount: +$('discount').value || 0, idNo: toLat($('idNo').value.trim()),
     returnDate: $('returnDate').value, cost: +$('cost').value || 0, supplier: $('supplier').value,
     departTime: $('departTime').value, returnTime: $('returnDate').value ? $('returnTime').value : '',
     cancelFee: $('status').value === 'cancelled' ? (+$('cancelFee').value || 0) : 0, supPenalty: $('status').value === 'cancelled' ? (+$('supPenalty').value || 0) : 0,
@@ -1343,7 +1289,7 @@ $('cancelEdit').onclick = resetForm;
 
 function edit(id){
   const r = data.find(x => x.id === id); if(!r) return;
-  ['name','phone','idNo','origin','destination','travelDate','returnDate','bookingDate','airline','pnr','status','qty','price','discount','paid','refBy','notes','cost'].forEach(k => $(k).value = r[k] ?? '');
+  ['name','phone','idNo','origin','destination','travelDate','returnDate','bookingDate','airline','pnr','status','qty','price','discount','paid','notes','cost'].forEach(k => $(k).value = r[k] ?? '');
   refreshSupSel(); $('supplier').value = r.supplier || ''; comm3(); dupCheck(); openMoreIfFilled(); fillGender(r); fillPhonesField(r);
   { const cl = CM.get(ckey(r)); $('passportExpiry').value = (cl && cl.passportExpiry) || ''; $('birthday').value = (cl && cl.birthday) || ''; }
   if (!$('qty').value) $('qty').value = 1;
@@ -1457,7 +1403,7 @@ $('restoreFile').addEventListener('change', e => {
           if (obj.clients) { clients = obj.clients; CM = new Map(clients.map(c => [c.id, c])); syncList('clients', clients); }
           if (obj.gifts) { gifts = obj.gifts; syncList('gifts', gifts); }
           if (obj.suppliers) { suppliers = obj.suppliers; syncList('suppliers', suppliers); } if (obj.payments) { payments = obj.payments; syncList('payments', payments); } if (obj.trash) { trash = obj.trash; syncList('trash', trash); } if (obj.expenses) { expenses = obj.expenses; syncList('expenses', expenses); }
-          if (obj.settings) { settings = Object.assign({threshold:3}, obj.settings); saveSettings(); $('thr').value = settings.threshold; }
+          if (obj.settings) { settings = Object.assign({threshold:3}, obj.settings); saveSettings() }
         }
         render();
       }
@@ -1517,9 +1463,8 @@ const isOpen = l => ['new','contacted','noanswer'].includes(l.status);
 const isLate = l => isOpen(l) && l.follow && l.follow <= todayStr();
 
 function showTab(t){
-  [['d','tabDash','tabBtnD'],['t','tabTasks','tabBtnT'],['b','tabBookings','tabBtnB'],['a','tabAll','tabBtnA'],['l','tabLeads','tabBtnL'],['r','tabLoyalty','tabBtnR'],['c','tabCamp','tabBtnC'],['s','tabAcc','tabBtnS']].forEach(([k, box, btn]) => {
+  [['d','tabDash','tabBtnD'],['t','tabTasks','tabBtnT'],['b','tabBookings','tabBtnB'],['a','tabAll','tabBtnA'],['l','tabLeads','tabBtnL'],['s','tabAcc','tabBtnS']].forEach(([k, box, btn]) => {
     $(box).style.display = t === k ? '' : 'none'; $(btn).classList.toggle('on', t === k); });
-  if (t === 'c') renderCampaigns();
   if (t === 'a') renderPeople();
   if (t === 's') renderAcc();
 }
@@ -1560,7 +1505,7 @@ function convertLead(id){
   resetForm();
   $('name').value = l.name; $('phone').value = l.phone; $('origin').value = l.orig || ''; $('destination').value = l.dest || '';
   $('travelDate').value = l.travel || ''; $('notes').value = l.notes || '';
-  $('qty').value = l.pax || 1; if (l.quotePrice) $('price').value = l.quotePrice; if (l.quoteAirline) $('airline').value = l.quoteAirline; if (l.refBy) $('refBy').value = l.refBy;
+  $('qty').value = l.pax || 1; if (l.quotePrice) $('price').value = l.quotePrice; if (l.quoteAirline) $('airline').value = l.quoteAirline;
   convertingLeadId = id;
   $('formTitle').textContent = 'تحويل مرجّح إلى حجز: ' + l.name + ' (أكمل باقي البيانات واضغط حفظ)';
   showTab('b'); window.scrollTo({top:0, behavior:'smooth'});
@@ -1622,10 +1567,9 @@ function buildCustomers(){
     const k = ckey(r);
     let c = map.get(k);
     if (!c) { c = {key:k, name:r.name, phone:r.phone, idNo:'', tickets:0, trips:0, spent:0, remaining:0, last:'', lastAct:'', firstDate:'', nextTrip:'', dests:new Set(), bk:[],
-      refBy:'', refName:'', refKey:'', referrals:[], client:CM.get(k) || null, code:refCode(k), tier:''}; map.set(k, c); }
+      client:CM.get(k) || null}; map.set(k, c); }
     c.name = r.name; if (pkey(r.phone) === k || !c.pOk) { c.phone = r.phone; c.pOk = pkey(r.phone) === k; } c.bk.push(r);
     if (r.idNo) c.idNo = r.idNo;
-    if (r.refBy && !c.refBy) c.refBy = r.refBy;
     if (r.status === 'cancelled') return;
     c.trips++; c.tickets += Math.max(1, Math.round(+r.qty || 1));
     c.spent += (+r.paid || 0); c.remaining += remaining(r);
@@ -1636,84 +1580,13 @@ function buildCustomers(){
     if (r.destination) c.dests.add(r.destination);
     if (r.travelDate >= todayStr() && (!c.nextTrip || r.travelDate < c.nextTrip)) c.nextTrip = r.travelDate;
   });
-  const byName = new Map(), byCode = new Map();
-  map.forEach(c => { c.tier = tierOf(c.tickets); byCode.set(c.code, c); const n = String(c.name||'').trim(); if (n && !byName.has(n)) byName.set(n, c); });
-  map.forEach(c => {
-    if (!c.refBy) return;
-    const raw = String(c.refBy).trim(), parts = raw.split('|'), nm = parts[0].trim();
-    const dg = pkey(parts.length > 1 ? parts[1] : c.refBy);
-    let ref = null;
-    if (/^[A-Z0-9]{7}$/.test(raw.toUpperCase()) && byCode.has(raw.toUpperCase())) ref = byCode.get(raw.toUpperCase());
-    else if (dg.length >= 7 && map.has(dg)) ref = map.get(dg);
-    else if (byName.has(nm)) ref = byName.get(nm);
-    if (ref === c) return;
-    c.refName = ref ? ref.name : nm;
-    if (ref) { c.refKey = ref.key; ref.referrals.push(c); }
-  });
   return [...map.values()];
 }
 
-let loyList = [], custAll = [];
-function renderLoyalty(){
-  const thr = thrV();
-  $('tierLegend').textContent = tierLegend();
-  const all = buildCustomers();
-  custAll = all;
-  $('custList').innerHTML = all.map(c => `<option value="${esc(c.name)} | ${esc(c.phone)}" label="${esc(c.idNo || '')}">`).join('');
-  const isVip = c => c.tickets > thr;
-  const q = $('rq').value.trim().toLowerCase(), v = $('rfView').value;
-  loyList = all.filter(c => {
-    if (q && !(c.name + ' ' + c.phone + ' ' + (c.idNo || '')).toLowerCase().includes(q)) return false;
-    if (v === 'vip') return isVip(c);
-    if (v === 'near') return !isVip(c) && c.tickets >= Math.max(1, thr - 1);
-    if (v === 'refs') return c.referrals.length > 0;
-    if (v === 'referred') return !!c.refName;
-    if (v === 'gold') return c.tier === 'gold';
-    if (v === 'silver') return c.tier === 'silver';
-    if (v === 'gift') return giftsDue(c).length > 0;
-    return true;
-  }).sort((a,b) => (isVip(b) - isVip(a)) || (b.tickets - a.tickets) || String(a.name).localeCompare(String(b.name), 'ar'));
-
-  $('rrows').innerHTML = loyList.length ? loyList.map((c, i) => {
-    const vip = isVip(c), act = refActive(c), dv = refDue(c), given = rewards[c.key] || 0, gd = giftsDue(c).length;
-    const tchip = vip ? '<span class="chip c-ok">🎁 مؤهل لعرض</span>' : `<span class="chip c-gray">باقي ${thr + 1 - c.tickets} للعرض</span>`;
-    const refsHtml = c.referrals.length
-      ? `<span class="chip c-info">${c.referrals.length} عميل</span>` +
-        c.referrals.slice(0, 4).map(x => `<div class="c-sub">• ${esc(x.name)}${x.trips ? '' : ' (لم يحجز)'}</div>`).join('') +
-        (c.referrals.length > 4 ? `<div class="c-sub">+${c.referrals.length - 4} آخرين</div>` : '')
-      : '<span class="c-sub">—</span>';
-    const rewHtml = c.referrals.length
-      ? (dv > 0 ? `<span class="chip c-warn">خصم مستحق × ${dv}</span>` : (act > 0 ? '<span class="chip c-ok">✓ لا يوجد مستحق</span>' : '<span class="c-sub">لم يحجز أحد منهم بعد</span>')) +
-        `<div class="c-sub">ممنوح ${given} من ${act}</div>`
-      : '<span class="c-sub">—</span>';
-    const acts = `<button class="sm" onclick="openProfileIdx(${i})">👤 ملفه</button> ` + (vip ? `<button class="sm" onclick="offerMsg(${i})">💬 رسالة</button> ` : '') +
-      (dv > 0 ? `<button class="sm" onclick="giveReward(${i},1)">منح خصم إحالة</button> ` : '') +
-      (given > 0 ? `<button class="sec sm" onclick="giveReward(${i},-1)">تراجع</button>` : '');
-    return `<tr class="${vip ? 'vip' : ''}">
-      <td><div class="c-name"><a class="plink" onclick="openProfileIdx(${i})">${esc(c.name)}</a> ${tierBadge(c)}${gd ? ' <span class="chip c-warn">🎁 هدية مستحقة</span>' : ''}</div>
-        ${phonesBlock(c.phone)}${c.idNo ? `<div class="c-sub">🪪 ${esc(c.idNo)}</div>` : ''}
-        <div class="c-sub">كود الإحالة: <b dir="ltr">${esc(c.code)}</b></div></td>
-      <td><div class="big">${c.tickets}</div><div class="c-sub">في ${c.trips} حجز</div>${tchip}</td>
-      <td>${money(c.spent)}${c.remaining > 0 ? `<div><span class="chip c-bad">متبقي ${money(c.remaining)}</span></div>` : ''}</td>
-      <td>${c.last ? fmtD(c.last) : '<span class="c-sub">—</span>'}</td>
-      <td>${c.refName ? `<div class="c-name">${esc(c.refName)}</div>${c.refKey ? '' : '<div class="c-sub">(غير مسجل كعميل)</div>'}` : '<span class="c-sub">—</span>'}</td>
-      <td>${refsHtml}</td>
-      <td>${rewHtml}</td>
-      <td class="noprint"><div class="acts">${acts}</div></td>
-    </tr>`;
-  }).join('') : '<tr><td class="empty" colspan="8">لا توجد نتائج</td></tr>';
-
-  const vipN = all.filter(isVip).length, dueN = all.reduce((s, c) => s + refDue(c), 0);
-  $('stats').insertAdjacentHTML('beforeend',
-    `<div class="stat ok">عملاء مؤهلون لعرض<b>${vipN}</b></div><div class="stat warn">خصومات إحالة مستحقة<b>${dueN}</b></div>`);
-}
-function giveReward(i, d){
-  const c = loyList[i]; if (!c) return;
-  rewards[c.key] = Math.max(0, (rewards[c.key] || 0) + d); saveRewards(); render();
-}
-function offerMsg(i){
-  const c = loyList[i]; if (!c) return;
-  xmOpen('رسالة إلى ' + c.name, c.phone, ['offer', 'giftmsg', 'referral', 'missyou', 'birthday', 'passport'].map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), custVars(c))})), 0);
+let custAll = [];
+function refreshCustAll(){
+  custAll = buildCustomers();
+  $('custList').innerHTML = custAll.map(c => `<option value="${esc(c.name)} | ${esc(c.phone)}" label="${esc(c.idNo || '')}">`).join('');
 }
 $('pick').addEventListener('input', () => {
   const parts = $('pick').value.split('|'); if (parts.length < 2) return;
@@ -1722,13 +1595,9 @@ $('pick').addEventListener('input', () => {
   $('name').value = c.name; $('phone').value = c.phone; $('idNo').value = c.idNo || '';
   $('passportExpiry').value = (c.client && c.client.passportExpiry) || ''; $('birthday').value = (c.client && c.client.birthday) || ''; if (c.client && c.client.prefAirline) $('airline').value = c.client.prefAirline;
   $('pick').value = '';
-  const thr = Math.max(1, +settings.threshold || 3);
-  $('pickInfo').innerHTML = '✓ تم اختيار <b>' + esc(c.name) + '</b> — لديه ' + c.tickets + ' تذكرة في ' + c.trips + ' حجز سابق' +
-    (c.tickets > thr ? ' <span class="chip c-ok">🎁 مؤهل لعرض</span>' : '') + (c.remaining > 0 ? ' <span class="chip c-bad">⚠ عليه متبقي ' + money(c.remaining) + '</span>' : '') + '. أكمل بيانات الرحلة الجديدة.';
+  $('pickInfo').innerHTML = '✓ تم اختيار <b>' + esc(c.name) + '</b> — لديه ' + c.tickets + ' تذكرة في ' + c.trips + ' حجز سابق' + (c.remaining > 0 ? ' <span class="chip c-bad">⚠ عليه متبقي ' + money(c.remaining) + '</span>' : '') + '. أكمل بيانات الرحلة الجديدة.';
   $('origin').focus();
 });
-['rq','rfView'].forEach(id => $(id).addEventListener('input', () => render()));
-$('thr').addEventListener('input', () => { settings.threshold = Math.max(1, Math.round(+$('thr').value || 3)); saveSettings(); render(); });
 
 ['lq','lfStatus'].forEach(id => $(id).addEventListener('input', () => render()));
 /*V2*/
@@ -1750,22 +1619,8 @@ const addMonths = (ds, n) => { const d = new Date(ds + 'T00:00:00'); d.setMonth(
 const ckey = r => { const k = pkey(r.phone); return k ? (aliasMap().get(k) || k) : ('n:' + String(r.name || '').trim()); };
 function ckp(p){ const k = pkey(p); return k ? (aliasMap().get(k) || k) : ''; }
 function fnv(s){ let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; }
-const refCode = key => (fnv(key).toString(36).padStart(7, '0').slice(-4) + fnv(key + '#').toString(36).padStart(7, '0').slice(-3)).toUpperCase();
-const thrV = () => Math.max(1, +settings.threshold || 3);
-const DEF_OFFICE = {name:'', phone:'', address:'', cc:'20', currency:'', quoteFooter:'السعر ساري حتى التاريخ المذكور وقابل للتغيير حسب توفر المقاعد.',
-  refReward:'خصم على حجزك القادم', birthdayGift:'خصم خاص بمناسبة ميلادك', offer:'خصم خاص على حجزك القادم',
-  bronzeFrom:1, giftBronze:'', giftSilver:'خصم 5% على الحجز القادم', giftGold:'خصم 10% وهدية مميزة', goldFrom:8};
+const DEF_OFFICE = {name:'', phone:'', address:'', cc:'20', currency:'', quoteFooter:'السعر ساري حتى التاريخ المذكور وقابل للتغيير حسب توفر المقاعد.'};
 const office = () => Object.assign({}, DEF_OFFICE, settings.office || {});
-const TIER_LABEL = {bronze:'🥉 برونزي', silver:'🥈 فضي', gold:'🥇 ذهبي'};
-const tierOf = t => t >= (+office().goldFrom || 8) ? 'gold' : t > thrV() ? 'silver' : t >= (+office().bronzeFrom || 1) ? 'bronze' : '';
-function tierLegend(){ const o = office(), b = +o.bronzeFrom || 1, sv = thrV() + 1, g = +o.goldFrom || 8;
-  return '🥉 برونزي: من ' + b + (sv - 1 > b ? ' إلى ' + (sv - 1) : '') + ' تذكرة · 🥈 فضي: من ' + sv + (g - 1 > sv ? ' إلى ' + (g - 1) : '') + ' تذكرة · 🥇 ذهبي: ' + g + ' تذكرة فأكثر'; }
-const tierGift = t => { const o = office(); return t === 'gold' ? o.giftGold : t === 'silver' ? o.giftSilver : o.giftBronze; };
-const tierBadge = c => c.tier ? `<span class="chip c-tier-${c.tier}">${TIER_LABEL[c.tier]}</span>` : '';
-const giftsDue = c => { const t = []; if (c.tickets > thrV()) t.push('silver'); if (c.tickets >= (+office().goldFrom || 8)) t.push('gold');
-  return t.filter(x => !gifts.some(g => g.client === c.key && g.tier === x)); };
-const refActive = c => c.referrals.filter(x => x.trips > 0).length;
-const refDue = c => Math.max(0, refActive(c) - (rewards[c.key] || 0));
 
 function patchClient(key, patch){
   let c = CM.get(key);
@@ -1779,25 +1634,21 @@ const TPL = {
   remind:    {label:'تذكير قبل السفر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلتكم {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو مراعاة التالي:\n• التأكد من سريان جواز السفر وصلاحية التأشيرة (إن لزمت).\n• الحضور إلى المطار قبل الإقلاع بثلاث ساعات.\n• إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكم رحلة سعيدة.\n{signature}'},
   bonvoyage: {label:'رحلة سعيدة', text:'السيد/ة {name}،\n\nيتمنى لكم فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجتم إلى أي مساعدة أثناء السفر فنحن على تواصل معكم.\n\n{signature}'},
   return:    {label:'تذكير رحلة العودة', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنذكّركم بموعد رحلة العودة:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو الحضور إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكم عودة آمنة.\n{signature}'},
-  feedback:  {label:'بعد العودة (تقييم وإحالة)', text:'السيد/ة {name}، الحمد لله على سلامتكم 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكم، ويهمنا رأيكم في خدمتنا: هل كانت تجربتكم كما توقعتم؟ وهل لديكم أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتكم خدمتنا فيسعدنا أن نخدم أهلكم وأصدقاءكم أيضًا؛ يكفي أن يذكروا كودكم الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولكم عند حجزهم: {refReward}.\n\nشاكرين ثقتكم.\n{signature}'},
+  feedback:  {label:'بعد العودة (تقييم)', text:'السيد/ة {name}، الحمد لله على سلامتكم 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكم، ويهمنا رأيكم في خدمتنا: هل كانت تجربتكم كما توقعتم؟ وهل لديكم أي ملاحظات تساعدنا على التطوير؟\n\nشاكرين ثقتكم.\n{signature}'},
   payment:   {label:'تذكير بالمتبقي على الحجز', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنفيدكم بأن المتبقي على حجز الرحلة {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو التكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكم.\n{signature}'},
   balance:   {label:'تذكير بإجمالي المتبقي على العميل', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nبمراجعة حسابكم لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو التكرم بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتكم.\n\nشاكرين تعاونكم.\n{signature}'},
   passport:  {label:'تنبيه جواز السفر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nنلفت انتباهكم إلى أن جواز سفركم ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل تجديده قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتكم لأي استفسار.\n{signature}'},
-  birthday:  {label:'تهنئة عيد ميلاد', text:'السيد/ة {name}،\n\nكل عام وأنتم بخير 🎂\nيتقدم لكم فريق {office} بأطيب التهاني بمناسبة عيد ميلادكم، ويسعده أن يقدّم لكم هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية يُرجى التواصل معنا.\n{signature}'},
-  missyou:   {label:'افتقدناكم (عميل غائب)', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nافتقدناكم! ويسعدنا أن نكون معكم في رحلتكم القادمة.\nوتقديرًا لثقتكم السابقة، لديكم عرض خاص: {offer}.\n\nللحجز أو الاستفسار نحن في خدمتكم.\n{signature}'},
-  offer:     {label:'عرض الولاء', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتكم وحجوزاتكم المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لكم عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض يُرجى التواصل معنا عند حجزكم القادم.\n\nشاكرين لكم ثقتكم.\n{signature}'},
-  giftmsg:   {label:'تهنئة بمستوى الولاء', text:'السيد/ة {name}، مبارك 🎉\n\nيسعدنا إبلاغكم بوصولكم إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتكم:\n🎁 {gift}\n\nيُرجى التواصل معنا لاستلامها، وشكرًا لثقتكم.\n{signature}'},
-  referral:  {label:'دعوة الإحالة', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلكم وأصدقاءكم، ولكم عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودكم الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لكم ثقتكم.\n{signature}'},
+  birthday:  {label:'تهنئة عيد ميلاد', text:'السيد/ة {name}،\n\nكل عام وأنتم بخير 🎂\nيتقدم لكم فريق {office} بأطيب التهاني بمناسبة عيد ميلادكم.\n{signature}'},
   leadfollow:{label:'متابعة عميل مرجّح', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركم عن رحلة {origin} ‏←‏ {dest}، هل ما زلتم مهتمين بالحجز؟ يسعدنا أن نوفر لكم أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكم.\n{signature}'},
   inqreply:  {label:'رد على طلب من صفحة العملاء', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكم معنا، وقد استلمنا طلبكم:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكم بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكم الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}'},
   quote:     {label:'عرض سعر', text:'السيد/ة {name}، تحية طيبة من {office}،\n\nيسرّنا تقديم عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى الرد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'}
 };
 const tplText = k => tplObj(k);
 const fillTpl = (text, v) => fillTplG(text, v);
-const VARS = [['name','اسم العميل'],['office','اسم المكتب'],['phone','هاتف المكتب'],['signature','توقيع المكتب'],['origin','مطار الإقلاع'],['dest','مطار الهبوط'],['date','تاريخ السفر'],['return','تاريخ العودة'],['returnLine','سطر العودة'],['when','موعد السفر'],['airline','شركة الطيران'],['pnr','رقم الحجز'],['qty','عدد التذاكر'],['price','السعر'],['paid','المدفوع'],['remaining','المتبقي'],['payLine','سطر السداد'],['currency','العملة'],['code','كود الإحالة'],['refLink','رابط الإحالة'],['tickets','عدد تذاكر العميل'],['tier','المستوى'],['gift','الهدية'],['passport','انتهاء الجواز'],['refReward','مكافأة الإحالة'],['birthdayGift','هدية الميلاد'],['offer','عرض افتقدناكم'],['pax','عدد الركاب'],['until','ساري حتى'],['info','تفاصيل']];
+const VARS = [['name','اسم العميل'],['office','اسم المكتب'],['phone','هاتف المكتب'],['signature','توقيع المكتب'],['origin','مطار الإقلاع'],['dest','مطار الهبوط'],['date','تاريخ السفر'],['return','تاريخ العودة'],['returnLine','سطر العودة'],['when','موعد السفر'],['airline','شركة الطيران'],['pnr','رقم الحجز'],['qty','عدد التذاكر'],['price','السعر'],['paid','المدفوع'],['remaining','المتبقي'],['payLine','سطر السداد'],['currency','العملة'],['tickets','عدد تذاكر العميل'],['passport','انتهاء الجواز'],['pax','عدد الركاب'],['until','ساري حتى'],['info','تفاصيل']];
 const VARS_HELP = VARS.map(v => '{' + v[0] + '} ' + v[1]).join(' · ');
 function baseVars(o){ o = o || office(); const nm = o.name || 'مكتبنا';
-  return {office: nm, phone: o.phone || '', address: o.address || '', refReward: o.refReward, birthdayGift: o.birthdayGift, offer: o.offer, currency: o.currency || '',
+  return {office: nm, phone: o.phone || '', address: o.address || '', currency: o.currency || '',
     signature: [nm, o.phone ? '📞 ' + o.phone : '', o.address ? '📍 ' + o.address : ''].filter(Boolean).join('\n')}; }
 function whenText(ds){ const d = daysUntil(ds); return d === 0 ? 'اليوم' : d === 1 ? 'غدًا' : d === 2 ? 'بعد يومين' : d > 2 ? 'بعد ' + d + ' أيام' : ''; }
 function bookingVars(r){
@@ -1805,14 +1656,14 @@ function bookingVars(r){
   return Object.assign(baseVars(), {gender: clientGender(ckey(r)), name: r.name, origin: r.origin, dest: r.destination, date: fmtPT(r), return: fmtPR(r),
     returnLine: r.returnDate ? '\n↩️ تاريخ العودة: ' + fmtPR(r) : '', when: r.travelDate ? whenText(r.travelDate) : '', airline: r.airline || '', pnr: r.pnr || '',
     qty: r.qty || 1, price: moneyP(r.price), paid: moneyP(r.paid), remaining: moneyP(remaining(r)),
-    payLine: !(+r.price) ? '' : remaining(r) > 0 ? '\n💰 المتبقي للسداد: ' + moneyP(remaining(r)) + ' ' + (office().currency || '') : '\n✅ تم سداد المبلغ بالكامل', code: refCode(ckey(r)), refLink: refLinkOf(refCode(ckey(r))), passport: cl ? fmtP(cl.passportExpiry) : ''});
+    payLine: !(+r.price) ? '' : remaining(r) > 0 ? '\n💰 المتبقي للسداد: ' + moneyP(remaining(r)) + ' ' + (office().currency || '') : '\n✅ تم سداد المبلغ بالكامل', passport: cl ? fmtP(cl.passportExpiry) : ''});
 }
 function custVars(c){
-  return Object.assign(baseVars(), {gender: c.client && gKnown(c.client.gender) ? c.client.gender : '', name: c.name, tickets: c.tickets, trips: c.trips, remaining: moneyP(c.remaining), code: c.code, refLink: refLinkOf(c.code), tier: (TIER_LABEL[c.tier] || '').replace(/^\S+\s/, ''), gift: tierGift(c.tier) || '', passport: c.client ? fmtP(c.client.passportExpiry) : ''});
+  return Object.assign(baseVars(), {gender: c.client && gKnown(c.client.gender) ? c.client.gender : '', name: c.name, tickets: c.tickets, trips: c.trips, remaining: moneyP(c.remaining), passport: c.client ? fmtP(c.client.passportExpiry) : ''});
 }
 function leadVars(l){
   return Object.assign(baseVars(), {gender: gKnown(l.gender) ? l.gender : genderByPhone(l.phone), name: l.name, origin: l.orig || '', dest: l.dest || '', date: fmtPT(l), pax: l.pax || 1, airline: l.quoteAirline || '',
-    price: moneyP(l.quotePrice), until: fmtP(l.quoteUntil), info: l.quoteInfo || '', code: refCode(pkey(l.phone) || ('n:' + l.name)), refLink: refLinkOf(refCode(pkey(l.phone) || ('n:' + l.name)))});
+    price: moneyP(l.quotePrice), until: fmtP(l.quoteUntil), info: l.quoteInfo || ''});
 }
 
 /* ---------- المهام المنجزة ---------- */
@@ -1843,7 +1694,7 @@ function buildTasks(){
   const done = doneIds(), T = [], today = todayStr(), cmap = new Map(custAll.map(c => [c.key, c]));
   const push = (group, it) => { it.group = group; T.push(it); };
   inquiries.forEach(q => push('inq', {title: q.name, sub: (q.origin || '—') + ' ‏←‏ ' + (q.destination || '—') + (q.travel ? ' · ' + fmtPT(q) : '') + ' · ' + (q.pax || 1) + ' راكب',
-    sub2: (q.refCode ? '🔗 كود إحالة: ' + q.refCode + ' ' : '') + (q.notes ? '📝 ' + q.notes : ''), phone: q.phone, chip: ['c-info', fmtP(String(q.at).slice(0, 10))],
+    sub2: (q.notes ? '📝 ' + q.notes : ''), phone: q.phone, chip: ['c-info', fmtP(String(q.at).slice(0, 10))],
     wa: {phone: q.phone, text: () => fillTpl(tplText('inqreply'), Object.assign(baseVars(), {name: q.name, gender: q.gender || '', origin: q.origin, dest: q.destination, pax: q.pax || 1}))},
     x: [{label:'➕ تحويل لمرجّح', fn: () => inqToLead(q.id)}, {label:'حذف', cls:'del', fn: () => inqDelete(q.id)}]}));
   data.forEach(r => {
@@ -1869,11 +1720,6 @@ function buildTasks(){
       x: [{label:'🧾 عرض سعر', fn: () => openQuote(l.id)}, {label:'فتح', fn: () => { showTab('l'); editLead(l.id); }}]}); });
   custAll.forEach(c => {
     const cl = c.client, nomkt = cl && cl.optout;
-    giftsDue(c).forEach(t => push('gift', {title: c.name, key: c.key, sub: 'وصل للمستوى ' + TIER_LABEL[t] + (tierGift(t) ? ' — الهدية: ' + tierGift(t) : ''), chip: ['c-warn', c.tickets + ' تذكرة'],
-      wa: {phone: c.phone, text: () => fillTpl(tplText('giftmsg'), Object.assign(custVars(c), {tier: TIER_LABEL[t].replace(/^\S+\s/, ''), gift: tierGift(t) || ''}))},
-      x: [{label:'✓ سجّلت منح الهدية', fn: () => giveGift(c.key, t)}]}));
-    if (refDue(c) > 0) push('ref', {title: c.name, key: c.key, sub: 'أحال ' + refActive(c) + ' عميل حجزوا فعلًا، ممنوح ' + (rewards[c.key] || 0), chip: ['c-warn', 'خصم مستحق × ' + refDue(c)],
-      x: [{label:'✓ منحته الخصم', fn: () => { rewards[c.key] = (rewards[c.key] || 0) + 1; saveRewards(); render(); }}]});
     if (cl && cl.birthday && !nomkt) { const db = daysToBirthday(cl.birthday);
       if (db <= 7) { const yr = new Date(Date.now() + db * 86400000).getFullYear(), id = 'bday:' + c.key + ':' + yr;
         if (!done.has(id)) push('bday', {title: c.name, key: c.key, sub: 'ميلاده ' + fmtP(cl.birthday).slice(0, 5), chip: [db === 0 ? 'c-bad' : 'c-info', db === 0 ? 'اليوم 🎂' : 'بعد ' + db + ' أيام'], doneId: id,
@@ -1921,35 +1767,24 @@ async function pollInquiries(){
 }
 setInterval(() => { if (!document.hidden) pollInquiries(); }, 60000);
 
-/* ---------- الهدايا ---------- */
-function giveGift(key, tier, text){
-  gifts.push({id:'G' + Date.now() + Math.random().toString(36).slice(2, 5), client:key, tier:tier || '', gift:text || tierGift(tier) || 'هدية', at:todayStr(), note:''});
-  syncList('gifts', gifts); render(); if (pKey) renderProfile();
-}
-function delGift(id){ gifts = gifts.filter(g => g.id !== id); syncList('gifts', gifts); render(); if (pKey) renderProfile(); }
-
 /* ---------- صفحة العميل ---------- */
 let pKey = null;
-const openProfileIdx = i => { if (loyList[i]) openProfile(loyList[i].key); };
 function openProfileB(bid){ const r = data.find(x => x.id === bid); if (r) openProfile(ckey(r)); }
 function openProfile(key){ pKey = key; renderProfile(); $('pm').style.display = 'flex'; }
 function closeProfile(){ $('pm').style.display = 'none'; pKey = null; }
 function renderProfile(){
   const c = custAll.find(x => x.key === pKey);
   if (!c) { $('pmBody').innerHTML = '<div class="empty">لا توجد بيانات لهذا العميل</div>'; return; }
-  const cl = c.client || {}, thr = thrV(), nextTier = c.tier === 'gold' ? '' : c.tier === 'silver' ? (+office().goldFrom || 8) - c.tickets : thr + 1 - c.tickets;
-  const mygifts = gifts.filter(g => g.client === c.key).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  const cl = c.client || {};
   const hist = c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate)));
-  const given = rewards[c.key] || 0;
   $('pmBody').innerHTML = `
-    <div class="ph"><div><h2 style="margin:0">${esc(c.name)} ${tierBadge(c)} ${cl.optout ? '<span class="chip c-gray">🚫 عدم إزعاج</span>' : ''}</h2>
+    <div class="ph"><div><h2 style="margin:0">${esc(c.name)} ${cl.optout ? '<span class="chip c-gray">🚫 عدم إزعاج</span>' : ''}</h2>
       ${phonesHtml(c)}${c.idNo ? '<div class="c-sub">🪪 ' + esc(c.idNo) + '</div>' : ''}</div>
       <div class="acts"><button class="sm" onclick="idcOpen(pKey)">🪪 بطاقة العميل</button><button class="sm" onclick="profileNewBooking()">➕ حجز جديد</button><button class="sec sm" onclick="waSend(custAll.find(x=>x.key===pKey).phone,'')">💬 واتساب</button>${c.remaining > 0 ? '<button class="sec sm" onclick="profileBalance()">💰 تذكير بالمتبقي</button>' : ''}<button class="del sm" onclick="custDelete(pKey)">🗑 حذف العميل</button></div></div>
     ${c.remaining > 0 ? `<div class="debt">⚠️ عليه مبلغ متبقٍ إجمالي <b>${money(c.remaining)}</b> ${esc(office().currency || '')}</div>` : ''}
     <div class="pstats"><div><b>${c.tickets}</b>تذكرة</div><div><b>${c.trips}</b>حجز</div><div><b>${money(c.spent)}</b>إجمالي المدفوع</div>
       <div class="${c.remaining > 0 ? 'bad' : 'good'}"><b>${money(c.remaining)}</b>${c.remaining > 0 ? 'المتبقي عليه' : 'لا يوجد متبقي ✓'}</div>
       <div><b>${c.lastAct ? fmtP(c.lastAct) : '—'}</b>آخر نشاط</div><div><b>${c.firstDate ? fmtP(c.firstDate) : '—'}</b>أول حجز</div></div>
-    ${nextTier ? `<div class="c-sub">باقي <b>${nextTier}</b> تذكرة للمستوى التالي</div>` : ''}
     <div class="sgrp"><h3>📎 مستندات العميل</h3><p class="hint" style="margin:0 0 8px">صورة الجواز أو البطاقة أو إيصالات الدفع، تُحفظ بأمان في حسابك السحابي.</p><button class="sm" onclick="openTickets(docCid(pKey))">📂 فتح المستندات <span class="tc" data-cid="${esc(docCid(c.key))}"></span></button></div>
     <div class="sgrp"><h3>✏️ تعديل بيانات العميل</h3>
       <div class="fsec">📞 أرقام الهاتف</div>
@@ -1971,19 +1806,8 @@ function renderProfile(){
       <div class="grid">
         <div class="full"><label>المرافقون / أفراد العائلة</label><textarea id="pfComp" rows="2" placeholder="الاسم - صلة القرابة - رقم الجواز...">${esc(cl.companions || '')}</textarea></div>
         <div class="full"><label>ملاحظات عن العميل</label><textarea id="pfNotes" rows="2">${esc(cl.notes || '')}</textarea></div>
-        <div class="full"><label class="optrow"><input type="checkbox" id="pfOpt" ${cl.optout ? 'checked' : ''}> 🚫 عدم الإزعاج (لا تُرسل له رسائل تسويقية أو حملات)</label></div>
       </div>
       <div class="actions"><button onclick="saveProfile()">💾 حفظ بيانات العميل</button></div></div>
-    <div class="sgrp"><h3>🔗 الإحالات</h3>
-      <div>كود الإحالة: <b class="code" dir="ltr">${esc(c.code)}</b> <button class="sec sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${jq(c.code)}')">نسخ</button>
-        <button class="sm" onclick="profileInvite()">💬 إرسال دعوة الإحالة</button></div>
-      <div class="c-sub">${c.refName ? 'أحاله: <b>' + esc(c.refName) + '</b>' : 'لم يُحَل من أحد'} · ${c.referrals.length ? 'أحال ' + c.referrals.length + ' (حجز منهم ' + refActive(c) + '، خصومات ممنوحة ' + given + ')' : 'لم يُحل أحدًا بعد'}</div>
-      ${c.referrals.length ? '<div class="c-sub">' + c.referrals.map(x => esc(x.name) + (x.trips ? '' : ' (لم يحجز)')).join(' · ') + '</div>' : ''}</div>
-    <div class="sgrp"><h3>🎁 الهدايا</h3>
-      ${giftsDue(c).length ? `<div class="c-sub" style="color:var(--warn)">هدية مستحقة: ${giftsDue(c).map(t => TIER_LABEL[t] + (tierGift(t) ? ' — ' + esc(tierGift(t)) : '')).join(' ، ')}</div>` : ''}
-      ${mygifts.map(g => `<div class="tk"><span>🎁 ${esc(g.gift)} <small>${g.tier ? TIER_LABEL[g.tier] + ' · ' : ''}${fmtP(g.at)}</small></span><button class="del sm" onclick="delGift('${jq(g.id)}')">حذف</button></div>`).join('') || '<div class="c-sub">لا توجد هدايا مسجلة</div>'}
-      <div class="grid" style="margin-top:8px"><div class="full"><input id="pfGift" placeholder="نص الهدية (مثال: خصم 10%)" value="${esc(tierGift(c.tier) || '')}"></div></div>
-      <div class="actions"><button class="sec sm" onclick="giveGift(pKey,'',$('pfGift').value.trim())">➕ تسجيل هدية ممنوحة</button></div></div>
     <div class="sgrp"><h3>سجل الحجوزات (${hist.length})</h3><div class="tbl"><table class="rec"><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>التذاكر</th><th>السعر</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>
       ${hist.map(r => `<tr class="${r.status === 'cancelled' ? 'cancelled' : ''}"><td>${esc(r.origin)} ‏←‏ ${esc(r.destination)}</td><td>${fmtDT(r)}</td><td>${r.returnDate ? fmtDR(r) : '—'}</td><td>${r.qty || 1}</td><td>${money(r.price)}</td><td>${money(r.paid)}</td><td>${r.status !== 'cancelled' && remaining(r) > 0 ? `<span class="chip c-bad">${money(remaining(r))}</span>` : '—'}</td><td><span class="badge b-${r.status}">${STATUS[r.status]}</span></td></tr>`).join('')}
     </tbody></table></div></div>
@@ -1992,12 +1816,11 @@ function renderProfile(){
 function saveProfile(){
   { const m = mergePhones(pKey, '', $('pfPhones').value); $('pfPhones').value = m.text; if (m.rejected.length) alert(m.rejected.join('\n')); }
   patchClient(pKey, {phones: $('pfPhones').value.trim(), gender:$('pfGender').value, birthday:$('pfBirthday').value, passportExpiry:$('pfPassport').value, prefAirline:$('pfAirline').value.trim(), prefSeat:$('pfSeat').value.trim(),
-    prefMeal:$('pfMeal').value.trim(), companions:$('pfComp').value.trim(), notes:$('pfNotes').value.trim(), optout:$('pfOpt').checked ? 1 : 0});
+    prefMeal:$('pfMeal').value.trim(), companions:$('pfComp').value.trim(), notes:$('pfNotes').value.trim()});
   render(); renderProfile();
 }
 function profileBalance(){ const c = custAll.find(x => x.key === pKey); if (c) waSend(c.phone, fillTpl(tplText('balance'), custVars(c))); }
 function newBookingFor(key){ pKey = key; profileNewBooking(); }
-function profileInvite(){ const c = custAll.find(x => x.key === pKey); if (c) waSend(c.phone, fillTpl(tplText('referral'), custVars(c))); }
 function profileNewBooking(){
   const c = custAll.find(x => x.key === pKey); if (!c) return; const cl = c.client || {};
   closeProfile(); resetForm();
@@ -2005,55 +1828,6 @@ function profileNewBooking(){
   if (cl.prefAirline) $('airline').value = cl.prefAirline;
   showTab('n'); $('origin').focus(); window.scrollTo({top:0, behavior:'smooth'});
 }
-
-/* ---------- الحملات ---------- */
-let cgList = [];
-const SEGS = {all:'كل العملاء', silver:'المؤهلون للعرض (فضي فأعلى)', gold:'العملاء الذهبيون', near:'قريبون من العرض', lapsed:'عملاء غائبون', once:'حجزوا مرة واحدة فقط', dest:'سافروا إلى وجهة معيّنة', bday:'ميلادهم هذا الشهر'};
-function segmentList(){
-  const seg = $('cgSeg').value, thr = thrV(), today = todayStr();
-  let list = custAll.filter(c => c.trips > 0);
-  if (seg === 'silver') list = list.filter(c => c.tickets > thr);
-  else if (seg === 'gold') list = list.filter(c => c.tier === 'gold');
-  else if (seg === 'near') list = list.filter(c => c.tickets >= Math.max(1, thr - 1) && c.tickets <= thr);
-  else if (seg === 'lapsed') { const cut = addMonths(today, -(+$('cgMonths').value || 6)); list = list.filter(c => c.lastAct && c.lastAct < cut && !c.nextTrip); }
-  else if (seg === 'once') list = list.filter(c => c.trips === 1);
-  else if (seg === 'dest') { const d = $('cgDest').value; list = list.filter(c => c.dests.has(d)); }
-  else if (seg === 'bday') { const m = today.slice(5, 7); list = list.filter(c => c.client && c.client.birthday && c.client.birthday.slice(5, 7) === m); }
-  return list;
-}
-function initCampaignUI(){
-  $('cgSeg').innerHTML = Object.entries(SEGS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
-  const keys = ['offer', 'missyou', 'referral', 'birthday', 'giftmsg'];
-  $('cgTpl').innerHTML = keys.map(k => `<option value="${k}">${TPL[k].label}</option>`).join('') + '<option value="">رسالة فارغة (أكتبها بنفسي)</option>';
-  campFill('offer');
-  $('cgVars').textContent = 'المتغيرات: ' + VARS_HELP;
-  $('cgSeg').onchange = () => { $('cgMonthsBox').style.display = $('cgSeg').value === 'lapsed' ? '' : 'none'; $('cgDestBox').style.display = $('cgSeg').value === 'dest' ? '' : 'none';
-    const m = {lapsed:'missyou', bday:'birthday', silver:'offer', gold:'offer'}[$('cgSeg').value]; if (m) { $('cgTpl').value = m; campFill(m); } $('cgName').value = ''; renderCampaigns(); };
-  $('cgTpl').onchange = () => { campFill($('cgTpl').value); };
-  ['cgMonths', 'cgDest', 'cgName'].forEach(id => $(id).oninput = () => renderCampaigns());
-}
-function renderCampaigns(){
-  if ($('tabCamp').style.display === 'none') return;
-  const dests = [...new Set(custAll.flatMap(c => [...c.dests]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ar'));
-  const cur = $('cgDest').value; $('cgDest').innerHTML = dests.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join(''); if (dests.includes(cur)) $('cgDest').value = cur;
-  const all = segmentList(), list = all.filter(c => !(c.client && c.client.optout)), skipped = all.length - list.length;
-  const name = $('cgName').value.trim() || (SEGS[$('cgSeg').value] + ' ' + todayStr()), done = doneIds();
-  const full = list.map(c => ({c, id: 'camp:' + name + ':' + c.key}));
-  const sent = full.filter(x => done.has(x.id)).length; cgList = full.slice(0, 300);
-  $('cgStat').innerHTML = `<b>${list.length}</b> عميل في هذه الفئة${skipped ? ` (استُبعد ${skipped} بسبب «عدم الإزعاج»)` : ''} · أُرسل لـ <b>${sent}</b> · متبقي <b>${list.length - sent}</b>${full.length > 300 ? ' · <span class="c-sub">يُعرض أول 300 فقط (التصدير ينسخ الكل)</span>' : ''}`;
-  $('cgRows').innerHTML = list.length ? cgList.map((x, i) => { const c = x.c, isDone = done.has(x.id);
-    return `<tr class="${isDone ? 'cancelled' : ''}"><td><div class="c-name"><a class="plink" onclick="openProfile(cgList[${i}].c.key)">${esc(c.name)}</a> ${tierBadge(c)}</div>${phonesBlock(c.phone, {nowa: 1})}</td>
-      <td>${c.tickets} <span class="c-sub">(${c.trips} حجز)</span></td><td>${c.lastAct ? fmtD(c.lastAct) : '—'}</td><td>${isDone ? '<span class="chip c-ok">✓ أُرسل</span>' : '<span class="c-sub">—</span>'}</td>
-      <td class="noprint"><div class="acts"><button class="sm" onclick="campSend(${i})">💬 واتساب</button>${isDone ? '' : `<button class="sec sm" onclick="markDone(cgList[${i}].id)">✓ أرسلت</button>`}</div></td></tr>`; }).join('')
-    : '<tr><td class="empty" colspan="5">لا يوجد عملاء في هذه الفئة</td></tr>';
-}
-const campAll = () => segmentList().filter(c => !(c.client && c.client.optout)).map(c => ({c}));
-function campCSV(){
-  const cell = csvCell;
-  download('حملة-' + todayStr() + '.csv', '﻿' + [['الاسم','الهاتف','التذاكر','المستوى','آخر نشاط','كود الإحالة'].map(cell).join(','),
-    ...campAll().map(x => [x.c.name, x.c.phone, x.c.tickets, (TIER_LABEL[x.c.tier] || ''), x.c.lastAct, x.c.code].map(cell).join(','))].join('\r\n'), 'text/csv;charset=utf-8');
-}
-function campCopy(){ const t = campAll().map(x => x.c.phone).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => alert('تم نسخ ' + campAll().length + ' رقم')); }
 
 /* ---------- عرض السعر ---------- */
 let qLead = null;
@@ -2089,7 +1863,6 @@ function quoteCopy(){ if (qLead && navigator.clipboard) navigator.clipboard.writ
 /* ---------- الإعدادات ---------- */
 let tplDraft = {}, logoDraft = null, tplCur = 'confirm';
 const askUrl = () => new URL('ask.html', location.href).href.split('#')[0];
-const refLinkOf = code => askUrl() + '?ref=' + encodeURIComponent(code);
 const qrUrl = u => 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=10&data=' + encodeURIComponent(u);
 function setPane(p){
   document.querySelectorAll('#sNav button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
@@ -2097,36 +1870,24 @@ function setPane(p){
   const body = document.querySelector('.set-body .spanes'); if (body) body.scrollTop = 0;
 }
 document.querySelectorAll('#sNav button').forEach(b => b.addEventListener('click', () => setPane(b.dataset.p)));
-function draftOffice(){ const g = id => $(id).value.trim(); return Object.assign({}, office(), {name:g('sName'), phone:g('sPhone'), address:g('sAddr'), currency:g('sCur'),
-  refReward:g('sRefReward'), birthdayGift:g('sBdayGift'), offer:g('sOffer'), giftBronze:g('sGiftBronze'), giftSilver:g('sGiftSilver'), giftGold:g('sGiftGold')}); }
-function ladderPreview(){
-  const b = Math.max(1, Math.round(+$('sBronze').value || 1)), sv = Math.max(1, Math.round(+$('sSilver').value || 4)), g = Math.max(1, Math.round(+$('sGoldFrom').value || 8));
-  const ok = b < sv && sv < g;
-  $('sLadder').innerHTML = ok
-    ? `<span class="lad t-bronze">🥉 برونزي <b>${b}${sv - 1 > b ? '–' + (sv - 1) : ''}</b> تذكرة</span><span class="lad t-silver">🥈 فضي <b>${sv}${g - 1 > sv ? '–' + (g - 1) : ''}</b> تذكرة</span><span class="lad t-gold">🥇 ذهبي <b>${g}+</b> تذكرة</span>`
-    : '<span class="lad bad">⚠ يجب أن يكون الترتيب: برونزي أقل من فضي، وفضي أقل من ذهبي.</span>';
-  return ok;
-}
-['sBronze', 'sSilver', 'sGoldFrom'].forEach(id => $(id).addEventListener('input', ladderPreview));
+function draftOffice(){ const g = id => $(id).value.trim(); return Object.assign({}, office(), {name:g('sName'), phone:g('sPhone'), address:g('sAddr'), currency:g('sCur'),}); }
 function previewVars(){
   const o = draftOffice(), cur = o.currency || 'جنيه';
   return Object.assign(baseVars(Object.assign({}, o, {name: o.name || 'مكتب النور للطيران', phone: o.phone || '0100 000 0000'})), {name:'أحمد محمد', origin:'القاهرة (CAI)', dest:'الرياض (RUH)', date:'20/12/2026',
     return:'27/12/2026', returnLine:'\n↩️ تاريخ العودة: 27/12/2026', when:'بعد 3 أيام', airline:'مصر للطيران', pnr:'AB12CD', qty:2, price:'12,000', paid:'8,000', remaining:'4,000',
-    payLine:'\n💰 المتبقي للسداد: 4,000 ' + cur, currency:cur, code:'K7F2Q9X', refLink: askUrl() + '?ref=K7F2Q9X', tickets:5, trips:3, tier:'فضي', gift:o.giftSilver || 'خصم 5%',
-    passport:'12/03/2027', pax:2, until:'30/11/2026', info:'رحلة مباشرة · أمتعة 23 كجم', refReward:o.refReward || 'خصم على حجزك القادم', birthdayGift:o.birthdayGift || 'خصم خاص', offer:o.offer || 'خصم خاص'});
+    payLine:'\n💰 المتبقي للسداد: 4,000 ' + cur, currency:cur, tickets:5, trips:3,
+    passport:'12/03/2027', pax:2, until:'30/11/2026', info:'رحلة مباشرة · أمتعة 23 كجم'});
 }
 function tplInsert(k){ const t = $('sTplText'), a = t.selectionStart == null ? t.value.length : t.selectionStart, e = t.selectionEnd == null ? a : t.selectionEnd, v = '{' + k + '}';
   t.value = t.value.slice(0, a) + v + t.value.slice(e); t.focus(); t.selectionStart = t.selectionEnd = a + v.length; tplPreview(); }
 $('sTplText').addEventListener('input', tplPreview);
-['sName','sPhone','sAddr','sCur','sRefReward','sBdayGift','sOffer','sGiftSilver'].forEach(id => $(id).addEventListener('input', tplPreview));
+['sName','sPhone','sAddr','sCur'].forEach(id => $(id).addEventListener('input', tplPreview));
 function openSettings(){
   const o = office(); tplDraft = Object.assign({}, settings.templates || {}); logoDraft = settings.logo || '';
   const set = (id, v) => { $(id).value = v == null ? '' : v; };
   set('sName', o.name); set('sPhone', o.phone); set('sAddr', o.address); set('sCC', o.cc); set('sCur', o.currency); set('sQuoteFooter', o.quoteFooter);
-  set('sBronze', +o.bronzeFrom || 1); set('sSilver', thrV() + 1); set('sGoldFrom', o.goldFrom); set('sGiftBronze', o.giftBronze); set('sGiftSilver', o.giftSilver); set('sGiftGold', o.giftGold);
-  set('sRefReward', o.refReward); set('sBdayGift', o.birthdayGift); set('sOffer', o.offer);
   $('sVarChips').innerHTML = VARS.map(v => `<button type="button" class="vchip" onclick="tplInsert('${jq(v[0])}')" title="${v[1]}"><span dir="ltr">{${v[0]}}</span> ${v[1]}</button>`).join('');
-  tplCur = 'confirm'; tplGen = 'm'; $('sTplText').value = tplDraft.confirm || TPL.confirm.text; $('sTplName').textContent = TPL.confirm.label; tplList(); tplPreview(); ladderPreview();
+  tplCur = 'confirm'; tplGen = 'm'; $('sTplText').value = tplDraft.confirm || TPL.confirm.text; $('sTplName').textContent = TPL.confirm.label; tplList(); tplPreview();
   $('sLogoImg').style.display = logoDraft ? '' : 'none'; $('sLogoImg').src = logoDraft || ''; themeSwatches();
   const u = askUrl(); $('sAskUrl').value = u; $('sQr').src = qrUrl(u);
   setPane('office'); $('sm').style.display = 'flex';
@@ -2143,12 +1904,8 @@ $('sLogoFile').addEventListener('change', e => {
 });
 function logoRemove(){ logoDraft = ''; $('sLogoImg').style.display = 'none'; }
 function saveSettingsUI(){
-  if (!ladderPreview()) { setPane('loyal'); alert('رتّب حدود المستويات: برونزي أقل من فضي، وفضي أقل من ذهبي.'); return; }
   tplStore(); const g = id => $(id).value.trim();
-  settings.office = {name:g('sName'), phone:g('sPhone'), address:g('sAddr'), cc:(g('sCC').replace(/\D/g, '')) || '20', currency:g('sCur'), quoteFooter:g('sQuoteFooter'),
-    refReward:g('sRefReward'), birthdayGift:g('sBdayGift'), offer:g('sOffer'), giftBronze:g('sGiftBronze'), giftSilver:g('sGiftSilver'), giftGold:g('sGiftGold'),
-    bronzeFrom:Math.max(1, Math.round(+$('sBronze').value || 1)), goldFrom:Math.max(3, Math.round(+$('sGoldFrom').value || 8))};
-  settings.threshold = Math.max(1, Math.round(+$('sSilver').value || 4) - 1); $('thr').value = settings.threshold;
+  settings.office = {name:g('sName'), phone:g('sPhone'), address:g('sAddr'), cc:(g('sCC').replace(/\D/g, '')) || '20', currency:g('sCur'), quoteFooter:g('sQuoteFooter')};
   settings.templates = tplDraft; settings.logo = logoDraft || '';
   saveSettings(); closeSettings(); render();
 }
@@ -2255,7 +2012,7 @@ function renderGrouped(){
         <button type="button" class="chev noprint" onclick="grpToggle(${i})" aria-label="إظهار / إخفاء الرحلات" title="إظهار / إخفاء الرحلات">▾</button>
         <div class="avatar">${esc([...String(c.name).trim()][0] || '؟')}</div>
         <div class="cust-id" onclick="grpToggle(${i})">
-          <div class="c-name"><a class="plink" onclick="event.stopPropagation();openProfile(grpItems[${i}].k)">${esc(c.name)}</a> ${tierBadge(c)} ${cl.optout ? '<span class="chip c-gray">🚫</span>' : ''}</div>
+          <div class="c-name"><a class="plink" onclick="event.stopPropagation();openProfile(grpItems[${i}].k)">${esc(c.name)}</a> ${cl.optout ? '<span class="chip c-gray">🚫</span>' : ''}</div>
           ${phonesBlock(c.phone, {stop: 1})}${c.idNo ? '<div class="c-sub">🪪 ' + esc(c.idNo) + '</div>' : ''}
           ${nextLine ? `<div class="cust-next c-sub">${nextLine}</div>` : ''}
         </div>
@@ -2316,10 +2073,9 @@ function peopleText(p){
 }
 function renderPeople(){
   if ($('tabAll').style.display === 'none') return;
-  const all = buildPeople(), q = $('pq').value.trim().toLowerCase(), t = $('pType').value, thr = thrV();
-  const nB = all.filter(p => p.kind === 'booked').length, nL = all.filter(p => p.kind === 'lead').length, nI = all.filter(p => p.kind === 'inq').length, nC = all.filter(p => p.kind === 'client').length;
+  const all = buildPeople().filter(p => p.kind === 'booked' || p.kind === 'client'), q = $('pq').value.trim().toLowerCase(), t = $('pType').value;
   const debtors = all.filter(p => p.remaining > 0), debt = debtors.reduce((s, p) => s + p.remaining, 0);
-  $('ppStats').innerHTML = `<span class="chip c-info">👥 الإجمالي <b>${all.length}</b></span><span class="chip c-ok">✅ حجزوا <b>${nB}</b></span><span class="chip c-info">🔎 مرجّحون لم يحجزوا <b>${nL}</b></span><span class="chip c-warn">🌐 طلبات جديدة <b>${nI}</b></span><span class="chip c-gray">📝 مسجّلون فقط <b>${nC}</b></span>` +
+  $('ppStats').innerHTML = `<span class="chip c-info">👥 العملاء <b>${all.length}</b></span>` +
     (debt > 0 ? `<span class="chip c-bad">💰 متبقي ${money(debt)} على ${debtors.length}</span>` : '');
   let list = all.filter(p => {
     if (q && !peopleText(p).includes(q)) return false;
@@ -2327,9 +2083,7 @@ function renderPeople(){
     if (t === 'prospect') return p.kind !== 'booked';
     if (t === 'lead') return p.kind === 'lead';
     if (t === 'inq') return p.kind === 'inq';
-    if (t === 'client') return p.kind === 'client';
     if (t === 'debt') return p.remaining > 0;
-    if (t === 'vip') return p.kind === 'booked' && p.c.tickets > thr;
     return true;
   });
   const sk = $('pSort').value;
@@ -2341,11 +2095,11 @@ function renderPeople(){
   $('ppRows').innerHTML = shown.length ? shown.map((p, i) => {
     let kind = '', det = '', acts = '';
     if (p.kind === 'booked') { const c = p.c;
-      kind = `<span class="chip c-ok">✅ حجز</span> ${tierBadge(c)}${c.client && c.client.optout ? ' <span class="chip c-gray">🚫</span>' : ''}`;
+      kind = `<span class="chip c-ok">✅ حجز</span> ${c.client && c.client.optout ? ' <span class="chip c-gray">🚫</span>' : ''}`;
       det = `<div><b>${c.trips}</b> حجز · <b>${c.tickets}</b> تذكرة · مدفوع <b>${money(c.spent)}</b></div>` +
         (c.nextTrip ? `<div class="c-sub">✈️ القادمة: ${fmtD(c.nextTrip)}</div>` : c.last ? `<div class="c-sub">آخر سفر: ${fmtD(c.last)}</div>` : '<div class="c-sub">حجوزاته ملغاة</div>') +
         (c.dests.size ? `<div class="c-sub">${esc([...c.dests].slice(0, 3).map(apCode).join('، '))}${c.dests.size > 3 ? '…' : ''}</div>` : '');
-      acts = `<button class="sm" onclick="openProfile(peopleItems[${i}].key)">👤 الملف</button><button class="sec sm" onclick="newBookingFor(peopleItems[${i}].key)">➕ حجز</button><button class="sec sm" onclick="peopleMsg(${i})">💬 رسالة</button>`;
+      acts = `<button class="sm" onclick="openProfile(peopleItems[${i}].key)">👤 الملف</button><button class="sec sm" onclick="newBookingFor(peopleItems[${i}].key)">➕ حجز</button><button class="sec sm" onclick="peopleMsg(${i})">💬 رسالة</button><button class="del sm" onclick="custDelete(peopleItems[${i}].key)">🗑 حذف العميل</button>`;
     } else if (p.kind === 'client') { const cl = p.client;
       kind = '<span class="chip c-gray">📝 مسجّل (لم يحجز)</span>';
       det = `<div class="c-sub">${cl.gender ? (cl.gender === 'm' ? '♂ ذكر' : '♀ أنثى') : ''}${cl.idNo ? ' · 🪪 ' + esc(cl.idNo) : ''}</div>${cl.notes ? `<div class="c-note">📝 ${esc(cl.notes.length > 80 ? cl.notes.slice(0, 80) + '…' : cl.notes)}</div>` : ''}`;
@@ -2357,7 +2111,7 @@ function renderPeople(){
       acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
     } else { const n = p.inq;
       kind = '<span class="chip c-warn">🌐 طلب جديد</span>';
-      det = `<div><b dir="ltr">${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}${n.refCode ? `<div class="c-sub">🔗 كود إحالة: ${esc(n.refCode)}</div>` : ''}`;
+      det = `<div><b dir="ltr">${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}`;
       acts = `<button class="sm" onclick="inqToLead('${jq(n.id)}')">➕ تحويل لمرجّح</button><button class="sec sm" onclick="inqMsg('${jq(n.id)}')">💬 رد</button><button class="del sm" onclick="inqDelete('${jq(n.id)}')">حذف</button>`;
     }
     return `<tr><td><div class="c-name">${p.kind === 'booked' ? `<a class="plink" onclick="openProfile(peopleItems[${i}].key)">${esc(p.name)}</a>` : esc(p.name)} <button class="sec sm noprint" onclick="idcOpen(peopleItems[${i}].key)">🪪 بطاقة</button></div>
@@ -2369,8 +2123,8 @@ function renderPeople(){
 }
 function peopleMsg(i){
   const p = peopleItems[i]; if (!p) return;
-  if (p.kind === 'booked') xmOpen('رسالة إلى ' + p.name, p.phone, ['offer', 'giftmsg', 'referral', 'missyou', 'birthday', 'passport', 'balance'].map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), custVars(p.c))})), p.remaining > 0 ? 6 : 0);
-  else if (p.kind === 'lead') leadMsg(p.lead.id); else if (p.kind === 'client') xmOpen('رسالة إلى ' + p.name, p.phone, [{label: 'رسالة ترحيب', text: fillTpl(tplText('offer'), Object.assign(baseVars(), {name: p.name, gender: (p.client || {}).gender || ''}))}, {label: 'رسالة فارغة', text: 'السلام عليكم ' + p.name + '،\n'}], 0); else inqMsg(p.inq.id);
+  if (p.kind === 'booked') xmOpen('رسالة إلى ' + p.name, p.phone, ['birthday', 'passport', 'balance'].map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), custVars(p.c))})), p.remaining > 0 ? 2 : 0);
+  else if (p.kind === 'lead') leadMsg(p.lead.id); else if (p.kind === 'client') xmOpen('رسالة إلى ' + p.name, p.phone, [{label: 'رسالة جاهزة', text: fillTpl(tplText('inqreply'), Object.assign(baseVars(), {name: p.name, gender: (p.client || {}).gender || '', origin: '', dest: '', pax: 1}))}, {label: 'رسالة فارغة', text: 'السلام عليكم ' + p.name + '،\n'}], 0); else inqMsg(p.inq.id);
 }
 function inqMsg(id){
   const q = inquiries.find(x => x.id === id); if (!q) return;
@@ -2841,7 +2595,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ---------- تحسينات النموذج ---------- */
-function openMoreIfFilled(){ const d = $('moreBox'); if (d) d.open = ['idNo', 'passportExpiry', 'birthday', 'refBy'].some(k => $(k).value); }
+function openMoreIfFilled(){ const d = $('moreBox'); if (d) d.open = ['idNo', 'passportExpiry', 'birthday'].some(k => $(k).value); }
 
 /* ---------- دليل سريع ---------- */
 function helpOpen(){
@@ -2903,15 +2657,11 @@ const TPLM = {
   remind: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلتك {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منك مراعاة التالي:\n• تأكد من سريان جواز سفرك وصلاحية التأشيرة (إن لزمت).\n• احضر إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَ إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لك رحلة سعيدة.\n{signature}',
   bonvoyage: 'السيد {name}،\n\nيتمنى لك فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجت إلى أي مساعدة أثناء سفرك فنحن على تواصل معك.\n\n{signature}',
   return: 'السيد {name}، تحية طيبة من {office}،\n\nنذكّرك بموعد رحلة عودتك:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضر إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لك عودة آمنة.\n{signature}',
-  feedback: 'السيد {name}، الحمد لله على سلامتك 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتك، ويهمنا رأيك في خدمتنا: هل كانت تجربتك كما توقعت؟ وهل لديك أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتك خدمتنا فيسعدنا أن نخدم أهلك وأصدقاءك أيضًا؛ يكفي أن يذكروا كودك الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولك عند حجزهم: {refReward}.\n\nشاكرين لك ثقتك.\n{signature}',
+  feedback: 'السيد {name}، الحمد لله على سلامتك 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتك، ويهمنا رأيك في خدمتنا: هل كانت تجربتك كما توقعت؟ وهل لديك أي ملاحظات تساعدنا على التطوير؟\n\nشاكرين لك ثقتك.\n{signature}',
   payment: 'السيد {name}، تحية طيبة من {office}،\n\nنفيدك بأن المتبقي على حجز رحلتك {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرم بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونك.\n{signature}',
   balance: 'السيد {name}، تحية طيبة من {office}،\n\nبمراجعة حسابك لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو أن تتكرم بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتك.\n\nشاكرين تعاونك.\n{signature}',
   passport: 'السيد {name}، تحية طيبة من {office}،\n\nنلفت انتباهك إلى أن جواز سفرك ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل أن تجدده قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتك لأي استفسار.\n{signature}',
-  birthday: 'السيد {name}،\n\nكل عام وأنت بخير 🎂\nيتقدم لك فريق {office} بأطيب التهاني بمناسبة عيد ميلادك، ويسعده أن يقدّم لك هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية تفضّل بالتواصل معنا.\n{signature}',
-  missyou: 'السيد {name}، تحية طيبة من {office}،\n\nافتقدناك! ويسعدنا أن نكون معك في رحلتك القادمة.\nوتقديرًا لثقتك السابقة، لديك عرض خاص: {offer}.\n\nللحجز أو الاستفسار نحن في خدمتك.\n{signature}',
-  offer: 'السيد {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتك وحجوزاتك المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لك عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض تفضّل بالتواصل معنا عند حجزك القادم.\n\nشاكرين لك ثقتك.\n{signature}',
-  giftmsg: 'السيد {name}، مبارك لك 🎉\n\nيسعدنا إبلاغك بوصولك إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتك:\n🎁 {gift}\n\nتفضّل بالتواصل معنا لاستلامها، وشكرًا لثقتك.\n{signature}',
-  referral: 'السيد {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلك وأصدقاءك، ولك عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودك الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لك ثقتك.\n{signature}',
+  birthday: 'السيد {name}،\n\nكل عام وأنت بخير 🎂\nيتقدم لك فريق {office} بأطيب التهاني بمناسبة عيد ميلادك.\n{signature}',
   leadfollow: 'السيد {name}، تحية طيبة من {office}،\n\nبخصوص استفسارك عن رحلة {origin} ‏←‏ {dest}، هل ما زلت مهتمًا بالحجز؟ يسعدنا أن نوفر لك أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردك.\n{signature}',
   inqreply: 'السيد {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلك معنا، وقد استلمنا طلبك:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيك بأفضل الأسعار المتاحة في أقرب وقت، ويمكنك الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
   quote: 'السيد {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لك عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن ترد على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
@@ -2921,15 +2671,11 @@ const TPLF = {
   remind: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلتكِ {when}:\n\n‏✈️ {origin} ‏←‏ {dest}\n📅 {date} · {airline}\n🔖 رقم الحجز: {pnr}\n\nلتجنب أي تأخير، نرجو منكِ مراعاة التالي:\n• تأكدي من سريان جواز سفركِ وصلاحية التأشيرة (إن لزمت).\n• احضري إلى المطار قبل الإقلاع بثلاث ساعات.\n• لا تنسَي إحضار التذكرة والمستندات المطلوبة.{payLine}\n\nنتمنى لكِ رحلة سعيدة.\n{signature}',
   bonvoyage: 'السيدة {name}،\n\nيتمنى لكِ فريق {office} رحلة آمنة وإقامة طيبة ✈️\nوإن احتجتِ إلى أي مساعدة أثناء سفركِ فنحن على تواصل معكِ.\n\n{signature}',
   return: 'السيدة {name}، تحية طيبة من {office}،\n\nنذكّركِ بموعد رحلة عودتكِ:\n\n‏✈️ {dest} ‏←‏ {origin}\n📅 {return}\n🔖 رقم الحجز: {pnr}\n\nنرجو أن تحضري إلى المطار قبل الإقلاع بثلاث ساعات، ونتمنى لكِ عودة آمنة.\n{signature}',
-  feedback: 'السيدة {name}، الحمد لله على سلامتكِ 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكِ، ويهمنا رأيكِ في خدمتنا: هل كانت تجربتكِ كما توقعتِ؟ وهل لديكِ أي ملاحظات تساعدنا على التطوير؟\n\nوإن أعجبتكِ خدمتنا فيسعدنا أن نخدم أهلكِ وصديقاتكِ وأصدقاءكِ أيضًا؛ يكفي أن يذكروا كودكِ الخاص ({code}) أو يستخدموا الرابط:\n{refLink}\nولكِ عند حجزهم: {refReward}.\n\nشاكرين لكِ ثقتكِ.\n{signature}',
+  feedback: 'السيدة {name}، الحمد لله على سلامتكِ 🤍\n\nيسعدنا في {office} أن نطمئن على رحلتكِ، ويهمنا رأيكِ في خدمتنا: هل كانت تجربتكِ كما توقعتِ؟ وهل لديكِ أي ملاحظات تساعدنا على التطوير؟\n\nشاكرين لكِ ثقتكِ.\n{signature}',
   payment: 'السيدة {name}، تحية طيبة من {office}،\n\nنفيدكِ بأن المتبقي على حجز رحلتكِ {origin} ‏←‏ {dest} بتاريخ {date} هو:\n💰 {remaining} {currency}\n\nنرجو أن تتكرمي بالسداد قبل موعد السفر لضمان تثبيت الحجز وإصدار التذكرة.\n\nشاكرين تعاونكِ.\n{signature}',
   balance: 'السيدة {name}، تحية طيبة من {office}،\n\nبمراجعة حسابكِ لدينا، يوجد مبلغ متبقٍ إجماليه:\n💰 {remaining} {currency}\n\nنرجو أن تتكرمي بترتيب السداد في أقرب وقت، وللاستفسار نحن في خدمتكِ.\n\nشاكرين تعاونكِ.\n{signature}',
   passport: 'السيدة {name}، تحية طيبة من {office}،\n\nنلفت انتباهكِ إلى أن جواز سفركِ ينتهي بتاريخ {passport}. وتشترط كثير من الدول أن يكون الجواز ساريًا لمدة 6 أشهر على الأقل بعد تاريخ السفر، لذا يُفضَّل أن تجدديه قبل الحجز لتفادي أي مشكلة.\n\nنحن في خدمتكِ لأي استفسار.\n{signature}',
-  birthday: 'السيدة {name}،\n\nكل عام وأنتِ بخير 🎂\nيتقدم لكِ فريق {office} بأطيب التهاني بمناسبة عيد ميلادكِ، ويسعده أن يقدّم لكِ هدية خاصة: {birthdayGift}.\n\nللاستفادة من الهدية تفضّلي بالتواصل معنا.\n{signature}',
-  missyou: 'السيدة {name}، تحية طيبة من {office}،\n\nافتقدناكِ! ويسعدنا أن نكون معكِ في رحلتكِ القادمة.\nوتقديرًا لثقتكِ السابقة، لديكِ عرض خاص: {offer}.\n\nللحجز أو الاستفسار نحن في خدمتكِ.\n{signature}',
-  offer: 'السيدة {name}، تحية طيبة من {office}،\n\nتقديرًا لثقتكِ وحجوزاتكِ المتكررة معنا ({tickets} تذاكر)، يسرّنا أن نقدّم لكِ عرضًا خاصًا:\n🎁 {gift}\n\nللاستفادة من العرض تفضّلي بالتواصل معنا عند حجزكِ القادم.\n\nشاكرين لكِ ثقتكِ.\n{signature}',
-  giftmsg: 'السيدة {name}، مبارك لكِ 🎉\n\nيسعدنا إبلاغكِ بوصولكِ إلى مستوى «{tier}» في برنامج ولاء عملاء {office}، وهديتكِ:\n🎁 {gift}\n\nتفضّلي بالتواصل معنا لاستلامها، وشكرًا لثقتكِ.\n{signature}',
-  referral: 'السيدة {name}، تحية طيبة من {office}،\n\nيسعدنا أن نخدم أهلكِ وصديقاتكِ وأصدقاءكِ، ولكِ عن كل عميل جديد يحجز عندنا: {refReward}.\n\nيكفي أن يذكروا كودكِ الخاص: {code}\nأو يستخدموا هذا الرابط:\n{refLink}\n\nشاكرين لكِ ثقتكِ.\n{signature}',
+  birthday: 'السيدة {name}،\n\nكل عام وأنتِ بخير 🎂\nيتقدم لكِ فريق {office} بأطيب التهاني بمناسبة عيد ميلادكِ.\n{signature}',
   leadfollow: 'السيدة {name}، تحية طيبة من {office}،\n\nبخصوص استفساركِ عن رحلة {origin} ‏←‏ {dest}، هل ما زلتِ مهتمةً بالحجز؟ يسعدنا أن نوفر لكِ أفضل سعر متاح، ونحتاج فقط إلى تأكيد التاريخ وعدد المسافرين.\n\nفي انتظار ردكِ.\n{signature}',
   inqreply: 'السيدة {name}، تحية طيبة من {office}،\n\nشكرًا لتواصلكِ معنا، وقد استلمنا طلبكِ:\n‏✈️ {origin} ‏←‏ {dest}\n👥 عدد المسافرين: {pax}\n\nسنوافيكِ بأفضل الأسعار المتاحة في أقرب وقت، ويمكنكِ الرد على هذه الرسالة بأي تفاصيل إضافية.\n{signature}',
   quote: 'السيدة {name}، تحية طيبة من {office}،\n\nيسرّنا أن نقدّم لكِ عرض السعر التالي:\n\n✈️ المسار: {origin} ‏←‏ {dest}\n📅 تاريخ السفر: {date}\n👥 عدد المسافرين: {pax}\n🏢 شركة الطيران: {airline}\n💰 السعر الإجمالي: {price} {currency}\n⏳ ساري حتى: {until}\n{info}\n\nللتأكيد والحجز يُرجى أن تردّي على هذه الرسالة، علمًا بأن الأسعار والمقاعد قابلة للتغيير حتى إتمام الحجز.\n{signature}'
@@ -2985,7 +2731,7 @@ function autoGender(){
 }
 ['phone', 'name'].forEach(id => $(id).addEventListener('input', autoGender));
 $('gender').addEventListener('change', genderSuggest);
-['pick', 'refBy'].forEach(id => { const el = $(id); if (el) ['input', 'change'].forEach(ev => el.addEventListener(ev, () => setTimeout(autoGender, 0))); });
+['pick'].forEach(id => { const el = $(id); if (el) ['input', 'change'].forEach(ev => el.addEventListener(ev, () => setTimeout(autoGender, 0))); });
 function fillGender(r){ $('gender').value = clientGender(ckey(r)); genderSuggest(); }
 { const f = window.dupUse; window.dupUse = function(){ f.apply(this, arguments); autoGender(); }; }
 { const f = window.convertLead; window.convertLead = function(id){ f.apply(this, arguments); const l = leads.find(x => x.id === id); if (l) { $('gender').value = gKnown(l.gender) ? l.gender : genderByPhone(l.phone); genderSuggest(); } }; }
@@ -3008,12 +2754,6 @@ function xmSaveGender(){ const t = xmOpts[+$('xmSel').value].text, k = ckp(xmPho
 { const f = window.xmOpen; window.xmOpen = function(){ f.apply(this, arguments); xmGenUI(); }; }
 $('xmSel').addEventListener('change', xmGenUI);
 
-/* ---------- الحملات: نص للذكور ونص للإناث ---------- */
-function campFill(key){ $('cgText').value = key ? tplVariant(key, 'm') : ''; $('cgTextF').value = key ? tplVariant(key, 'f') : ''; }
-function campSend(i){
-  const x = cgList[i]; if (!x) return; const v = custVars(x.c), g = genderOfVars(v), f = $('cgTextF').value.trim();
-  waSend(x.c.phone, fillRaw(g === 'f' && f ? f : $('cgText').value, v));
-}
 
 
 /* ===== v8: عدة أرقام لكل عميل ===== */
@@ -3124,14 +2864,12 @@ function idcHtml(key, forPrint){
   const D = idcData(p), cl = D.cl, c = D.c, l = D.l, q = D.q, o = office(), cur = esc(o.currency || '');
   const init = String(D.name).trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('');
   const kindTag = p.kind === 'booked' ? '<span class="tg ok">✅ عميل حاجز</span>' : p.kind === 'lead' ? '<span class="tg warn">🔎 مرجّح لم يحجز</span>' : '<span class="tg warn">🌐 طلب جديد من الصفحة</span>';
-  const tier = c && c.tier ? `<span class="tg pri">${TIER_LABEL[c.tier]}</span>` : '';
   const since = [c && c.firstDate, l && l.inquiry, q && String(q.at || '').slice(0, 10)].filter(Boolean).sort()[0] || '';
   const bd = cl.birthday, age = idcAge(bd), nb = idcNextBd(bd);
   let pp = '';
   if (cl.passportExpiry) { const dd = daysUntil(cl.passportExpiry); pp = fmtP(cl.passportExpiry) + (dd < 0 ? ' <span class="tg bad">منتهي</span>' : dd <= 180 ? ` <span class="tg warn">ينتهي بعد ${dd} يوم</span>` : ' <span class="tg ok">ساري</span>'); }
-  const code = c ? c.code : refCode(key);
   const contact = `<div class="sec"><h4>📞 بيانات التواصل</h4>${D.phones.map(x => idcRow(esc(x.label), `<span class="ltr">${esc(x.num)}</span>`)).join('')}${idcRow('رقم الهوية / الجواز', (c && c.idNo) || cl.idNo ? esc((c && c.idNo) || cl.idNo) : '', true)}${cl.optout ? '<div class="row"><span>التسويق</span><b>🚫 عدم إزعاج</b></div>' : ''}</div>`;
-  const personal = `<div class="sec"><h4>🪪 البيانات الشخصية</h4>${idcRow('الجنس', D.g === 'm' ? '♂ ذكر' : D.g === 'f' ? '♀ أنثى' : '')}${idcRow('تاريخ الميلاد', bd ? fmtP(bd) + (age !== '' ? ' (' + age + ' سنة)' : '') : '')}${idcRow('عيد الميلاد القادم', bd ? (nb === 0 ? 'اليوم 🎂' : 'بعد ' + nb + ' يوم') : '')}${idcRow('انتهاء جواز السفر', pp)}${idcRow('كود العميل', `<span class="ltr">${esc(code)}</span>`)}${!bd && !cl.passportExpiry && !D.g ? '<div class="empty">لم تُسجَّل بيانات شخصية بعد.</div>' : ''}</div>`;
+  const personal = `<div class="sec"><h4>🪪 البيانات الشخصية</h4>${idcRow('الجنس', D.g === 'm' ? '♂ ذكر' : D.g === 'f' ? '♀ أنثى' : '')}${idcRow('تاريخ الميلاد', bd ? fmtP(bd) + (age !== '' ? ' (' + age + ' سنة)' : '') : '')}${idcRow('عيد الميلاد القادم', bd ? (nb === 0 ? 'اليوم 🎂' : 'بعد ' + nb + ' يوم') : '')}${idcRow('انتهاء جواز السفر', pp)}${!bd && !cl.passportExpiry && !D.g ? '<div class="empty">لم تُسجَّل بيانات شخصية بعد.</div>' : ''}</div>`;
   const prefs = (cl.prefAirline || cl.prefSeat || cl.prefMeal) ? `<div class="sec"><h4>⭐ التفضيلات</h4>${idcRow('شركة الطيران', esc(cl.prefAirline || ''))}${idcRow('المقعد', esc(cl.prefSeat || ''))}${idcRow('الوجبة', esc(cl.prefMeal || ''))}</div>` : '';
   let stats = '', hist = '';
   if (c) {
@@ -3144,17 +2882,12 @@ function idcHtml(key, forPrint){
   } else stats = `<div class="sec full"><h4>📊 ملخص النشاط</h4><div class="empty">لم يحجز بعد — لا توجد حجوزات مسجلة.</div></div>`;
   let enq = '';
   if (l) enq += `<div class="sec ${q ? '' : 'full'}"><h4>🔎 المرجّح / الاستفسار</h4>${idcRow('الحالة', LSTATUS[l.status] || esc(l.status))}${idcRow('المسار', esc(routeTxt(l.orig, l.dest)))}${idcRow('تاريخ السفر', l.travel ? fmtPT(l) : '')}${idcRow('تاريخ العودة', l.returnDate ? fmtPR(l) : '')}${idcRow('عدد الركاب', l.pax ? esc(l.pax) : '')}${idcRow('تاريخ الاستفسار', l.inquiry ? fmtP(l.inquiry) : '')}${idcRow('موعد المتابعة', l.follow ? fmtP(l.follow) + (isLate(l) ? ' <span class="tg bad">متأخرة</span>' : '') : '')}${l.quotePrice ? idcRow('عرض السعر', money(l.quotePrice) + ' ' + cur + (l.quoteAirline ? ' — ' + esc(l.quoteAirline) : '') + (l.quoteUntil ? ' حتى ' + fmtP(l.quoteUntil) : '')) : ''}${l.notes ? `<div class="note">📝 ${esc(l.notes)}</div>` : ''}</div>`;
-  if (q) enq += `<div class="sec ${l ? '' : 'full'}"><h4>🌐 طلب من صفحة الاستفسار</h4>${idcRow('المسار', esc(routeTxt(q.origin, q.destination)))}${idcRow('تاريخ السفر', q.travel ? fmtPT(q) : '')}${idcRow('عدد الركاب', q.pax ? esc(q.pax) : '')}${idcRow('وصل بتاريخ', q.at ? fmtP(String(q.at).slice(0, 10)) : '')}${idcRow('كود إحالة مُدخَل', q.refCode ? esc(q.refCode) : '')}${q.notes ? `<div class="note">📝 ${esc(q.notes)}</div>` : ''}</div>`;
-  let loy = '';
-  if (c) {
-    const mg = gifts.filter(x => x.client === c.key).sort((a, b) => String(b.at).localeCompare(String(a.at))), given = rewards[c.key] || 0;
-    loy = `<div class="sec"><h4>🏆 الولاء والإحالات</h4>${idcRow('المستوى', c.tier ? TIER_LABEL[c.tier] : 'بدون مستوى')}${idcRow('أحاله', c.refName ? esc(c.refName) : '')}${idcRow('عدد من أحالهم', c.referrals.length ? c.referrals.length + ' (حجز منهم ' + refActive(c) + ')' : '0')}${given ? idcRow('خصومات إحالة ممنوحة', given) : ''}${mg.length ? `<div class="note">🎁 ${mg.map(x => esc(x.gift) + ' (' + fmtP(x.at) + ')').join('<br>🎁 ')}</div>` : ''}</div>`;
-  }
+  if (q) enq += `<div class="sec ${l ? '' : 'full'}"><h4>🌐 طلب من صفحة الاستفسار</h4>${idcRow('المسار', esc(routeTxt(q.origin, q.destination)))}${idcRow('تاريخ السفر', q.travel ? fmtPT(q) : '')}${idcRow('عدد الركاب', q.pax ? esc(q.pax) : '')}${idcRow('وصل بتاريخ', q.at ? fmtP(String(q.at).slice(0, 10)) : '')}${q.notes ? `<div class="note">📝 ${esc(q.notes)}</div>` : ''}</div>`;
   const extra = (cl.companions ? `<div class="sec ${cl.notes ? '' : 'full'}"><h4>👨‍👩‍👧 المرافقون / العائلة</h4><div class="note" style="margin:0">${esc(cl.companions)}</div></div>` : '') + (cl.notes ? `<div class="sec ${cl.companions ? '' : 'full'}"><h4>📝 ملاحظات</h4><div class="note" style="margin:0">${esc(cl.notes)}</div></div>` : '');
   return `<div class="idc" style="--ia:${forPrint ? accent() : 'var(--pri,#0e7490)'}"><div class="hd"><div class="off">${settings.logo ? `<img src="${settings.logo}" alt="">` : ''}<span>${esc(o.name || 'مكتب الطيران')}</span></div><div class="ttl">بطاقة تعريف عميل</div></div>
-    <div class="id"><div class="av">${esc(init)}</div><div><h3 class="nm">${esc(D.name)}</h3><div class="tags">${kindTag}${tier}${cl.optout ? '<span class="tg bad">🚫 عدم إزعاج</span>' : ''}</div></div></div>
+    <div class="id"><div class="av">${esc(init)}</div><div><h3 class="nm">${esc(D.name)}</h3><div class="tags">${kindTag}${cl.optout ? '<span class="tg bad">🚫 عدم إزعاج</span>' : ''}</div></div></div>
     <div class="meta">${since ? `<span>عميل منذ <b>${fmtP(since)}</b></span>` : ''}${o.phone ? `<span>📞 <b class="ltr">${esc(o.phone)}</b></span>` : ''}${o.address ? `<span>📍 <b>${esc(o.address)}</b></span>` : ''}</div>
-    <div class="body">${contact}${personal}${prefs}${loy}${stats}${enq}${extra}${hist}</div>
+    <div class="body">${contact}${personal}${prefs}${stats}${enq}${extra}${hist}</div>
     <div class="ft"><span>${esc(o.name || '')}</span><span>صدرت بتاريخ ${fmtP(todayStr())}</span></div></div>`;
 }
 var idcKey = null;
@@ -3168,7 +2901,7 @@ function idcProfile(){ const k = idcKey; idcClose(); openProfile(k); }
 function idcDocs(){ if (idcKey) openTickets(docCid(idcKey)); }
 function idcMsg(){
   const p = idcKey && idcPerson(idcKey); if (!p) return;
-  if (p.kind === 'booked') xmOpen('رسالة إلى ' + p.name, p.phone, ['offer', 'giftmsg', 'referral', 'missyou', 'birthday', 'passport', 'balance'].map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), custVars(p.c))})), p.remaining > 0 ? 6 : 0);
+  if (p.kind === 'booked') xmOpen('رسالة إلى ' + p.name, p.phone, ['birthday', 'passport', 'balance'].map(k => ({label: TPL[k].label, text: fillTpl(tplText(k), custVars(p.c))})), p.remaining > 0 ? 2 : 0);
   else if (p.kind === 'lead') leadMsg(p.lead.id); else inqMsg(p.inq.id);
   $('xm').style.zIndex = 80;
 }
@@ -3185,7 +2918,7 @@ function idcText(key){
   if (cl.birthday) L.push('🎂 الميلاد: ' + fmtP(cl.birthday));
   if (cl.passportExpiry) L.push('🛂 انتهاء الجواز: ' + fmtP(cl.passportExpiry));
   if (cl.prefAirline || cl.prefSeat || cl.prefMeal) L.push('⭐ التفضيلات: ' + [cl.prefAirline, cl.prefSeat, cl.prefMeal].filter(Boolean).join(' · '));
-  if (c) { L.push('', '📊 ' + c.trips + ' حجز · ' + c.tickets + ' تذكرة · مدفوع ' + money(c.spent) + (c.remaining > 0 ? ' · متبقي ' + money(c.remaining) : '') + (c.tier ? ' · ' + TIER_LABEL[c.tier] : ''));
+  if (c) { L.push('', '📊 ' + c.trips + ' حجز · ' + c.tickets + ' تذكرة · مدفوع ' + money(c.spent) + (c.remaining > 0 ? ' · متبقي ' + money(c.remaining) : ''));
     c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate))).slice(0, 8).forEach(r => L.push('• ' + fmtPT(r) + ' ' + apCode(r.origin) + '‏←‏' + apCode(r.destination) + (r.pnr ? ' ' + r.pnr : '') + (r.status === 'cancelled' ? ' (ملغي)' : ''))); }
   else L.push('', 'لم يحجز بعد (' + (p.kind === 'lead' ? 'مرجّح' : 'طلب من الصفحة') + ')');
   if (cl.companions) L.push('', '👨‍👩‍👧 ' + cl.companions); if (cl.notes) L.push('📝 ' + cl.notes);
@@ -3273,28 +3006,25 @@ function trashSorted(){
 
 /* ---------- القائمة الجانبية ---------- */
 function sbBuild(){
-  var G = [{g: '', i: [['d', '🏠', 'الرئيسية']]},
-    {g: 'العمل اليومي', i: [['t', '📋', 'مهام اليوم'], ['n', '➕', 'حجز جديد'], ['b', '✈️', 'سجل الحجوزات'], ['a', '👥', 'جميع العملاء'], ['l', '🔎', 'العملاء المرجحون']]},
-    {g: 'التسويق', i: [['r', '⭐', 'الولاء والإحالات'], ['c', '📣', 'حملات العروض']]},
-    {g: 'المال', i: [['s', '💼', 'الحسابات والأرباح']]}];
-  var h = '<div class="sb-brand"><span>✈</span><b>' + esc(office().name || 'مكتب حجز الطيران') + '</b></div><button type="button" class="sb-add" onclick="sbClose();acOpen()">➕ إضافة عميل</button><nav class="sb-nav" aria-label="الصفحات">';
+  var G = [{g: '', i: [['d', '🏠', 'لوحة التحكم'], ['a', '👥', 'العملاء'], ['b', '✈️', 'الحجوزات'], ['l', '🔎', 'استفسارات'], ['sup', '🏢', 'الموردين'], ['exp', '💸', 'المصروفات'], ['trash', '🗑', 'سلة المهملات']]}];
+  var h = '<div class="sb-brand"><span>✈</span><b>' + esc(office().name || 'مكتب حجز الطيران') + '</b></div><nav class="sb-nav" aria-label="الصفحات">';
   G.forEach(function(g){ if (g.g) h += '<div class="sb-g">' + g.g + '</div>'; g.i.forEach(function(it){ h += '<button type="button" class="sb-i" data-t="' + it[0] + '" onclick="sbGo(\'' + jq(it[0]) + '\')"><i>' + it[1] + '</i><span>' + it[2] + '</span><em class="sb-bd" id="sbBd_' + it[0] + '"></em></button>'; }); });
   h += '<div class="sb-g">أدوات</div>';
-  [['⚙️', 'الإعدادات', 'openSettings()'], ['🎨', 'المظهر والألوان', "openSettings();setPane('look')"], ['💾', 'نسخة احتياطية', 'backup()'], ['⏱', 'نسخة تلقائية أسبوعية', 'autoBkToggle()'], ['📊', 'تصدير Excel', 'exportCSV()'], ['🔄', 'تحديث البيانات', 'location.reload()'], ['🖨', 'طباعة', 'window.print()'], ['♻', 'استرجاع نسخة', "document.getElementById('restoreFile').click()"], ['❓', 'دليل سريع', 'helpOpen()'], ['🚪', 'تسجيل الخروج', 'cloudLogout()']]
+  [['⚙️', 'الإعدادات', 'openSettings()'], ['💾', 'نسخة احتياطية', 'backup()'], ['♻', 'استرجاع نسخة احتياطية', "document.getElementById('restoreFile').click()"], ['📊', 'تصدير Excel', 'exportCSV()'], ['❓', 'دليل', 'helpOpen()'], ['🚪', 'تسجيل خروج', 'cloudLogout()']]
     .forEach(function(x){ h += '<button type="button" class="sb-i tool" onclick="sbClose();' + x[2] + '"><i>' + x[0] + '</i><span>' + x[1] + '</span></button>'; });
   $('sidebar').innerHTML = h + '</nav>';
 }
 function sbBadges(){
   var set = function(k, n){ var e = $('sbBd_' + k); if (e) e.textContent = n ? n : ''; };
-  try { set('t', typeof taskItems !== 'undefined' ? taskItems.length : 0); set('l', leads.filter(isOpen).length); set('a', inquiries.length ? '🌐' + inquiries.length : ''); } catch (e) {}
+  try { set('l', leads.filter(isOpen).length + inquiries.length); } catch (e) {}
 }
 function sbToggle(){
   if (window.innerWidth >= 960) { var on = document.body.classList.toggle('sbon'); try { localStorage.setItem('office_sb', on ? '1' : '0'); } catch (e) {} }
   else document.body.classList.toggle('sbdrawer');
 }
 function sbClose(){ document.body.classList.remove('sbdrawer'); }
-function sbGo(t){ showTab(t); sbClose(); }
-function sbMark(t){ document.querySelectorAll('.sb-i[data-t]').forEach(function(b){ b.classList.toggle('on', b.dataset.t === t); }); }
+function sbGo(t){ if (t === 'sup' || t === 'exp' || t === 'trash') { accTab = t; showTab('s'); } else showTab(t); sbClose(); }
+function sbMark(t){ var k = t === 's' ? (accTab === 'profit' ? 'd' : accTab) : t; document.querySelectorAll('.sb-i[data-t]').forEach(function(b){ b.classList.toggle('on', b.dataset.t === k); }); }
 
 /* ---------- الصفحة الرئيسية ---------- */
 function dashRow(a, b, c, js){ return '<div class="dr"' + (js ? ' onclick="' + js + '"' : '') + '><div class="dr-m"><b>' + a + '</b><span class="c-sub">' + b + '</span></div><div class="dr-s">' + (c || '') + '</div></div>'; }
@@ -3307,14 +3037,13 @@ function renderDash(){
   var openN = leads.filter(isOpen).length, lateL = leads.filter(isLate).sort(function(a, b){ return String(a.follow).localeCompare(String(b.follow)); });
   var week = act.filter(function(r){ var d = daysUntil(r.travelDate); return d >= 0 && d <= 7; }).sort(function(a, b){ return String(a.travelDate).localeCompare(String(b.travelDate)); });
   var dt = new Date().toLocaleDateString('ar-EG', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-  $('dashHello').innerHTML = '<div class="dh"><div><h2>🏠 ' + esc(office().name || 'مكتب حجز الطيران') + '</h2><div class="c-sub">' + dt + '</div></div>' +
-    '<div class="dh-a noprint"><button onclick="newBooking()">✈️ حجز جديد</button><button class="sec" onclick="newLead()">🔎 مرجّح جديد</button><button class="sec" onclick="showTab(\'c\')">📣 حملة</button></div></div>';
+  $('dashHello').innerHTML = '<div class="dh"><div><h2>🏠 ' + esc(office().name || 'مكتب حجز الطيران') + '</h2><div class="c-sub">' + dt + '</div></div></div>';
   var K = function(ic, l, v, sub, js, cls){ return '<div class="kp ' + (cls || '') + '" onclick="' + js + '"><i>' + ic + '</i><div><small>' + l + '</small><b>' + v + '</b>' + (sub ? '<em>' + sub + '</em>' : '') + '</div></div>'; };
   var kpis = K('🎫', 'حجوزات ' + monthLabel(m), sm.n, '', "showTab('b')") + K('💰', 'مبيعات الشهر', money(sm.sales), c, "showTab('s')") + K('💼', 'عمولة الشهر', money(sm.prof), sm.missing ? sm.missing + ' بدون سعر شراء' : c, "showTab('s')", sm.prof < 0 ? 'bad' : 'ok') +
     K('💸', 'مصروفات الشهر', money(expTotalM(m)), c, "accTab='exp';showTab('s')", '') + K('📈', 'صافي الشهر', money(netMonth(m)), 'بعد المصروفات والإلغاءات', "accTab='profit';showTab('s')", netMonth(m) < 0 ? 'bad' : 'ok') +
     K('⚠️', 'متبقٍ على العملاء', money(owedCust), debtors.length + ' عميل', "showTab('a');$('pType').value='debt';renderPeople()", owedCust > 0 ? 'bad' : 'ok') +
     K('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') + K('🔎', 'مرجّحون مفتوحون', openN, lateL.length ? lateL.length + ' متابعة متأخرة' : '', "showTab('l')", lateL.length ? 'warn' : '') +
-    K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('a');$('pType').value='inq';renderPeople()", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
+    K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('l')", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
   var wk = week.length ? week.slice(0, 7).map(function(r){ var d = daysUntil(r.travelDate), rem = remaining(r);
     return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + jq(r.id) + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
   var need = '';
@@ -3346,7 +3075,7 @@ function initV10(){
   document.querySelectorAll('#tabAll th[data-pk]').forEach(function(th){ th.onclick = function(){ ppHead(th.dataset.pk); }; });
   sortRevUI();
   { var f = render; render = function(){ f.apply(this, arguments); sortHeadUI(); sbBadges(); if ($('tabDash') && $('tabDash').style.display !== 'none') renderDash(); }; }
-  { var g = window.showTab; window.showTab = function(t){ g(t); sbMark(t); if (t === 'd') renderDash(); sortHeadUI(); }; }
+  { var g = window.showTab; window.showTab = function(t){ g(t); if (t === 'd') { $('tabTasks').style.display = ''; renderDash(); } sbMark(t); sortHeadUI(); }; }
   new MutationObserver(function(){ clearTimeout(sortTO); sortTO = setTimeout(sortableScan, 60); }).observe(document.body, {childList: true, subtree: true});
   try { render(); } catch (e) { window.__v10err = 'render: ' + e.stack; }
   try { showTab('d'); } catch (e) { window.__v10err = (window.__v10err || '') + ' show: ' + e.stack; }
@@ -3687,7 +3416,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-24 · 31';
+var APP_VERSION = '2026-11-25 · 32';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3771,7 +3500,7 @@ function phxInit(taId){
   renderProfile = function(){ _rp.apply(this, arguments); var t = $('pfPhones'); if (t) { t.__phx = false; phxInit('pfPhones'); } };
 }
 
-/* v16: ملف العميل A4 */
+/* v16: تنسيق المستندات + زر حجز جديد */
 const CF_CSS = `.cf{max-width:190mm;margin:0 auto;padding:4mm}
 .cf-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:2px solid #1a1f2b;padding-bottom:8px}
 .cf-hd .o{display:flex;align-items:center;gap:10px}.cf-hd img{height:42px}.cf-hd .on{font-size:17px;font-weight:800}.cf-hd .os{font-size:11px;color:#556}
@@ -3795,54 +3524,7 @@ const CF_CSS = `.cf{max-width:190mm;margin:0 auto;padding:4mm}
 .cf .tm,.idc .tm{font-weight:700;white-space:nowrap;direction:ltr;color:#334;background:none;padding:0;font-size:.9em}.idc td,.cf td{line-height:1.45}`;
 const CF_BASE = `*{box-sizing:border-box}body{margin:0;background:#fff;color:#1a1f2b;font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:12.5px;line-height:1.6}
 @page{size:A4;margin:12mm}`;
-var CF_OPT = {bk: true, acc: true, notes: true, sign: true};
 function cfRow(l, v, ltr){ return (v === '' || v == null) ? '' : `<div class="cf-r"><span>${l}</span><b${ltr ? ' class="ltr"' : ''}>${v}</b></div>`; }
-function cfHtml(key, opt){
-  opt = opt || CF_OPT; const p = idcPerson(key); if (!p) return '<p>لا توجد بيانات</p>';
-  const D = idcData(p), cl = D.cl, c = D.c, l = D.l, o = office(), cur = esc(o.currency || '');
-  const kind = p.kind === 'booked' ? 'عميل حاجز' : p.kind === 'lead' ? 'عميل مرجّح (لم يحجز)' : 'طلب من صفحة الاستفسار';
-  const bd = cl.birthday, age = idcAge(bd);
-  const phones = D.phones.map(x => cfRow(esc(x.label), `<span class="ltr">${esc(x.num)}</span>`)).join('');
-  const personal = cfRow('الجنس', D.g === 'm' ? 'ذكر' : D.g === 'f' ? 'أنثى' : '') + cfRow('تاريخ الميلاد', bd ? fmtP(bd) + (age !== '' ? ' (' + age + ' سنة)' : '') : '') + cfRow('رقم الهوية / الجواز', c && c.idNo ? esc(c.idNo) : '', true) + cfRow('انتهاء الجواز', cl.passportExpiry ? fmtP(cl.passportExpiry) : '') + cfRow('شركة الطيران المفضلة', esc(cl.prefAirline || '')) + cfRow('المقعد المفضل', esc(cl.prefSeat || '')) + cfRow('الوجبة المفضلة', esc(cl.prefMeal || ''));
-  let sum = '', hist = '';
-  if (c && opt.bk) {
-    sum = `<div class="cf-sec"><h3>ملخص النشاط</h3><div class="cf-sum"><div><b>${c.trips}</b><small>حجز</small></div><div><b>${c.tickets}</b><small>تذكرة</small></div>${opt.acc ? `<div><b>${money(c.spent)}</b><small>المدفوع ${cur}</small></div><div><b>${c.remaining > 0 ? money(c.remaining) : '0'}</b><small>المتبقي ${cur}</small></div>` : `<div><b>${c.firstDate ? fmtP(c.firstDate) : '—'}</b><small>أول حجز</small></div><div><b>${c.nextTrip ? fmtP(c.nextTrip) : '—'}</b><small>الرحلة القادمة</small></div>`}</div></div>`;
-    const rows = c.bk.slice().sort((a, b) => String(b.travelDate).localeCompare(String(a.travelDate)));
-    hist = `<div class="cf-sec"><h3>سجل الحجوزات (${rows.length})</h3><table><thead><tr><th>الرحلة</th><th>السفر</th><th>العودة</th><th>الطيران</th><th>PNR</th><th>تذاكر</th>${opt.acc ? '<th>السعر</th><th>المدفوع</th><th>المتبقي</th>' : ''}<th>الحالة</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.status === 'cancelled' ? 'cx' : ''}"><td>${esc(apCode(r.origin))} ‏←‏ ${esc(apCode(r.destination))}</td><td>${fmtHT(r)}</td><td>${r.returnDate ? fmtHR(r) : '—'}</td><td>${esc(r.airline || '—')}</td><td class="ltr">${esc(r.pnr || '—')}</td><td>${r.tickets || 1}</td>${opt.acc ? `<td>${money(r.price)}</td><td>${money(r.paid)}</td><td>${money(Math.max(0, (+r.price || 0) - (+r.discount || 0) - (+r.paid || 0)))}</td>` : ''}<td>${STATUS[r.status] || esc(r.status || '')}</td></tr>`).join('')}</tbody></table></div>`;
-  } else if (l && opt.bk) {
-    hist = `<div class="cf-sec"><h3>تفاصيل الاستفسار</h3><div class="cf-g">${cfRow('المسار', esc(routeTxt(l.orig, l.dest)))}${cfRow('تاريخ السفر', l.travel ? fmtPT(l) : '')}${cfRow('تاريخ العودة', l.returnDate ? fmtPR(l) : '')}${cfRow('عدد الركاب', l.pax ? esc(l.pax) : '')}</div></div>`;
-  }
-  const comp = cl.companions ? `<div class="cf-sec"><h3>المرافقون / العائلة</h3><div class="cf-note">${esc(cl.companions)}</div></div>` : '';
-  const notes = opt.notes && cl.notes ? `<div class="cf-sec"><h3>ملاحظات</h3><div class="cf-note">${esc(cl.notes)}</div></div>` : '';
-  return `<div class="cf"><div class="cf-hd"><div class="o">${settings.logo ? `<img src="${settings.logo}" alt="">` : ''}<div><div class="on">${esc(o.name || 'مكتب الطيران')}</div><div class="os">${[o.phone, o.address].filter(Boolean).map(esc).join(' — ')}</div></div></div><div class="t"><b>ملف عميل</b>${fmtP(todayStr())}</div></div>
-  <div class="cf-nm">${esc(D.name)}</div><div class="cf-tags"><span>${kind}</span>${c && c.tier ? `<span>${esc(TIER_LABEL[c.tier])}</span>` : ''}</div>
-  <div class="cf-sec"><h3>بيانات التواصل والبيانات الشخصية</h3><div class="cf-g"><div>${phones}</div><div>${personal}</div></div></div>${sum}${hist}${comp}${notes}
-  ${opt.sign ? '<div class="cf-sg"><div>توقيع العميل</div><div>توقيع المسؤول</div></div>' : ''}
-  <div class="cf-ft"><span>${esc(o.name || '')}</span><span>صدر بتاريخ ${fmtP(todayStr())}</span></div></div>`;
-}
-var cfKey = null;
-function cfOpen(key){
-  cfKey = key || idcKey; let m = $('cfm');
-  if (!m) { m = document.createElement('div'); m.id = 'cfm'; m.className = 'modal'; m.style.cssText = 'display:none;z-index:70'; m.onclick = e => { if (e.target === m) cfClose(); };
-    m.innerHTML = '<div class="mbox wide" style="padding:14px"><h2 style="margin-top:0">📄 ملف العميل (A4)</h2><div id="cfOpts" class="cfopts"></div><div id="cfPrev" class="cfprev"></div><div class="actions" style="margin-top:12px"><button onclick="cfPrint()">🖨 طباعة / حفظ PDF</button><button class="sec" onclick="cfClose()">إغلاق</button></div></div>'; document.body.appendChild(m); }
-  cfRender(); m.style.display = 'flex';
-}
-function cfRender(){
-  const L = {bk: 'الحجوزات', acc: 'الحسابات (السعر/المدفوع/المتبقي)', notes: 'الملاحظات', sign: 'خانة التوقيع'};
-  $('cfOpts').innerHTML = Object.keys(L).map(k => `<label class="cfo"><input type="checkbox" ${CF_OPT[k] ? 'checked' : ''} onchange="CF_OPT['${jq(k)}']=this.checked;cfRender()"> ${L[k]}</label>`).join('');
-  $('cfPrev').innerHTML = `<style>${CF_CSS}</style>` + cfHtml(cfKey, CF_OPT);
-}
-function cfClose(){ const m = $('cfm'); if (m) m.style.display = 'none'; }
-function cfPrint(){
-  let f = $('cfFrame'); if (f) f.remove(); f = document.createElement('iframe'); f.id = 'cfFrame'; f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(f);
-  const d = f.contentWindow.document; d.open(); d.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ملف عميل</title><style>${CF_BASE}${CF_CSS}</style></head><body>${cfHtml(cfKey, CF_OPT)}</body></html>`); d.close();
-  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { alert('تعذر الطباعة'); } }, 300);
-}
-var _idcOpen16 = idcOpen;
-idcOpen = function(key){
-  _idcOpen16(key); const a = document.querySelector('#idmBody .actions');
-  if (a && !a.querySelector('.cfbtn')) { const b = document.createElement('button'); b.className = 'cfbtn'; b.textContent = '📄 ملف العميل A4'; b.onclick = () => cfOpen(key); a.insertBefore(b, a.firstChild); }
-};
 (function(){
   const h = [...document.querySelectorAll('#tabBookings h2')].find(x => x.textContent.trim().indexOf('سجل ال') === 0); if (!h || h.parentNode.classList.contains('newbk')) return;
   const w = document.createElement('div'); w.className = 'newbk noprint'; h.parentNode.insertBefore(w, h); w.appendChild(h);
@@ -3965,7 +3647,7 @@ function actsToMenu(root){
     const head = a.parentElement && a.parentElement.classList.contains('cust-h'), l = document.createElement('div'); l.className = 'amlist';
     if (head) { const card = a.closest('.cust'), i = card ? +card.id.replace('cust-', '') : -1, it = () => grpItems[i];
       btns.forEach(x => l.appendChild(x));
-      l.appendChild(amBtn('🪪 بطاقة العميل', () => it() && idcOpen(it().k))); l.appendChild(amBtn('📄 ملف العميل A4', () => it() && cfOpen(it().k))); l.appendChild(amBtn('💬 واتساب', () => it() && waSend(it().c.phone, ''))); }
+      l.appendChild(amBtn('🪪 بطاقة العميل', () => it() && idcOpen(it().k))); l.appendChild(amBtn('💬 واتساب', () => it() && waSend(it().c.phone, ''))); }
     else btns.forEach(x => l.appendChild(x));
     l.querySelectorAll('.sm').forEach(x => x.classList.remove('sm'));
     const w = document.createElement('div'); w.className = 'amenu noprint'; const b = document.createElement('button'); b.type = 'button'; b.className = 'sec sm amb'; b.title = 'إجراءات'; b.setAttribute('onclick', 'amToggle(this)'); b.textContent = head ? '⋯ إجراءات' : '⋯';
@@ -4224,10 +3906,66 @@ function custDelete(key){
 }
 acDelete = custDelete;
 
+/* v23: استفسارات — الطلبات الواردة من صفحة «اسأل» تظهر مع المتابعات في قسم واحد */
+function inqCard(q){
+  var init = [].slice.call(String(q.name).trim())[0] || '؟', id = q.id, n = +q.pax || 1;
+  return '<div class="lcard st-new inq"><div class="lc-h"><div class="avatar">' + esc(init) + '</div><div class="lc-id"><div class="c-name">' + esc(q.name) + ' <span class="badge b-new">🌐 من الصفحة</span></div>' + phonesBlock(q.phone) + '</div></div>' +
+    '<div class="lc-r"><span class="route">' + ap(q.origin) + '<span class="arr">←</span>' + ap(q.destination) + '</span>' + (n > 1 ? ' <span class="chip c-gray">👥 ' + n + ' ركاب</span>' : '') + '</div>' +
+    '<div class="lc-d"><span>✈️ سفر: ' + (q.travel ? fmtDT(q) : '<i class="c-sub">غير محدد</i>') + '</span><span>📅 وصل: ' + fmtD(String(q.at || '').slice(0, 10)) + '</span></div>' +
+    (q.notes ? '<div class="c-note lead">📝 ' + esc(q.notes.length > 110 ? q.notes.slice(0, 110) + '…' : q.notes) + '</div>' : '') +
+    '<div class="lc-a noprint"><button class="sm" onclick="inqToLead(\'' + jq(id) + '\')">➕ نقل للمتابعة</button><button class="sec sm" onclick="inqMsg(\'' + jq(id) + '\')">💬 رد</button><button class="del sm" onclick="inqDelete(\'' + jq(id) + '\')">حذف</button></div></div>';
+}
+{
+  const f23 = renderLeads;
+  renderLeads = function(){
+    f23.apply(this, arguments);
+    if (!$('ldBox')) return;
+    const q = $('lq').value.trim().toLowerCase(), st = $('lfStatus').value;
+    const list = (st === '' || st === 'open' || st === 'new') ? inquiries.filter(function(x){ return !q || (x.name + ' ' + x.phone + ' ' + (x.origin || '') + ' ' + (x.destination || '') + ' ' + (x.notes || '')).toLowerCase().includes(q); }) : [];
+    if (!list.length) return;
+    if (ldView === 'table') {
+      $('lrows').insertAdjacentHTML('afterbegin', list.map(function(x){ return '<tr class="inq"><td><div class="c-name">' + esc(x.name) + '</div>' + phonesBlock(x.phone) + '</td><td><div class="route">' + ap(x.origin) + '<span class="arr">←</span>' + ap(x.destination) + '</div></td><td>' + (x.travel ? fmtDT(x) : '—') + '</td><td>' + fmtD(String(x.at || '').slice(0, 10)) + '</td><td>—</td><td>—</td><td><span class="badge b-new">🌐 من الصفحة</span></td><td class="noprint"><div class="acts"><button class="sm" onclick="inqToLead(\'' + jq(x.id) + '\')">نقل للمتابعة</button><button class="sec sm" onclick="inqMsg(\'' + jq(x.id) + '\')">💬</button><button class="del sm" onclick="inqDelete(\'' + jq(x.id) + '\')">حذف</button></div></td></tr>'; }).join(''));
+    } else {
+      const has = $('ldBox').querySelector('.lgrid');
+      $('ldBox').innerHTML = '<div class="ld-sec">🌐 طلبات جديدة من صفحة «اسأل» (' + list.length + ')</div><div class="lgrid">' + list.map(inqCard).join('') + '</div>' + (has ? '<div class="ld-sec">المتابعات</div>' + has.outerHTML : '');
+    }
+  };
+}
+
+/* ---------- اقتراح العملاء المسجّلين أثناء كتابة الاسم في الحجز الجديد (منعًا للتسجيل المزدوج) ---------- */
+(function(){
+  const d = $('dupBox'); if (!d || $('nameSug')) return;
+  d.insertAdjacentHTML('afterend', '<div class="full" id="nameSug" style="display:none"></div>');
+})();
+function sugList(nm){
+  const seen = new Set(), out = [], add = (k, name, phone, n) => { if (seen.has(k) || !name) return; seen.add(k); out.push({k: k, name: name, phone: phone || '', n: n || 0}); };
+  custAll.forEach(c => { if (String(c.name).toLowerCase().includes(nm)) add(c.key, c.name, c.phone, c.trips); });
+  clients.forEach(cl => { if (cl.name && String(cl.name).toLowerCase().includes(nm)) add(cl.id, cl.name, cl.phone, 0); });
+  return out.slice(0, 5);
+}
+function sugUse(k){
+  const c = custAll.find(x => x.key === k), cl = CM.get(k) || {};
+  $('name').value = (c && c.name) || cl.name || ''; $('phone').value = (c && c.phone) || cl.phone || ''; $('idNo').value = (c && c.idNo) || cl.idNo || $('idNo').value;
+  $('passportExpiry').value = cl.passportExpiry || ''; $('birthday').value = cl.birthday || ''; if (cl.prefAirline && !$('airline').value) $('airline').value = cl.prefAirline;
+  dupCheck(); $('origin').focus();
+}
+function sugRender(){
+  const box = $('nameSug'); if (!box) return;
+  const nm = $('name').value.trim().toLowerCase(); let html = '';
+  if (nm.length >= 2 && !$('id').value) {
+    const L = sugList(nm).filter(x => !(dupKey && x.k === dupKey));
+    if (L.length) html = '<div class="dup info">💡 عملاء مسجّلون بهذا الاسم — اختر الشخص بدل تسجيله من جديد:<div class="sugs">' + L.map(x => '<button type="button" class="sec sm" onclick="sugUse(\'' + jq(jq(x.k)) + '\')">👤 ' + esc(x.name) + (x.phone ? ' · <span dir="ltr">' + esc(x.phone) + '</span>' : '') + (x.n ? ' · ' + x.n + ' حجز' : '') + '</button>').join('') + '</div></div>';
+  }
+  box.innerHTML = html; box.style.display = html ? '' : 'none';
+}
+{ const f = dupCheck; dupCheck = function(){ f.apply(this, arguments); sugRender(); }; }
+$('name').addEventListener('input', sugRender);
+
+{ const f = openSettings; openSettings = function(){ f.apply(this, arguments); autoBkLabel(); }; }
+
 const _render = render;
-render = function(){ render3(); refreshLists(); _render(); renderLeads(); renderLoyalty(); renderGrouped(); renderPeople(); renderTasks(); renderCampaigns(); updateCounts(); };
-$('thr').value = settings.threshold;
-try { $('fGroup').value = localStorage.getItem('office_group') || 'cust'; $('fSort').value = localStorage.getItem('office_sort') || 'near'; } catch(e) {} refreshLists(); initCampaignUI(); resetForm(); resetLeadForm(); render(); showTab('t'); initV10();
+render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
+try { $('fGroup').value = localStorage.getItem('office_group') || 'cust'; $('fSort').value = localStorage.getItem('office_sort') || 'near'; } catch(e) {} refreshLists(); resetForm(); resetLeadForm(); render(); showTab('t'); initV10();
 pollInquiries();
 </script>
 </body>

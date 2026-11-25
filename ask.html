@@ -37,7 +37,6 @@
     <div class="row"><div><label>تاريخ السفر المتوقع</label><input type="date" id="travel"></div>
       <div><label>عدد الركاب</label><input type="number" id="pax" min="1" max="50" value="1"></div></div>
     <label>ملاحظات (اختياري)</label><textarea id="notes" rows="3" maxlength="500" placeholder="ذهاب وعودة؟ ميزانية؟ أي تفاصيل..."></textarea>
-    <label>كود صديق أحالك (اختياري)</label><input id="ref" maxlength="20" dir="ltr" style="text-align:right">
     <div class="hp"><label>لا تملأ هذا الحقل</label><input id="website" tabindex="-1" autocomplete="off"></div>
     <div id="cap" style="margin-top:14px;display:flex;justify-content:center"></div>
     <button type="submit" id="go">إرسال الطلب</button>
@@ -56,7 +55,6 @@
   const BASE = norm(C.url), KEY = (C.key || '').trim();
   if (C.name) { document.title = C.name + ' - اسأل عن رحلتك'; $('ttl').textContent = '✈ ' + C.name; }
   if (C.phone) { $('ph').textContent = ' أو اتصل بنا: ' + C.phone; $('foot').textContent = '📞 ' + C.phone; }
-  try { const r = new URLSearchParams(location.search).get('ref'); if (r) $('ref').value = r.slice(0, 20); } catch(e) {}
   /* Cloudflare Turnstile (اختياري حتى تضبطه: ضع المفتاح العام في config.js باسم turnstile) */
   const TS = /^[0-9A-Za-z_-]{10,80}$/.test(C.turnstile || '') ? C.turnstile : '';
   let capToken = '', capId = null;
@@ -86,7 +84,7 @@
         auth = {apikey: KEY, Authorization: 'Bearer ' + aj.access_token};
       }
       const body = {name: $('name').value.trim(), phone, origin: $('origin').value.trim(), destination: $('destination').value.trim(),
-        travel: $('travel').value || null, pax: Math.min(50, Math.max(1, Math.round(+$('pax').value || 1))), notes: $('notes').value.trim(), ref_code: toLat($('ref').value.trim()).toUpperCase(), gender: $('gender').value};
+        travel: $('travel').value || null, pax: Math.min(50, Math.max(1, Math.round(+$('pax').value || 1))), notes: $('notes').value.trim(), gender: $('gender').value};
       const r = await fetch(BASE + '/rest/v1/inquiries', {method: 'POST', headers: Object.assign({'Content-Type': 'application/json', Prefer: 'return=minimal'}, auth), body: JSON.stringify(body)});
       if (!r.ok) throw new Error('HTTP ' + r.status);
       try { localStorage.setItem('ask_last', String(Date.now())); } catch(_) {}
