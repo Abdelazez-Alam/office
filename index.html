@@ -875,6 +875,7 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
             <div><label>العملة</label><input id="sCur" placeholder="جنيه"></div>
             <div class="full"><label>ملاحظة أسفل عرض السعر</label><input id="sQuoteFooter"></div>
             <div class="full"><label>نسخة احتياطية</label><button type="button" class="sec" id="autoBkBtn" onclick="autoBkToggle()"></button></div>
+            <div class="full"><label>سجل الأخطاء</label><button type="button" class="sec" id="errLogBtn" onclick="errLogShow()"></button></div>
             <div class="full"><label>شعار المكتب (يظهر أعلى عرض السعر)</label>
               <div class="logo-row"><img id="sLogoImg" alt="" style="display:none"><input type="file" id="sLogoFile" accept="image/*"><button type="button" class="sec sm" onclick="logoRemove()">إزالة الشعار</button></div></div>
           </div>
@@ -3420,7 +3421,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-25 · 32';
+var APP_VERSION = '2026-11-25 · 33';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3965,7 +3966,23 @@ function sugRender(){
 { const f = dupCheck; dupCheck = function(){ f.apply(this, arguments); sugRender(); }; }
 $('name').addEventListener('input', sugRender);
 
-{ const f = openSettings; openSettings = function(){ f.apply(this, arguments); autoBkLabel(); }; }
+/* سجل الأخطاء المحلي: آخر 30 خطأ في هذا الجهاز فقط (لا يُرسل لأي جهة) */
+const ERRK = 'norma_errlog';
+function errLogGet(){ try { return JSON.parse(localStorage.getItem(ERRK) || '[]'); } catch (e) { return []; } }
+function errLogAdd(m){ try { const a = errLogGet(); a.push({ t: new Date().toISOString(), p: String(location.hash || '').slice(0, 40), m: String(m).slice(0, 300), v: typeof APP_VERSION === 'string' ? APP_VERSION : '' }); localStorage.setItem(ERRK, JSON.stringify(a.slice(-30))); } catch (e) {} }
+window.addEventListener('error', e => errLogAdd((e.message || 'error') + ' @' + (e.lineno || 0) + ':' + (e.colno || 0)));
+window.addEventListener('unhandledrejection', e => errLogAdd('promise: ' + ((e.reason && e.reason.message) || e.reason)));
+function errLogLabel(){ document.querySelectorAll('#errLogBtn').forEach(b => { b.textContent = '🐞 سجل الأخطاء (' + errLogGet().length + ')'; }); }
+function errLogShow(){
+  const a = errLogGet(), txt = a.length ? a.map(x => x.t + ' | ' + x.v + ' | ' + x.m).join('\n') : 'لا توجد أخطاء مسجلة ✓';
+  const ov = document.createElement('div'); ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = '<div style="background:var(--surface);color:var(--txt);border-radius:14px;padding:16px;max-width:560px;width:100%;max-height:85vh;display:flex;flex-direction:column;gap:10px"><b>🐞 سجل الأخطاء</b><textarea readonly style="height:240px;direction:ltr;font-size:12px"></textarea><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="elCopy">نسخ</button><button type="button" class="sec" id="elClr">مسح السجل</button><button type="button" class="sec" id="elX">إغلاق</button></div></div>';
+  document.body.appendChild(ov); const ta = ov.querySelector('textarea'); ta.value = txt;
+  ov.querySelector('#elCopy').onclick = () => { ta.select(); try { navigator.clipboard.writeText(txt); } catch (e) { document.execCommand('copy'); } toast('تم النسخ'); };
+  ov.querySelector('#elClr').onclick = () => { try { localStorage.removeItem(ERRK); } catch (e) {} ov.remove(); errLogLabel(); };
+  ov.querySelector('#elX').onclick = () => ov.remove();
+}
+{ const f = openSettings; openSettings = function(){ f.apply(this, arguments); autoBkLabel(); errLogLabel(); }; }
 
 const _render = render;
 render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
