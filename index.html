@@ -626,7 +626,7 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
     <div class="pp-stats" id="ppStats"></div>
     <div class="toolbar noprint">
       <input id="pq" placeholder="بحث بالاسم أو الهاتف أو الوجهة...">
-      <select id="pType"><option value="">كل العملاء</option><option value="debt">💰 عليهم متبقي</option></select>
+      <select id="pType"><option value="">كل العملاء</option><option value="booked">✅ لديهم حجوزات</option><option value="prospect">🔎 استفسروا ولم يحجزوا</option><option value="debt">💰 عليهم متبقي</option></select>
       <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option></select>
       <button onclick="acOpen()">➕ إضافة عميل</button>
     </div>
@@ -2069,14 +2069,15 @@ function refreshLists(){
 /* ---------- صفحة جميع العملاء (حجزوا ومن لم يحجزوا) ---------- */
 let peopleItems = [], ppLimit = 60;
 function buildPeople(){
-  const out = [], seen = new Map();
+  const out = [], seen = new Map(), nmIdx = new Map(), nn = s => String(s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+  const find = (k, r) => seen.get(k) || (!pkey(r.phone) ? nmIdx.get(nn(r.name)) : null);
   custAll.forEach(c => { const lastBook = c.bk.reduce((m, r) => (r.bookingDate && r.bookingDate > m ? r.bookingDate : m), '');
-    const p = {kind:'booked', key:c.key, name:c.name, phone:c.phone, c, act:lastBook || c.lastAct || '', remaining:c.remaining}; out.push(p); seen.set(c.key, p); });
+    const p = {kind:'booked', key:c.key, name:c.name, phone:c.phone, c, act:lastBook || c.lastAct || '', remaining:c.remaining}; out.push(p); seen.set(c.key, p); if (!nmIdx.has(nn(c.name))) nmIdx.set(nn(c.name), p); });
   const lastLead = new Map();
   leads.forEach(l => { const k = ckey(l), prev = lastLead.get(k); if (!prev || String(l.inquiry || '') >= String(prev.inquiry || '')) lastLead.set(k, l); });
-  lastLead.forEach((l, k) => { if (seen.has(k)) { seen.get(k).lead = l; return; }
-    const p = {kind:'lead', key:k, name:l.name, phone:l.phone, lead:l, act:l.inquiry || '', remaining:0}; out.push(p); seen.set(k, p); });
-  inquiries.forEach(q => { const k = ckey(q); if (seen.has(k)) { seen.get(k).inq = q; return; }
+  lastLead.forEach((l, k) => { const ex = find(k, l); if (ex) { ex.lead = l; return; }
+    const p = {kind:'lead', key:k, name:l.name, phone:l.phone, lead:l, act:l.inquiry || '', remaining:0}; out.push(p); seen.set(k, p); if (!nmIdx.has(nn(l.name))) nmIdx.set(nn(l.name), p); });
+  inquiries.forEach(q => { const k = ckey(q), ex = find(k, q); if (ex) { ex.inq = q; return; }
     const p = {kind:'inq', key:k, name:q.name, phone:q.phone, inq:q, act:String(q.at || '').slice(0, 10), remaining:0}; out.push(p); seen.set(k, p); });
   clients.forEach(cl => { if (seen.has(cl.id) || !(cl.name || cl.phone)) return; const p = {kind:'client', key:cl.id, name:cl.name || cl.phone, phone:cl.phone || '', client:cl, act:cl.added || '', remaining:0}; out.push(p); seen.set(cl.id, p); });
   return out;
@@ -2087,16 +2088,14 @@ function peopleText(p){
 }
 function renderPeople(){
   if ($('tabAll').style.display === 'none') return;
-  const all = buildPeople().filter(p => p.kind === 'booked' || p.kind === 'client'), q = $('pq').value.trim().toLowerCase(), t = $('pType').value;
+  const all = buildPeople(), q = $('pq').value.trim().toLowerCase(), t = $('pType').value;
   const debtors = all.filter(p => p.remaining > 0), debt = debtors.reduce((s, p) => s + p.remaining, 0);
   $('ppStats').innerHTML = `<span class="chip c-info">👥 العملاء <b>${all.length}</b></span>` +
     (debt > 0 ? `<span class="chip c-bad">💰 متبقي ${money(debt)} على ${debtors.length}</span>` : '');
   let list = all.filter(p => {
     if (q && !peopleText(p).includes(q)) return false;
-    if (t === 'booked') return p.kind === 'booked';
-    if (t === 'prospect') return p.kind !== 'booked';
-    if (t === 'lead') return p.kind === 'lead';
-    if (t === 'inq') return p.kind === 'inq';
+    if (t === 'booked') return p.kind === 'booked' && p.c.trips > 0;
+    if (t === 'prospect') return p.kind !== 'booked' || !p.c.trips;
     if (t === 'debt') return p.remaining > 0;
     return true;
   });
@@ -2119,18 +2118,18 @@ function renderPeople(){
       det = `<div class="c-sub">${cl.gender ? (cl.gender === 'm' ? '♂ ذكر' : '♀ أنثى') : ''}${cl.idNo ? ' · 🪪 ' + esc(cl.idNo) : ''}</div>${cl.notes ? `<div class="c-note">📝 ${esc(cl.notes.length > 80 ? cl.notes.slice(0, 80) + '…' : cl.notes)}</div>` : ''}`;
       acts = `<button class="sm" onclick="acBookFor(peopleItems[${i}].key)">➕ حجز</button><button class="sec sm" onclick="acLeadFor(peopleItems[${i}].key)">🔎 مرجّح</button><button class="sec sm" onclick="peopleMsg(${i})">💬 رسالة</button><button class="del sm" onclick="acDelete(peopleItems[${i}].key)">حذف</button>`;
     } else if (p.kind === 'lead') { const l = p.lead;
-      kind = `<span class="chip c-info">🔎 مرجّح</span> <span class="badge b-${l.status}">${LSTATUS[l.status] || l.status}</span>`;
+      kind = `<span class="chip c-info">🔎 استفسار</span> <span class="badge b-${l.status}">${LSTATUS[l.status] || l.status}</span>`;
       det = `<div><b dir="ltr">${esc(routeTxt(l.orig, l.dest))}</b>${l.travel ? ' · ' + fmtDT(l) : ''}${(+l.pax || 1) > 1 ? ' · ' + (+l.pax) + ' ركاب' : ''}</div>` +
         (l.quotePrice ? `<div class="c-sub">عرض سعر: ${money(l.quotePrice)}</div>` : '') + (l.follow ? `<div class="c-sub">المتابعة: ${fmtD(l.follow)}${isLate(l) ? ' <span class="chip c-bad">متأخرة</span>' : ''}</div>` : '');
-      acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
+      acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="del sm" onclick="delLead('${jq(l.id)}')">🗑 حذف</button><button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
     } else { const n = p.inq;
-      kind = '<span class="chip c-warn">🌐 طلب جديد</span>';
+      kind = '<span class="chip c-warn">🌐 طلب من الصفحة</span>';
       det = `<div><b dir="ltr">${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}`;
       acts = `<button class="sm" onclick="inqToLead('${jq(n.id)}')">➕ تحويل لمرجّح</button><button class="sec sm" onclick="inqMsg('${jq(n.id)}')">💬 رد</button><button class="del sm" onclick="inqDelete('${jq(n.id)}')">حذف</button>`;
     }
     return `<tr><td><div class="c-name">${p.kind === 'booked' ? `<a class="plink" onclick="openProfile(peopleItems[${i}].key)">${esc(p.name)}</a>` : esc(p.name)} <button class="sec sm noprint" onclick="idcOpen(peopleItems[${i}].key)">🪪 بطاقة</button></div>
       ${phonesBlock(p.phone)}</td>
-      <td>${kind}</td><td>${det}</td><td>${p.remaining > 0 ? `<span class="chip c-bad">${money(p.remaining)}</span>` : '<span class="c-sub">—</span>'}</td>
+      <td>${kind}${p.kind === 'booked' && p.lead ? ' <span class="chip c-info">+ استفسار</span>' : ''}</td><td>${det}</td><td>${p.remaining > 0 ? `<span class="chip c-bad">${money(p.remaining)}</span>` : '<span class="c-sub">—</span>'}</td>
       <td>${p.act ? fmtD(p.act) : '—'}</td><td class="noprint"><div class="acts">${acts}</div></td></tr>`; }).join('') +
     (list.length > ppLimit ? `<tr><td colspan="6" style="text-align:center"><button class="sec" onclick="ppLimit+=60;renderPeople()">عرض المزيد (${list.length - ppLimit})</button></td></tr>` : '')
     : '<tr><td class="empty" colspan="6">لا توجد نتائج</td></tr>';
@@ -2145,7 +2144,7 @@ function inqMsg(id){
   xmOpen('رد على ' + q.name, q.phone, [{label: TPL.inqreply.label, text: fillTpl(tplText('inqreply'), Object.assign(baseVars(), {name: q.name, gender: q.gender || '', origin:q.origin, dest:q.destination, pax:q.pax || 1}))}], 0);
 }
 function peopleCSV(){
-  const cell = csvCell, KIND = {booked:'حجز', lead:'مرجّح (لم يحجز)', inq:'طلب جديد من الصفحة', client:'مسجّل بدون حجز'};
+  const cell = csvCell, KIND = {booked:'عميل', lead:'استفسار', inq:'طلب من الصفحة'};
   download('جميع-العملاء-' + todayStr() + '.csv', '﻿' + [['الاسم','الهاتف','الحالة','عدد الحجوزات','عدد التذاكر','المدفوع','المتبقي','آخر نشاط'].map(cell).join(','),
     ...peopleItems.map(p => [p.name, p.phone, KIND[p.kind], p.c ? p.c.trips : '', p.c ? p.c.tickets : '', p.c ? p.c.spent : '', p.remaining, p.act].map(cell).join(','))].join('\r\n'), 'text/csv;charset=utf-8');
 }
@@ -3424,7 +3423,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-25 · 34';
+var APP_VERSION = '2026-11-25 · 35';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3948,12 +3947,14 @@ function inqCard(q){
 function sugList(nm){
   const seen = new Set(), out = [], add = (k, name, phone, n) => { if (seen.has(k) || !name) return; seen.add(k); out.push({k: k, name: name, phone: phone || '', n: n || 0}); };
   custAll.forEach(c => { if (String(c.name).toLowerCase().includes(nm)) add(c.key, c.name, c.phone, c.trips); });
+  leads.forEach(l => { if (String(l.name || '').toLowerCase().includes(nm)) add(ckey(l), l.name, l.phone, 0); });
+  inquiries.forEach(q => { if (String(q.name || '').toLowerCase().includes(nm)) add(ckey(q), q.name, q.phone, 0); });
   clients.forEach(cl => { if (cl.name && String(cl.name).toLowerCase().includes(nm)) add(cl.id, cl.name, cl.phone, 0); });
   return out.slice(0, 5);
 }
 function sugUse(k){
-  const c = custAll.find(x => x.key === k), cl = CM.get(k) || {};
-  $('name').value = (c && c.name) || cl.name || ''; $('phone').value = (c && c.phone) || cl.phone || ''; $('idNo').value = (c && c.idNo) || cl.idNo || $('idNo').value;
+  const c = custAll.find(x => x.key === k), cl = CM.get(k) || {}, ld = leads.find(x => ckey(x) === k) || inquiries.find(x => ckey(x) === k) || {};
+  $('name').value = (c && c.name) || cl.name || ld.name || ''; $('phone').value = (c && c.phone) || cl.phone || ld.phone || ''; $('idNo').value = (c && c.idNo) || cl.idNo || $('idNo').value;
   $('passportExpiry').value = cl.passportExpiry || ''; $('birthday').value = cl.birthday || ''; if (cl.prefAirline && !$('airline').value) $('airline').value = cl.prefAirline;
   dupCheck(); $('origin').focus();
 }
@@ -3986,6 +3987,18 @@ function errLogShow(){
   ov.querySelector('#elX').onclick = () => ov.remove();
 }
 { const f = openSettings; openSettings = function(){ f.apply(this, arguments); autoBkLabel(); errLogLabel(); }; }
+
+/* حذف العميل يشمل استفساراته وطلباته أيضًا (تذهب لسلة المحذوفات) حتى لا يعود للظهور في «العملاء» */
+{ const f = custDelete; custDelete = function(key){
+    const before = (data.filter(r => ckey(r) === key).length) + (CM.get(key) ? 1 : 0);
+    f.apply(this, arguments);
+    if (before && !data.some(r => ckey(r) === key) && !CM.get(key)) {
+      const ls = leads.filter(l => ckey(l) === key); ls.forEach(l => trashPut('lead', l));
+      if (ls.length) { leads = leads.filter(l => ckey(l) !== key); saveLeads(); }
+      const qs = inquiries.filter(q => ckey(q) === key); if (qs.length) { inquiries = inquiries.filter(q => ckey(q) !== key); syncList('inquiries', inquiries); }
+      render();
+    }
+  }; acDelete = custDelete; }
 
 const _render = render;
 render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
