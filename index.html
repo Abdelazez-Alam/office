@@ -866,8 +866,8 @@ html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
         <div class="grid">
         <div><label>مطار الإقلاع</label><input id="lorig" list="airports"></div>
         <div><label>مطار الهبوط</label><input id="ldest" list="airports"></div>
-        <div><label>تاريخ وساعة الإقلاع</label><div class="dtp"><input type="date" id="ltravel" onchange="if($('lreturn'))$('lreturn').min=this.value"><input type="time" id="ldepartTime" aria-label="ساعة الإقلاع"></div></div>
-        <div id="lreturnBox" style="display:none"><label>تاريخ وساعة العودة</label><div class="dtp"><input type="date" id="lreturn"><input type="time" id="lreturnTime" aria-label="ساعة إقلاع العودة"></div></div>
+        <div><label>تاريخ السفر المتوقع</label><input type="date" id="ltravel" onchange="if($('lreturn'))$('lreturn').min=this.value"><input type="time" id="ldepartTime" hidden></div>
+        <div id="lreturnBox" style="display:none"><label>تاريخ العودة</label><input type="date" id="lreturn"><input type="time" id="lreturnTime" hidden></div>
         <div><label>عدد الركاب</label><input type="number" id="lpax" min="1" value="1"></div>
       </div></div>
       <div class="sgrp"><h3>⏰ المتابعة</h3><div class="grid">
@@ -913,7 +913,7 @@ html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
     </div></div>
     <div class="sgrp" id="acLeadBox" style="display:none"><h3>بيانات الاستفسار</h3><div class="grid">
       <div><label>مطار الإقلاع</label><input id="acOrig" list="airports"></div><div><label>مطار الهبوط</label><input id="acDest" list="airports"></div>
-      <div><label>نوع الرحلة</label><select id="acTrip" onchange="acTripSet()"><option value="one">ذهاب فقط</option><option value="round">ذهاب وعودة</option></select></div><div><label>تاريخ وساعة الإقلاع</label><div class="dtp"><input type="date" id="acTravel"><input type="time" id="acTime" aria-label="ساعة الإقلاع"></div></div><div id="acReturnBox" style="display:none"><label>تاريخ وساعة العودة</label><div class="dtp"><input type="date" id="acReturn"><input type="time" id="acRetTime" aria-label="ساعة إقلاع العودة"></div></div><div><label>موعد المتابعة</label><input type="date" id="acFollow"></div>
+      <div><label>نوع الرحلة</label><select id="acTrip" onchange="acTripSet()"><option value="one">ذهاب فقط</option><option value="round">ذهاب وعودة</option></select></div><div><label>تاريخ السفر المتوقع</label><input type="date" id="acTravel"><input type="time" id="acTime" hidden></div><div id="acReturnBox" style="display:none"><label>تاريخ العودة</label><input type="date" id="acReturn"><input type="time" id="acRetTime" hidden></div><div><label>موعد المتابعة</label><input type="date" id="acFollow"></div>
       <div><label>عدد الركاب</label><input type="number" id="acPax" min="1" value="1"></div>
       <div class="full"><label>ملاحظات الاستفسار</label><input id="acLNote"></div></div></div>
     <div class="sgrp"><h3>تفضيلات وملاحظات (اختياري)</h3><div class="grid">
@@ -3463,15 +3463,15 @@ function phonesAll(phone){
 }
 function phonesBlock(phone, o){
   o = o || {}; if (!phone) return '';
-  var list = phonesAll(phone), many = list.length > 1;
+  var list = phonesAll(phone).slice(0, 1), many = false;
   return list.map(function(p, i){
-    return '<div class="c-sub" dir="ltr" style="text-align:right">' + esc(p.num) + (p.label ? ' <span dir="rtl">(' + esc(p.label) + ')</span>' : '') + (many && i === 0 ? ' <span dir="rtl" class="chip c-info">الأساسي</span>' : '') +
+    return '<div class="c-sub" dir="ltr" style="text-align:right">' + esc(p.num) + (many && i === 0 ? ' <span dir="rtl" class="chip c-info">الأساسي</span>' : '') +
       (o.nowa ? '' : ' <a class="wa noprint" target="_blank"' + (o.stop ? ' onclick="event.stopPropagation()"' : '') + ' href="' + waLink(p.num) + '">واتساب</a>') + '</div>';
   }).join('');
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-26 · 39';
+var APP_VERSION = '2026-11-26 · 40';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3507,7 +3507,7 @@ function acTripSet(){ var r = $('acTrip').value === 'round'; $('acReturnBox').st
 /* ---------- قائمة أرقام الهاتف بزر (+) ---------- */
 function phxRows(taId){
   var ui = $(taId + '_ui'); if (!ui) return [];
-  return [].map.call(ui.querySelectorAll('.phrow'), function(r){ return {num: r.querySelector('.phn').value.trim(), label: r.querySelector('.phl').value.trim()}; });
+  return [].map.call(ui.querySelectorAll('.phrow'), function(r){ return {num: r.querySelector('.phn').value.trim(), label: ''}; });
 }
 function phxSync(taId){
   var ta = $(taId); if (!ta) return;
@@ -3516,8 +3516,7 @@ function phxSync(taId){
 }
 var PHX_SET = {};
 function phxRowHtml(p){
-  return '<div class="phrow"><input class="phn" dir="ltr" inputmode="tel" placeholder="رقم آخر" value="' + esc(p.num || '') + '"><input class="phl" placeholder="ملاحظة (زوجته، العمل...)" value="' + esc(p.label || '') + '">' +
-    '<button type="button" class="phplus" data-a="add" title="إضافة رقم آخر">＋</button><button type="button" class="phdel" data-a="del" title="حذف الرقم">✕</button></div>';
+  return '<div class="phrow"><input class="phn" dir="ltr" inputmode="tel" placeholder="رقم آخر" value="' + esc(p.num || '') + '"><button type="button" class="phplus" data-a="add" title="إضافة رقم آخر">＋</button><button type="button" class="phdel" data-a="del" title="حذف الرقم">✕</button></div>';
 }
 function phxRender(taId){
   var ta = $(taId), ui = $(taId + '_ui'); if (!ta || !ui) return;
