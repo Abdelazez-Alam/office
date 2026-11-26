@@ -450,8 +450,6 @@ tr:hover td{background:color-mix(in srgb,var(--pri) 4%,transparent)}
 @media(max-width:700px){.tk .tktiles{gap:8px}.tktile{padding:10px 12px}.tkrow{flex-wrap:wrap;padding:12px 14px}.tkmain{flex-basis:calc(100% - 52px)}.tkact{width:100%;justify-content:flex-end}.tkgrp-h{padding:12px 14px}}
 #tasksBox{display:block!important}#tasksBox .tk{width:100%;display:block}#tasksBox .tk .card{width:auto;max-width:none}
 /* ===== v20: فصل السجل عن حجز جديد ===== */
-#tabBookings[data-view=list]>.card:nth-of-type(1){display:none!important}
-#tabBookings[data-view=form]>.card:nth-of-type(2){display:none!important}
 .fback{margin-bottom:12px}
 
 /* v24: وقت الإقلاع */
@@ -668,6 +666,24 @@ form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[t
   #bkTbl td.empty{text-align:center}
 }
 form input[type=time],.mbox input[type=time]{min-width:104px}
+
+/* v38: النوافذ الثلاث (حجز / استفسار / مورد) بتصميم موحّد */
+.mbox.mdl{position:relative;max-width:720px;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.mbox.mdl>h2{margin:0;padding:16px 56px 14px 20px;font-size:1.05rem;border-bottom:1px solid var(--bd);background:var(--surface2)}
+html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
+.mbox.mdl>form,.mbox.mdl>.grid,.mbox.mdl>div:not(.actions){padding-inline:20px}
+.mbox.mdl>form{overflow:auto;padding-top:16px;padding-bottom:0;display:flex;flex-direction:column;flex:1;min-height:0}
+.mbox.mdl>.grid{padding-top:16px;overflow:auto}
+.mbox.mdl .actions{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--bd);margin:16px -20px 0;padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap}
+.mbox.mdl>.actions{margin:0;padding:12px 20px}
+.mbox.mdl .mx{position:absolute;top:10px;inset-inline-end:12px;width:34px;height:34px;padding:0;border-radius:50%;background:transparent;color:var(--mut);border:0;font-size:1rem;z-index:2;box-shadow:none}
+.mbox.mdl .mx:hover{background:var(--bd);color:var(--txt)}
+#bkm #cancelEdit{display:inline-block!important}
+.mbox.mdl .sgrp{border-top:0;margin-top:8px;padding-top:0}
+.mbox.mdl .sgrp>h3{background:none;border:0;border-bottom:1px solid var(--bd);border-inline-start:4px solid var(--pri);padding:4px 10px 8px;margin:20px 0 12px;color:var(--txt);font-size:.98rem;font-weight:800;text-align:start}
+.mbox.mdl>.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;padding-bottom:18px}
+.mbox.mdl>.grid>*{min-width:0}.mbox.mdl>.grid>.full{grid-column:1/-1}
+@media(max-width:560px){.mbox.mdl>.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -714,7 +730,7 @@ form input[type=time],.mbox input[type=time]{min-width:104px}
 
 <div id="tabBookings" style="display:none">
   <div class="card">
-    <h2 id="formTitle">تسجيل عميل / حجز جديد</h2>
+    <h2 id="formTitle">✈️ حجز جديد</h2>
     <form id="f" autocomplete="off">
       <input type="hidden" id="id">
       <div class="grid">
@@ -776,7 +792,7 @@ form input[type=time],.mbox input[type=time]{min-width:104px}
       </div>
       <div class="actions">
         <button type="submit" id="saveBtn">حفظ</button>
-        <button type="button" class="sec" id="cancelEdit" style="display:none">إلغاء التعديل</button>
+        <button type="button" class="sec" id="cancelEdit">إلغاء</button>
       </div>
     </form>
   </div>
@@ -838,7 +854,7 @@ form input[type=time],.mbox input[type=time]{min-width:104px}
 </div>
 </div>
 
-<div id="lm" class="modal" style="display:none" onclick="if(event.target===this)lmClose()"><div class="mbox wide"><h2 id="leadFormTitle">تسجيل عميل مرجح (سأل عن رحلة ولم يحجز)</h2><form id="lf" autocomplete="off">
+<div id="lm" class="modal" style="display:none" onclick="if(event.target===this)lmClose()"><div class="mbox wide"><h2 id="leadFormTitle">🔎 استفسار جديد</h2><form id="lf" autocomplete="off">
       <input type="hidden" id="lid">
       <div class="sgrp"><h3>👤 بيانات العميل</h3><div class="grid">
         <div><label>اسم العميل *</label><input id="lname" required></div>
@@ -1335,7 +1351,7 @@ function resetForm(){
   convertingLeadId = null;
   $('pickInfo').textContent = '';
   $('f').reset(); $('id').value=''; formReset3(); if ($('moreBox')) $('moreBox').open = false; genderSuggest(); $('bookingDate').value = todayStr();
-  $('formTitle').textContent='تسجيل عميل / حجز جديد'; $('cancelEdit').style.display='none';
+  $('formTitle').textContent='✈️ حجز جديد'; $('cancelEdit').style.display='none';
 }
 
 $('f').addEventListener('submit', e => {
@@ -1557,7 +1573,7 @@ function showTab(t){
 }
 function resetLeadForm(){
   $('lf').reset(); $('lid').value=''; $('linquiry').value = todayStr();
-  $('leadFormTitle').textContent = 'تسجيل عميل مرجح (سأل عن رحلة ولم يحجز)'; $('lcancel').style.display='none';
+  $('leadFormTitle').textContent = '🔎 استفسار جديد'; $('lcancel').style.display='none';
 }
 $('lcancel').onclick = resetLeadForm;
 $('lf').addEventListener('submit', e => {
@@ -1595,7 +1611,6 @@ function convertLead(id){
   $('qty').value = l.pax || 1; if (l.quotePrice) $('price').value = l.quotePrice; if (l.quoteAirline) $('airline').value = l.quoteAirline;
   convertingLeadId = id;
   $('formTitle').textContent = 'تحويل مرجّح إلى حجز: ' + l.name + ' (أكمل باقي البيانات واضغط حفظ)';
-  showTab('b'); window.scrollTo({top:0, behavior:'smooth'});
 }
 function renderLeads(){
   const q = $('lq').value.trim().toLowerCase(), st = $('lfStatus').value;
@@ -3456,7 +3471,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-26 · 37';
+var APP_VERSION = '2026-11-26 · 38';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3742,12 +3757,7 @@ function bkView(v){ const t = $('tabBookings'); if (t) t.dataset.view = v; }
   };
 }
 { const e20 = edit; edit = function(id){ e20.apply(this, arguments); showTab('n'); }; }
-$('f').addEventListener('submit', () => setTimeout(() => { const t = $('tabBookings'); if (t && t.dataset.view === 'form' && !$('id').value && !$('name').value) showTab('b'); }, 120));
-$('cancelEdit').addEventListener('click', () => showTab('b'));
-(function(){
-  const card = $('f') && $('f').closest('.card'); if (card && !card.querySelector('.fback')) card.insertAdjacentHTML('afterbegin', '<div class="fback noprint"><button type="button" class="sec sm" onclick="showTab(\'b\')">← سجل الحجوزات</button></div>');
-  bkView('list');
-})();
+bkView('list');
 
 /* ---------- v24: وقت الإقلاع (الساعة:الدقيقة) ---------- */
 function fmtTm(t){
@@ -3977,7 +3987,7 @@ newLead = function(){ sheetClose(); resetLeadForm(); lmOpen(); setTimeout(functi
   if ($('supm')) return;
   document.body.insertAdjacentHTML('beforeend', '<div id="supm" class="modal" style="display:none" onclick="if(event.target===this)supClose()"><div class="mbox"><h2 id="supTitle">🏢 مورد جديد</h2><input type="hidden" id="supId"><div class="grid">' +
     '<div class="full"><label>اسم المورد / المكتب *</label><input id="supName" autocomplete="off"></div><div class="full"><label>الهاتف (اختياري)</label><input id="supPhone" dir="ltr" style="text-align:right" inputmode="tel"></div><div class="full"><label>ملاحظات</label><input id="supNotes"></div></div>' +
-    '<div class="actions"><button type="button" onclick="supSave()">حفظ المورد</button><button type="button" class="sec" onclick="supClose()">إغلاق</button></div></div></div>');
+    '<div class="actions"><button type="button" onclick="supSave()">حفظ</button><button type="button" class="sec" onclick="supClose()">إلغاء</button></div></div></div>');
 })();
 function supClose(){ $('supm').style.display = 'none'; }
 function newSupplier(){ sheetClose(); $('supId').value = ''; $('supName').value = ''; $('supPhone').value = ''; $('supNotes').value = ''; $('supTitle').textContent = '🏢 مورد جديد'; $('supm').style.display = 'flex'; setTimeout(function(){ $('supName').focus(); }, 60); }
@@ -4120,6 +4130,27 @@ function clientEdit(key){
   }; }
 { const f = sugList; sugList = function(nm){ const L = f.call(this, nm), seen = new Set(); return L.filter(x => { const k = pkey(x.phone) || x.k; if (seen.has(k)) return false; seen.add(k); return true; }); }; }
 { const f = lsugList; lsugList = function(){ const L = f.apply(this, arguments), seen = new Set(); return L.filter(x => { const k = pkey(x.phone) || x.k; if (seen.has(k)) return false; seen.add(k); return true; }); }; }
+
+/* ---------- 4) نافذة الحجز (نفس تصميم نافذتي الاستفسار والمورد) ---------- */
+(function(){
+  const card = $('f').closest('.card');
+  const m = document.createElement('div'); m.id = 'bkm'; m.className = 'modal'; m.style.display = 'none';
+  m.onclick = function(e){ if (e.target === m) bkClose(); };
+  const box = document.createElement('div'); box.className = 'mbox wide';
+  while (card.firstChild) box.appendChild(card.firstChild);
+  card.remove(); m.appendChild(box); document.body.appendChild(m);
+  [['bkm','bkClose'],['lm','lmClose'],['supm','supClose']].forEach(function(x){
+    const b = $(x[0]).querySelector('.mbox'); if (!b) return;
+    b.classList.add('wide', 'mdl');
+    b.insertAdjacentHTML('afterbegin', '<button type="button" class="mx" aria-label="إغلاق" onclick="' + x[1] + '()">✕</button>');
+  });
+})();
+function bkClose(){ $('bkm').style.display = 'none'; resetForm(); }
+function bkOpen(){ sheetClose(); $('bkm').style.display = 'flex'; }
+{ const f = showTab; showTab = function(t){ if (t === 'n') { bkOpen(); return; } f.apply(this, arguments); }; }
+$('cancelEdit').onclick = bkClose;
+$('f').addEventListener('submit', function(){ setTimeout(function(){ if ($('bkm').style.display !== 'none' && !$('id').value && !$('name').value) { $('bkm').style.display = 'none'; } }, 150); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { if ($('bkm').style.display !== 'none') bkClose(); } });
 
 const _render = render;
 render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
