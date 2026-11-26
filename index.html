@@ -684,6 +684,7 @@ html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
 .mbox.mdl>.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;padding-bottom:18px}
 .mbox.mdl>.grid>*{min-width:0}.mbox.mdl>.grid>.full{grid-column:1/-1}
 @media(max-width:560px){.mbox.mdl>.grid{grid-template-columns:1fr}}
+#lm .phbox,#supm .phbox{grid-column:auto!important}
 </style>
 </head>
 <body>
@@ -3471,7 +3472,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-26 · 40';
+var APP_VERSION = '2026-11-27 · 41';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
