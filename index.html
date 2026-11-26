@@ -590,6 +590,70 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
 .badge,.chip{transition:transform .15s ease}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media print{*{animation:none!important;transition:none!important}}
+
+/* v36: لوحة تحكم احترافية */
+.dh2{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:2px 0 14px}
+.dh2 h2{margin:0;font-size:1.5rem;letter-spacing:-.01em}.dh-g{color:var(--pri);font-weight:800;font-size:.9rem}
+.dh-a{display:flex;gap:8px;flex-wrap:wrap}
+.hero4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.hk{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--bd);border-radius:16px;padding:14px 16px 0;cursor:pointer;box-shadow:var(--cardsh);display:flex;flex-direction:column;min-height:150px}
+.hk-t{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--mut);font-weight:700;font-size:.85rem}
+.hk b{font-size:1.7rem;line-height:1.25;margin-top:6px;font-variant-numeric:tabular-nums}
+.hk small{color:var(--mut);font-size:.78rem}
+.hk em{font-style:normal;font-size:.76rem;font-weight:800;padding:2px 8px;border-radius:99px}
+.hk em.up{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}.hk em.dn{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.hk.bad b{color:var(--bad)}
+.spark{display:block;width:calc(100% + 32px);height:42px;margin:auto -16px 0}
+.sp-l{fill:none;stroke:var(--pri);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.sp-a{fill:color-mix(in srgb,var(--pri) 12%,transparent);stroke:none}
+.alrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.al{display:flex;gap:10px;align-items:center;text-align:right;background:var(--surface);color:var(--txt);border:1px solid var(--bd);border-radius:14px;padding:10px 12px;min-width:0;font-weight:400}
+.al>i{font-style:normal;font-size:1.25rem;width:38px;height:38px;flex:0 0 38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--pri-soft)}
+.al span{display:flex;flex-direction:column;min-width:0}.al small{color:var(--mut);font-size:.76rem}.al b{font-size:1.05rem;font-variant-numeric:tabular-nums}.al em{font-style:normal;color:var(--mut);font-size:.72rem}
+.al.bad>i{background:color-mix(in srgb,var(--bad) 15%,transparent)}.al.bad b{color:var(--bad)}
+.al.warn>i{background:color-mix(in srgb,var(--warn) 17%,transparent)}.al.info>i{background:color-mix(in srgb,var(--pri) 17%,transparent)}
+.al:hover{border-color:var(--pri)}
+.dg2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start}
+.dg-main,.dg-side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.dg2 .dcard{margin:0;border-radius:16px;box-shadow:var(--cardsh)}
+.cleg{display:flex;gap:16px;font-size:.8rem;color:var(--mut);margin-bottom:6px}.cleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px}
+.cleg .l1{background:color-mix(in srgb,var(--pri) 30%,var(--surface))}.cleg .l2{background:var(--pri)}
+.cbars{display:flex;gap:10px;align-items:flex-end;height:210px}
+.cb{flex:1;min-width:0;display:flex;flex-direction:column;height:100%;text-align:center}
+.cb-c{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;border-bottom:1px solid var(--bd)}
+.cb-c i{display:block;width:38%;max-width:26px;border-radius:5px 5px 0 0}
+.cb-c .s{background:color-mix(in srgb,var(--pri) 30%,var(--surface))}.cb-c .p{background:var(--pri)}.cb-c .p.neg{background:var(--bad)}
+.cb-l{font-size:.78rem;font-weight:700;margin-top:6px}.cb-n{font-size:.7rem;color:var(--mut)}
+.tb{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;font-size:.9rem}
+.tb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tb-b{height:8px;border-radius:99px;background:var(--pri-soft);overflow:hidden}.tb-b i{display:block;height:100%;background:var(--pri);border-radius:99px}
+@media(max-width:1100px){.hero4{grid-template-columns:repeat(2,minmax(0,1fr))}.alrow{grid-template-columns:repeat(3,minmax(0,1fr))}.dg2{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.alrow{grid-template-columns:repeat(2,minmax(0,1fr))}.hk b{font-size:1.35rem}.hk{min-height:130px}.al small{font-size:.72rem}}
+
+/* v36b: شكل جديد للجداول */
+.card table,.tbl table,table.rec,table.ptbl{border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:var(--cardsh);background:var(--surface)}
+thead th{background:var(--surface2)!important;color:var(--mut);font-size:.8rem;font-weight:800;padding:11px 14px!important;border-bottom:1px solid var(--bd)!important}
+tbody td{padding:13px 14px!important;border-bottom:1px solid var(--bd)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even) td{background:transparent}
+tbody tr:hover td{background:var(--pri-soft)}
+tbody tr td:first-child{border-inline-start:3px solid transparent}
+tbody tr:hover td:first-child{border-inline-start-color:var(--pri)}
+th.sortable:hover{color:var(--pri)}
+td .chip,td .badge{white-space:nowrap}
+
+/* v36c: شكل جديد للحقول (الحجز / العميل / المرجّح) */
+form label,.mbox label,.sgrp label{font-size:.8rem;font-weight:800;color:var(--mut);letter-spacing:.01em;margin-bottom:6px}
+form input:not([type=checkbox]):not([type=radio]):not([type=file]),form select,form textarea,.mbox input:not([type=checkbox]):not([type=radio]):not([type=file]),.mbox select,.mbox textarea{
+  background:var(--surface);border:1.5px solid var(--fld-bd);border-radius:12px;min-height:calc(var(--ch) + 4px);padding:0 14px;color:var(--txt);transition:border-color .15s,box-shadow .15s,background-color .15s}
+form textarea,.mbox textarea{padding:10px 14px;min-height:96px}
+form input:hover,form select:hover,form textarea:hover,.mbox input:hover,.mbox select:hover,.mbox textarea:hover{border-color:color-mix(in srgb,var(--pri) 45%,var(--fld-bd))}
+form input:focus,form select:focus,form textarea:focus,.mbox input:focus,.mbox select:focus,.mbox textarea:focus{outline:0!important;border-color:var(--pri);box-shadow:0 0 0 4px color-mix(in srgb,var(--pri) 16%,transparent);background:var(--surface)}
+form input::placeholder,.mbox input::placeholder,form textarea::placeholder{color:color-mix(in srgb,var(--mut) 70%,transparent);font-weight:400}
+form .fsec,.mbox .fsec{background:none!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--bd)!important;border-radius:0!important;border-inline-start:4px solid var(--pri)!important;padding:4px 10px 8px!important;margin:20px 0 10px!important;color:var(--txt)!important;font-size:.98rem;font-weight:800;text-align:start!important;display:block}
+td b,td .c-sub b,.dr-m span b{unicode-bidi:isolate}
+form .grid,.mbox .grid{gap:14px 12px}
+.seg button{border-radius:10px}
+form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[type=time]{padding:0 8px;min-width:0}
 </style>
 </head>
 <body>
@@ -745,7 +809,7 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
 <div id="tabLeads" style="display:none">
   <div class="card">
     <div class="ld-head"><div><h2>🔎 استفسارات</h2><div class="c-sub">من سأل عن رحلة ولم يحجز بعد (من صفحة «اسأل» أو سجّلته بنفسك) — تابعهم حتى يحجزوا. <b id="ldCount"></b></div></div>
-      <div class="ld-hact noprint"><button onclick="newLead()">➕ استفسار جديد</button><div class="seg" id="ldView"><button type="button" data-v="cards" onclick="ldSetView('cards')">▦ بطاقات</button><button type="button" data-v="table" onclick="ldSetView('table')">☰ جدول</button></div></div></div>
+      <div class="ld-hact noprint"><button onclick="newLead()">➕ استفسار جديد</button></div></div>
     <div class="ld-pills noprint" id="ldKpis"></div>
     <div class="toolbar noprint">
       <input id="lq" placeholder="بحث بالاسم أو الرقم أو الوجهة أو الملاحظات...">
@@ -754,8 +818,7 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
       <select id="lfStatus" hidden><option value="">كل الحالات</option><option value="open">مفتوحة</option><option value="late">متأخرة</option><option value="new">جديد</option><option value="contacted">تمت المتابعة</option><option value="noanswer">لم يرد</option><option value="lost">لم يكمل</option><option value="converted">تحول لحجز</option></select>
       <button class="sec" onclick="ldClear()">مسح الفلاتر</button>
     </div>
-    <div id="ldBox"></div>
-    <div class="tbl" id="ldTbl" style="display:none"><table class="rec"><thead><tr><th data-lk="name" onclick="ldHead('name')">العميل</th><th>الرحلة (من ‏←‏ إلى)</th><th data-lk="travel" onclick="ldHead('travel')">سفر متوقع</th><th data-lk="inquiry" onclick="ldHead('inquiry')">تاريخ الاستفسار</th><th data-lk="follow" onclick="ldHead('follow')">موعد المتابعة</th><th data-lk="price" onclick="ldHead('price')">العرض</th><th data-lk="status" onclick="ldHead('status')">الحالة</th><th class="noprint">إجراءات</th></tr></thead><tbody id="lrows"></tbody></table></div>
+    <div class="tbl" id="ldTbl"><table class="rec"><thead><tr><th data-lk="name" onclick="ldHead('name')">العميل</th><th>الرحلة (من ‏←‏ إلى)</th><th data-lk="travel" onclick="ldHead('travel')">سفر متوقع</th><th data-lk="inquiry" onclick="ldHead('inquiry')">تاريخ الاستفسار</th><th data-lk="follow" onclick="ldHead('follow')">موعد المتابعة</th><th data-lk="price" onclick="ldHead('price')">العرض</th><th data-lk="status" onclick="ldHead('status')">الحالة</th><th class="noprint">إجراءات</th></tr></thead><tbody id="lrows"></tbody></table></div>
     <div id="ldMore" class="noprint" style="text-align:center;margin-top:10px"></div>
   </div>
 </div>
@@ -843,10 +906,6 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
 <div id="idm" class="modal" style="display:none;z-index:60" onclick="if(event.target===this)idcClose()"><div class="mbox wide" style="padding:10px"><div id="idmBody"></div></div></div>
 <div id="pm" class="modal" style="display:none" onclick="if(event.target===this)closeProfile()"><div class="mbox wide"><div id="pmBody"></div></div></div>
 
-<div id="qm" class="modal" style="display:none" onclick="if(event.target===this)closeQuote()">
-  <div class="mbox wide"><div id="qBody"></div>
-    <div class="actions"><button onclick="printQuote()">🖨 طباعة / PDF</button><button onclick="quoteWA()">💬 إرسال واتساب</button><button class="sec" onclick="quoteCopy()">نسخ النص</button><button class="sec" onclick="closeQuote()">إغلاق</button></div></div>
-</div>
 
 <div id="xm" class="modal" style="display:none" onclick="if(event.target===this)xmClose()">
   <div class="mbox"><h2 id="xmTitle"></h2>
@@ -876,10 +935,10 @@ button:not(:disabled):not(.amb):active{transform:scale(.96)}
             <div class="full"><label>العنوان</label><input id="sAddr"></div>
             <div><label>رمز الدولة لواتساب</label><input id="sCC" dir="ltr" style="text-align:right" placeholder="20"><div class="hint">الأرقام التي تبدأ بصفر تُعامل كأرقام هذه الدولة. أرقام الدول الأخرى اكتبها بصيغة +966…</div></div>
             <div><label>العملة</label><input id="sCur" placeholder="جنيه"></div>
-            <div class="full"><label>ملاحظة أسفل عرض السعر</label><input id="sQuoteFooter"></div>
+            <div class="full"><label>ملاحظة أسفل الإيصال</label><input id="sQuoteFooter"></div>
             <div class="full"><label>نسخة احتياطية</label><button type="button" class="sec" id="autoBkBtn" onclick="autoBkToggle()"></button></div>
             <div class="full"><label>سجل الأخطاء</label><button type="button" class="sec" id="errLogBtn" onclick="errLogShow()"></button></div>
-            <div class="full"><label>شعار المكتب (يظهر أعلى عرض السعر)</label>
+            <div class="full"><label>شعار المكتب (يظهر أعلى الإيصال والمستندات)</label>
               <div class="logo-row"><img id="sLogoImg" alt="" style="display:none"><input type="file" id="sLogoFile" accept="image/*"><button type="button" class="sec sm" onclick="logoRemove()">إزالة الشعار</button></div></div>
           </div>
         </section>
@@ -1558,7 +1617,7 @@ function renderLeads(){
     <td>${fmtD(l.inquiry)}</td>
     <td>${l.follow ? `<div class="c-name">${fmtD(l.follow)}</div>${fchip}` : '<span class="c-sub">—</span>'}</td>
     <td><span class="badge b-${l.status}">${LSTATUS[l.status]}</span></td>
-    <td class="noprint"><div class="acts">${l.status!=='converted' ? `<button class="sm" onclick="convertLead('${jq(l.id)}')">تحويل لحجز</button> ` : ''}<button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button> <button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button> <button class="sec sm" onclick="editLead('${jq(l.id)}')">تعديل</button> <button class="del sm" onclick="delLead('${jq(l.id)}')">حذف</button></div></td>
+    <td class="noprint"><div class="acts">${l.status!=='converted' ? `<button class="sm" onclick="convertLead('${jq(l.id)}')">تحويل لحجز</button> ` : ''}<button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button> <button class="sec sm" onclick="editLead('${jq(l.id)}')">تعديل</button> <button class="del sm" onclick="delLead('${jq(l.id)}')">حذف</button></div></td>
   </tr>`;
   }).join('') : `<tr><td class="empty" colspan="7">لا توجد نتائج</td></tr>`;
   const openN = leads.filter(isOpen).length, lateN = leads.filter(isLate).length;
@@ -1731,7 +1790,7 @@ function buildTasks(){
   leads.filter(isLate).forEach(l => { const id = 'lead:' + l.id + ':' + l.follow; if (done.has(id)) return;
     push('lead', {title: l.name, sub: (l.orig || '—') + ' ‏←‏ ' + (l.dest || '—') + (l.travel ? ' · ' + fmtPT(l) : ''), chip: ['c-bad', 'متابعة ' + fmtP(l.follow)], doneId: id,
       wa: {phone: l.phone, text: () => fillTpl(tplText('leadfollow'), leadVars(l))},
-      x: [{label:'🧾 عرض سعر', fn: () => openQuote(l.id)}, {label:'فتح', fn: () => { showTab('l'); editLead(l.id); }}]}); });
+      x: [{label:'فتح', fn: () => { showTab('l'); editLead(l.id); }}]}); });
   custAll.forEach(c => {
     const cl = c.client, nomkt = cl && cl.optout;
     if (cl && cl.birthday && !nomkt) { const db = daysToBirthday(cl.birthday);
@@ -1843,36 +1902,7 @@ function profileNewBooking(){
   showTab('n'); $('origin').focus(); window.scrollTo({top:0, behavior:'smooth'});
 }
 
-/* ---------- عرض السعر ---------- */
-let qLead = null;
-const QCSS = () => '.qt{font-family:Tahoma,Arial,sans-serif;direction:rtl;color:#1d2433;max-width:720px;margin:0 auto;padding:24px;border:1px solid #dde2ec;border-radius:10px;background:#fff}.qt .qh{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid ' + accent() + ';padding-bottom:12px;margin-bottom:16px;gap:12px}.qt .qh img{max-height:70px;max-width:180px}.qt h1{margin:0;font-size:24px;color:' + accent() + '}.qt .on{font-size:20px;font-weight:bold}.qt table{width:100%;min-width:0;border-collapse:collapse;margin:12px 0;table-layout:fixed}.qt td{white-space:normal;word-break:break-word;text-align:right}.qt td{padding:10px;border:1px solid #dde2ec;font-size:15px}.qt td:first-child{background:#f3f6fc;width:32%;font-weight:bold}.qt .price{font-size:26px;font-weight:bold;color:#1a8a4a}.qt .ft{margin-top:14px;color:#6b7488;font-size:13px;line-height:1.8;border-top:1px dashed #dde2ec;padding-top:10px}@media print{body{margin:0}.qt{border:0}}';
 const accent = () => (getComputedStyle(document.documentElement).getPropertyValue('--pri').trim() || '#0e7490');
-function quoteInner(l){
-  const o = office(), pax = Math.max(1, +l.pax || 1), per = l.quotePrice && pax > 1 ? moneyP(Math.round(l.quotePrice / pax * 100) / 100) : '';
-  return `<style>${QCSS()}</style><div class="qt">
-    <div class="qh"><div>${settings.logo ? `<img src="${settings.logo}" alt="">` : `<div class="on">${esc(o.name || 'مكتب الطيران')}</div>`}</div><div style="text-align:left"><h1>عرض سعر</h1><div style="font-size:13px;color:#6b7488">رقم: ${esc(String(l.id).slice(-6))} · ${fmtP(todayStr())}</div></div></div>
-    <div>${honorific(gKnown(l.gender) ? l.gender : (genderByPhone(l.phone) || guessGender(l.name)))}: <b>${esc(l.name)}</b></div>
-    <table>
-      <tr><td>الرحلة</td><td>${esc(l.orig || '—')} ‏←‏ ${esc(l.dest || '—')}</td></tr>
-      <tr><td>تاريخ السفر</td><td>${l.travel ? fmtPT(l) : 'يُحدد لاحقًا'}</td></tr>
-      <tr><td>عدد الركاب</td><td>${pax}</td></tr>
-      ${l.quoteAirline ? `<tr><td>شركة الطيران</td><td>${esc(l.quoteAirline)}</td></tr>` : ''}
-      ${l.quoteInfo ? `<tr><td>تفاصيل</td><td>${esc(l.quoteInfo)}</td></tr>` : ''}
-      <tr><td>السعر الإجمالي</td><td><span class="price">${moneyP(l.quotePrice)}</span> ${esc(o.currency || '')}${per ? ` <span style="color:#6b7488;font-size:13px">(للراكب ${per})</span>` : ''}</td></tr>
-      ${l.quoteUntil ? `<tr><td>العرض ساري حتى</td><td>${fmtP(l.quoteUntil)}</td></tr>` : ''}
-    </table>
-    <div class="ft">${esc(o.quoteFooter || '')}<br>${esc(o.name || '')}${o.phone ? ' · 📞 ' + esc(o.phone) : ''}${o.address ? '<br>' + esc(o.address) : ''}</div></div>`;
-}
-function openQuote(id){ qLead = leads.find(x => x.id === id); if (!qLead) return; $('qBody').innerHTML = quoteInner(qLead); $('qm').style.display = 'flex'; }
-function closeQuote(){ $('qm').style.display = 'none'; qLead = null; }
-function printQuote(){
-  if (!qLead) return; const w = window.open('', '_blank'); if (!w) { alert('اسمح بالنوافذ المنبثقة للطباعة'); return; }
-  w.document.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>عرض سعر</title></head><body>' + quoteInner(qLead) + '</body></html>');
-  w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
-}
-const quoteText = () => fillTpl(tplText('quote'), leadVars(qLead));
-function quoteWA(){ if (qLead) waSend(qLead.phone, quoteText()); }
-function quoteCopy(){ if (qLead && navigator.clipboard) navigator.clipboard.writeText(quoteText()).then(() => alert('تم نسخ نص العرض')); }
 
 /* ---------- الإعدادات ---------- */
 let tplDraft = {}, logoDraft = null, tplCur = 'confirm';
@@ -2110,8 +2140,8 @@ function renderPeople(){
     if (p.kind === 'booked') { const c = p.c;
       kind = `<span class="chip c-ok">✅ حجز</span> ${c.client && c.client.optout ? ' <span class="chip c-gray">🚫</span>' : ''}`;
       det = `<div><b>${c.trips}</b> حجز · <b>${c.tickets}</b> تذكرة · مدفوع <b>${money(c.spent)}</b></div>` +
-        (c.nextTrip ? `<div class="c-sub">✈️ القادمة: ${fmtD(c.nextTrip)}</div>` : c.last ? `<div class="c-sub">آخر سفر: ${fmtD(c.last)}</div>` : '<div class="c-sub">حجوزاته ملغاة</div>') +
-        (c.dests.size ? `<div class="c-sub">${esc([...c.dests].slice(0, 3).map(apCode).join('، '))}${c.dests.size > 3 ? '…' : ''}</div>` : '');
+        (() => { const L = (c.bk || []).filter(b => b.status !== 'cancelled' && b.travelDate), up = L.filter(b => b.travelDate >= todayStr()).sort((a, b) => a.travelDate.localeCompare(b.travelDate))[0], lt = L.slice().sort((a, b) => b.travelDate.localeCompare(a.travelDate))[0], t = up || lt;
+          return t ? `<div class="c-sub">${up ? '✈️ القادمة' : 'آخر سفر'}: <b>${esc(routeTxt(t.origin, t.destination))}</b> · ${fmtDT(t)}</div>` : '<div class="c-sub">حجوزاته ملغاة</div>'; })();
       acts = `<button class="sm" onclick="openProfile(peopleItems[${i}].key)">👤 الملف</button><button class="sec sm" onclick="newBookingFor(peopleItems[${i}].key)">➕ حجز</button><button class="sec sm" onclick="peopleMsg(${i})">💬 رسالة</button><button class="del sm" onclick="custDelete(peopleItems[${i}].key)">🗑 حذف العميل</button>`;
     } else if (p.kind === 'client') { const cl = p.client;
       kind = '<span class="chip c-gray">📝 مسجّل (لم يحجز)</span>';
@@ -2119,12 +2149,12 @@ function renderPeople(){
       acts = `<button class="sm" onclick="acBookFor(peopleItems[${i}].key)">➕ حجز</button><button class="sec sm" onclick="acLeadFor(peopleItems[${i}].key)">🔎 مرجّح</button><button class="sec sm" onclick="peopleMsg(${i})">💬 رسالة</button><button class="del sm" onclick="acDelete(peopleItems[${i}].key)">حذف</button>`;
     } else if (p.kind === 'lead') { const l = p.lead;
       kind = `<span class="chip c-info">🔎 استفسار</span> <span class="badge b-${l.status}">${LSTATUS[l.status] || l.status}</span>`;
-      det = `<div><b dir="ltr">${esc(routeTxt(l.orig, l.dest))}</b>${l.travel ? ' · ' + fmtDT(l) : ''}${(+l.pax || 1) > 1 ? ' · ' + (+l.pax) + ' ركاب' : ''}</div>` +
+      det = `<div><b>${esc(routeTxt(l.orig, l.dest))}</b>${l.travel ? ' · ' + fmtDT(l) : ''}${(+l.pax || 1) > 1 ? ' · ' + (+l.pax) + ' ركاب' : ''}</div>` +
         (l.quotePrice ? `<div class="c-sub">عرض سعر: ${money(l.quotePrice)}</div>` : '') + (l.follow ? `<div class="c-sub">المتابعة: ${fmtD(l.follow)}${isLate(l) ? ' <span class="chip c-bad">متأخرة</span>' : ''}</div>` : '');
-      acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="del sm" onclick="delLead('${jq(l.id)}')">🗑 حذف</button><button class="sec sm" onclick="openQuote('${jq(l.id)}')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
+      acts = `<button class="sm" onclick="convertLead('${jq(l.id)}');showTab('n')">➕ تحويل لحجز</button><button class="sec sm" onclick="showTab('l');editLead('${jq(l.id)}')">فتح</button><button class="del sm" onclick="delLead('${jq(l.id)}')">🗑 حذف</button><button class="sec sm" onclick="leadMsg('${jq(l.id)}')">💬 رسالة</button>`;
     } else { const n = p.inq;
       kind = '<span class="chip c-warn">🌐 طلب من الصفحة</span>';
-      det = `<div><b dir="ltr">${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}`;
+      det = `<div><b>${esc(routeTxt(n.origin, n.destination))}</b>${n.travel ? ' · ' + fmtDT(n) : ''} · ${(+n.pax || 1)} راكب</div>${n.notes ? `<div class="c-note">📝 ${esc(n.notes)}</div>` : ''}`;
       acts = `<button class="sm" onclick="inqToLead('${jq(n.id)}')">➕ تحويل لمرجّح</button><button class="sec sm" onclick="inqMsg('${jq(n.id)}')">💬 رد</button><button class="del sm" onclick="inqDelete('${jq(n.id)}')">حذف</button>`;
     }
     return `<tr><td><div class="c-name">${p.kind === 'booked' ? `<a class="plink" onclick="openProfile(peopleItems[${i}].key)">${esc(p.name)}</a>` : esc(p.name)} <button class="sec sm noprint" onclick="idcOpen(peopleItems[${i}].key)">🪪 بطاقة</button></div>
@@ -2325,17 +2355,7 @@ const cancelMonth = b => String(b.cancelDate || b.bookingDate || '').slice(0, 7)
 const cancelRows = m => data.filter(b => b.status === 'cancelled' && ((+b.cancelFee || 0) || (+b.supPenalty || 0)) && cancelMonth(b) === m);
 const cancelNet = m => r2(cancelRows(m).reduce((s, b) => s + (+b.cancelFee || 0) - (+b.supPenalty || 0), 0));
 const cancelRefundDue = b => b.status === 'cancelled' ? r2((+b.paid || 0) - (+b.refunded || 0) - (+b.cancelFee || 0)) : 0;
-function expForMonth(m){
-  const L = [];
-  expenses.forEach(e => {
-    const em = String(e.date || '').slice(0, 7); if (!em) return;
-    if (e.recur === 'monthly') { if (m >= em && (!e.until || m <= String(e.until).slice(0, 7))) L.push({e, rep: em !== m}); }
-    else if (em === m) L.push({e, rep: false});
-  });
-  return L.sort((a, b) => String(b.e.date).localeCompare(String(a.e.date)));
-}
-const expTotalM = m => r2(expForMonth(m).reduce((s, x) => s + (+x.e.amount || 0), 0));
-const netMonth = m => r2(sumProfit(monthRows(m)).prof + cancelNet(m) - expTotalM(m));
+const netMonth = m => r2(sumProfit(monthRows(m)).prof + cancelNet(m));
 const monthProfit = () => r2(sumProfit(monthRows(todayStr().slice(0, 7))).prof + cancelNet(todayStr().slice(0, 7)));
 const MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 const monthLabel = m => { const [y, mo] = m.split('-'); return MONTHS_AR[+mo - 1] + ' ' + y; };
@@ -2346,13 +2366,12 @@ function groupBy(rows, fn){
 }
 const grpTbl = (title, g) => g.length ? `<div class="sgrp"><h3>${title}</h3><table class="ptbl"><thead><tr><th></th><th>حجوزات</th><th>المبيعات</th><th>عمولتك</th></tr></thead><tbody>${g.slice(0, 12).map(x => `<tr><td>${esc(x.k)}</td><td>${x.n}</td><td>${money(x.sales)}</td><td><b>${x.nc ? money(x.prof) : '—'}</b></td></tr>`).join('')}</tbody></table></div>` : '';
 let accTab = 'profit', accMonth = '', supSel = null;
-function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); data.forEach(b => { if (b.status === 'cancelled' && cancelMonth(b)) s.add(cancelMonth(b)); }); expenses.forEach(e => { if (e.date) s.add(String(e.date).slice(0, 7)); }); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
+function accMonths(){ const s = new Set(data.map(monthOf).filter(Boolean)); data.forEach(b => { if (b.status === 'cancelled' && cancelMonth(b)) s.add(cancelMonth(b)); }); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
 function exportMonth(){
   const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
   const head = ['التاريخ', 'العميل', 'الوجهة', 'شركة الطيران', 'المكتب المورد', 'سعر البيع (بعد الخصم)', 'سعر الشراء', 'العمولة'];
   const rows = monthRows(m).map(b => [b.bookingDate, b.name, b.destination, b.airline, supName(b.supplier), netPrice(b), hasCost(b) ? b.cost : '', hasCost(b) ? commOf(b) : ''].map(cell).join(','));
   cancelRows(m).forEach(b => rows.push([b.cancelDate || b.bookingDate, 'إلغاء: ' + b.name, b.destination, b.airline, supName(b.supplier), +b.cancelFee || 0, +b.supPenalty || 0, r2((+b.cancelFee || 0) - (+b.supPenalty || 0))].map(cell).join(',')));
-  expForMonth(m).forEach(x => rows.push([x.e.date, 'مصروف: ' + x.e.category, x.e.note || '', '', '', '', x.e.amount, -x.e.amount].map(cell).join(',')));
   download('أرباح-' + m + '.csv', '﻿' + [head.map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
 }
 function accProfitHtml(){
@@ -2365,7 +2384,7 @@ function accProfitHtml(){
     ${t.missing ? `<div class="debt" style="background:var(--warn-soft,#fff4d6)">⚠ ${t.missing} حجز بدون «سعر الشراء» لم يدخل في حساب العمولة. أضف سعر الشراء من «تعديل» الحجز.</div>` : ''}
     ${netBlockHtml(accMonth, t)}
     <div class="pstats"><div class="${owedCust > 0 ? 'bad' : ''}"><b>${money(owedCust)}</b>متبقٍ على العملاء (الإجمالي)</div><div class="${owedSup > 0 ? 'bad' : ''}"><b>${money(owedSup)}</b>مستحق للمكاتب (الإجمالي)</div>${refundDueAll() > 0 ? `<div class="bad"><b>${money(refundDueAll())}</b>مستحق ردّه للعملاء (إلغاءات)</div>` : ''}</div>
-    <div class="sgrp"><h3>صافي آخر 12 شهرًا (بعد المصروفات)</h3><div class="bars">${hist.map(h => `<div class="barrow"><span class="bl">${monthLabel(h.m)}</span><span class="bt"><i class="${h.p < 0 ? 'neg' : ''}" style="width:${Math.round(Math.abs(h.p) / mx * 100)}%"></i></span><b>${money(h.p)}</b></div>`).join('')}</div></div>
+    <div class="sgrp"><h3>صافي آخر 12 شهرًا (مع غرامات الإلغاء)</h3><div class="bars">${hist.map(h => `<div class="barrow"><span class="bl">${monthLabel(h.m)}</span><span class="bt"><i class="${h.p < 0 ? 'neg' : ''}" style="width:${Math.round(Math.abs(h.p) / mx * 100)}%"></i></span><b>${money(h.p)}</b></div>`).join('')}</div></div>
     ${grpTbl('حسب الوجهة', groupBy(rows, b => b.destination))}${grpTbl('حسب المكتب المورّد', groupBy(rows, b => supName(b.supplier)))}${grpTbl('حسب شركة الطيران', groupBy(rows, b => b.airline))}`;
 }
 function accSupHtml(){
@@ -2421,9 +2440,9 @@ function accTrashHtml(){
 /* ---------- صفحة الحسابات ---------- */
 function renderAcc(){
   const box = $('tabAcc'); if (!box || box.style.display === 'none') return;
-  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['exp', '💸 المصروفات'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
+  const tabs = [['profit', '📊 الأرباح'], ['sup', '🏢 المكاتب الموردة'], ['trash', '🗑 سلة المحذوفات' + (trash.length ? ' (' + trash.length + ')' : '')]];
   $('accNav').innerHTML = tabs.map(([k, l]) => `<button class="${accTab === k ? 'on' : ''}" onclick="accTab='${jq(k)}';renderAcc()">${l}</button>`).join('');
-  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTab === 'exp' ? accExpHtml() : accTrashHtml();
+  $('accBody').innerHTML = accTab === 'profit' ? accProfitHtml() : accTab === 'sup' ? accSupHtml() : accTrashHtml();
   const am = $('accMonth'); if (am) am.onchange = () => { accMonth = am.value; renderAcc(); };
 }
 function render3(){ refreshSupSel(); renderAcc(); }
@@ -3013,7 +3032,7 @@ function trashSorted(){
 
 /* ---------- القائمة الجانبية ---------- */
 function sbBuild(){
-  var G = [{g: '', i: [['d', '🏠', 'لوحة التحكم'], ['a', '👥', 'العملاء'], ['b', '✈️', 'الحجوزات'], ['l', '🔎', 'استفسارات'], ['sup', '🏢', 'الموردين'], ['exp', '💸', 'المصروفات'], ['trash', '🗑', 'سلة المهملات']]}];
+  var G = [{g: '', i: [['d', '🏠', 'لوحة التحكم'], ['a', '👥', 'العملاء'], ['b', '✈️', 'الحجوزات'], ['l', '🔎', 'استفسارات'], ['sup', '🏢', 'الموردين'], ['trash', '🗑', 'سلة المهملات']]}];
   var h = '<div class="sb-brand"><span>✈</span><b>' + esc(office().name || 'مكتب حجز الطيران') + '</b></div><nav class="sb-nav" aria-label="الصفحات">';
   G.forEach(function(g){ if (g.g) h += '<div class="sb-g">' + g.g + '</div>'; g.i.forEach(function(it){ h += '<button type="button" class="sb-i" data-t="' + it[0] + '" onclick="sbGo(\'' + jq(it[0]) + '\')"><i>' + it[1] + '</i><span>' + it[2] + '</span><em class="sb-bd" id="sbBd_' + it[0] + '"></em></button>'; }); });
   h += '<div class="sb-g">أدوات</div>';
@@ -3030,45 +3049,65 @@ function sbToggle(){
   else document.body.classList.toggle('sbdrawer');
 }
 function sbClose(){ document.body.classList.remove('sbdrawer'); }
-function sbGo(t){ if (t === 'sup' || t === 'exp' || t === 'trash') { accTab = t; showTab('s'); } else showTab(t); sbClose(); }
+function sbGo(t){ if (t === 'sup' || t === 'trash') { accTab = t; showTab('s'); } else showTab(t); sbClose(); }
 function sbMark(t){ var k = t === 's' ? (accTab === 'profit' ? 'd' : accTab) : t; document.querySelectorAll('.sb-i[data-t]').forEach(function(b){ b.classList.toggle('on', b.dataset.t === k); }); }
 
 /* ---------- الصفحة الرئيسية ---------- */
 function dashRow(a, b, c, js){ return '<div class="dr"' + (js ? ' onclick="' + js + '"' : '') + '><div class="dr-m"><b>' + a + '</b><span class="c-sub">' + b + '</span></div><div class="dr-s">' + (c || '') + '</div></div>'; }
 function dashCard(t, body, more){ return '<div class="card dcard"><div class="dc-h"><h3>' + t + '</h3>' + (more || '') + '</div>' + body + '</div>'; }
+function dashPct(c, p){ if (!p) return c > 0 ? {t: 'جديد', up: true} : null; var d = Math.round((c - p) / Math.abs(p) * 100); return d === 0 ? {t: '0%', up: true} : {t: (d > 0 ? '▲ ' : '▼ ') + Math.abs(d) + '%', up: d > 0}; }
+function dashSpark(vals){
+  var n = vals.length, mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals), rg = (mx - mn) || 1;
+  var pts = vals.map(function(v, i){ return ((n - 1 - i) / (n - 1) * 100).toFixed(1) + ',' + (26 - (v - mn) / rg * 22).toFixed(1); });
+  return '<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,30 ' + pts.slice().reverse().join(' ') + ' 100,30" class="sp-a"/><polyline points="' + pts.slice().reverse().join(' ') + '" class="sp-l"/></svg>';
+}
 function renderDash(){
   var box = $('dashBox'); if (!box) return;
   custAll = buildCustomers();
   var today = todayStr(), m = today.slice(0, 7), c = esc(cur3()), act = data.filter(function(r){ return r.status !== 'cancelled'; });
-  var sm = sumProfit(monthRows(m)), owedCust = act.reduce(function(s, r){ return s + remaining(r); }, 0), debtors = custAll.filter(function(x){ return x.remaining > 0; }).sort(function(a, b){ return b.remaining - a.remaining; });
+  var months = []; for (var i = 5; i >= 0; i--) { var d0 = new Date(); d0.setDate(1); d0.setMonth(d0.getMonth() - i); months.push(d0.getFullYear() + '-' + ('0' + (d0.getMonth() + 1)).slice(-2)); }
+  var H = months.map(function(mk){ var s = sumProfit(monthRows(mk)); return {m: mk, n: s.n, sales: s.sales, prof: s.prof, net: netMonth(mk)}; });
+  var cu = H[5], pv = H[4], sm = sumProfit(monthRows(m));
+  var owedCust = act.reduce(function(s, r){ return s + remaining(r); }, 0), debtors = custAll.filter(function(x){ return x.remaining > 0; }).sort(function(a, b){ return b.remaining - a.remaining; });
   var openN = leads.filter(isOpen).length, lateL = leads.filter(isLate).sort(function(a, b){ return String(a.follow).localeCompare(String(b.follow)); });
   var week = act.filter(function(r){ var d = daysUntil(r.travelDate); return d >= 0 && d <= 7; }).sort(function(a, b){ return String(a.travelDate).localeCompare(String(b.travelDate)); });
-  var dt = new Date().toLocaleDateString('ar-EG', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-  $('dashHello').innerHTML = '<div class="dh"><div><h2>🏠 ' + esc(office().name || 'مكتب حجز الطيران') + '</h2><div class="c-sub">' + dt + '</div></div></div>';
-  var K = function(ic, l, v, sub, js, cls){ return '<div class="kp ' + (cls || '') + '" onclick="' + js + '"><i>' + ic + '</i><div><small>' + l + '</small><b>' + v + '</b>' + (sub ? '<em>' + sub + '</em>' : '') + '</div></div>'; };
-  var kpis = K('🎫', 'حجوزات ' + monthLabel(m), sm.n, '', "showTab('b')") + K('💰', 'مبيعات الشهر', money(sm.sales), c, "showTab('s')") + K('💼', 'عمولة الشهر', money(sm.prof), sm.missing ? sm.missing + ' بدون سعر شراء' : c, "showTab('s')", sm.prof < 0 ? 'bad' : 'ok') +
-    K('💸', 'مصروفات الشهر', money(expTotalM(m)), c, "accTab='exp';showTab('s')", '') + K('📈', 'صافي الشهر', money(netMonth(m)), 'بعد المصروفات والإلغاءات', "accTab='profit';showTab('s')", netMonth(m) < 0 ? 'bad' : 'ok') +
-    K('⚠️', 'متبقٍ على العملاء', money(owedCust), debtors.length + ' عميل', "showTab('a');$('pType').value='debt';renderPeople()", owedCust > 0 ? 'bad' : 'ok') +
-    K('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') + K('🔎', 'مرجّحون مفتوحون', openN, lateL.length ? lateL.length + ' متابعة متأخرة' : '', "showTab('l')", lateL.length ? 'warn' : '') +
-    K('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة الاستفسار', "showTab('l')", inquiries.length ? 'warn' : '') + K('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()");
+  var dt = new Date().toLocaleDateString('ar-EG', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}), hr = new Date().getHours();
+  $('dashHello').innerHTML = '<div class="dh2"><div><div class="dh-g">' + (hr < 12 ? 'صباح الخير' : 'مساء الخير') + '</div><h2>' + esc(office().name || 'مكتب حجز الطيران') + '</h2><div class="c-sub">' + dt + '</div></div>' +
+    '<div class="dh-a noprint"><button onclick="newBooking()">＋ حجز جديد</button><button class="sec" onclick="newLead()">＋ استفسار</button><button class="sec" onclick="acOpen()">＋ عميل</button></div></div>';
+  var HK = function(l, v, sub, pc, vals, js, cls){ return '<div class="hk ' + (cls || '') + '" onclick="' + js + '"><div class="hk-t"><span>' + l + '</span>' + (pc ? '<em class="' + (pc.up ? 'up' : 'dn') + '">' + pc.t + '</em>' : '') + '</div><b>' + v + '</b><small>' + sub + '</small>' + dashSpark(vals) + '</div>'; };
+  var hero = HK('حجوزات ' + monthLabel(m), sm.n, 'عن الشهر الماضي ' + pv.n, dashPct(cu.n, pv.n), H.map(function(h){ return h.n; }), "showTab('b')") +
+    HK('المبيعات', money(sm.sales), c, dashPct(cu.sales, pv.sales), H.map(function(h){ return h.sales; }), "showTab('s')") +
+    HK('العمولة', money(sm.prof), sm.missing ? sm.missing + ' حجز بدون سعر شراء' : c, dashPct(cu.prof, pv.prof), H.map(function(h){ return h.prof; }), "showTab('s')", sm.prof < 0 ? 'bad' : '') +
+    HK('صافي الشهر', money(netMonth(m)), 'العمولة + غرامات الإلغاء', dashPct(cu.net, pv.net), H.map(function(h){ return h.net; }), "accTab='profit';showTab('s')", netMonth(m) < 0 ? 'bad' : '');
+  var A = function(ic, l, v, sub, js, cls){ return '<button type="button" class="al ' + (cls || '') + '" onclick="' + js + '"><i>' + ic + '</i><span><small>' + l + '</small><b>' + v + '</b>' + (sub ? '<em>' + sub + '</em>' : '') + '</span></button>'; };
+  var alerts = A('💰', 'متبقٍ على العملاء', money(owedCust), debtors.length + ' عميل', "showTab('a');$('pType').value='debt';renderPeople()", owedCust > 0 ? 'bad' : '') +
+    A('🏢', 'مستحق للموردين', money(totalOwed()), c, "accTab='sup';showTab('s')", totalOwed() > 0 ? 'warn' : '') +
+    A('⏰', 'متابعات متأخرة', lateL.length, openN + ' استفسار مفتوح', "showTab('l')", lateL.length ? 'bad' : '') +
+    A('🌐', 'طلبات جديدة', inquiries.length, 'من صفحة «اسأل»', "showTab('l')", inquiries.length ? 'warn' : '') +
+    A('✈️', 'سفر خلال 7 أيام', week.length, '', "showTab('b');$('fView').value='soon';render()", week.length ? 'info' : '');
   var wk = week.length ? week.slice(0, 7).map(function(r){ var d = daysUntil(r.travelDate), rem = remaining(r);
-    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + jq(r.id) + "')"); }).join('') : '<div class="empty">لا توجد رحلات خلال الأسبوع القادم</div>';
+    return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · ' + fmtPT(r) + (r.airline ? ' · ' + esc(r.airline) : ''), (d === 0 ? '<span class="chip c-bad">اليوم</span>' : '<span class="chip c-info">بعد ' + d + ' يوم</span>') + (rem > 0 ? ' <span class="chip c-bad">متبقي ' + money(rem) + '</span>' : ''), "openProfileB('" + jq(r.id) + "')"); }).join('') : '<div class="empty">لا رحلات خلال 7 أيام</div>';
   var need = '';
   lateL.slice(0, 4).forEach(function(l){ need += dashRow('🔎 ' + esc(l.name), esc(routeTxt(l.orig, l.dest)) + ' · متابعة ' + fmtP(l.follow), '<span class="chip c-bad">متأخر</span>', "showTab('l');editLead('" + jq(l.id) + "')"); });
   data.filter(function(r){ return cancelRefundDue(r) > 0; }).slice(0, 4).forEach(function(r){ need += dashRow('↩️ ردّ مبلغ: ' + esc(r.name), 'حجز ملغي — مستحق ردّه للعميل', '<span class="chip c-bad">' + money(cancelRefundDue(r)) + '</span>', "openProfileB('" + jq(r.id) + "')"); });
   debtors.slice(0, 4).forEach(function(x){ need += dashRow('💰 ' + esc(x.name), 'متبقٍ عليه', '<span class="chip c-bad">' + money(x.remaining) + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); });
   custAll.forEach(function(x){ var cl = x.client || {}; if (cl.passportExpiry) { var d = daysUntil(cl.passportExpiry); if (d <= 60 && x.nextTrip) need += dashRow('🛂 ' + esc(x.name), 'انتهاء الجواز ' + fmtP(cl.passportExpiry), '<span class="chip ' + (d < 0 ? 'c-bad' : 'c-warn') + '">' + (d < 0 ? 'منتهٍ' : 'بعد ' + d + ' يوم') + '</span>', "openProfile('" + jq(esc(x.key)) + "')"); } });
   custAll.forEach(function(x){ var cl = x.client || {}; if (cl.birthday) { var b = idcNextBd(cl.birthday); if (b !== '' && b <= 7) need += dashRow('🎂 ' + esc(x.name), 'عيد ميلاده ' + (b === 0 ? 'اليوم' : 'بعد ' + b + ' يوم'), '', "openProfile('" + jq(esc(x.key)) + "')"); } });
-  var hist = []; for (var i = 5; i >= 0; i--) { var d0 = new Date(); d0.setDate(1); d0.setMonth(d0.getMonth() - i); var mk = d0.getFullYear() + '-' + ('0' + (d0.getMonth() + 1)).slice(-2); hist.push({m: mk, p: sumProfit(monthRows(mk)).prof, n: monthRows(mk).length}); }
-  var mx = Math.max(1, Math.max.apply(null, hist.map(function(h){ return Math.abs(h.p); })));
-  var bars = '<div class="dbars">' + hist.map(function(h){ return '<div class="db"><div class="db-v">' + (h.p ? money(h.p) : '') + '</div><div class="db-c"><i class="' + (h.p < 0 ? 'neg' : '') + '" style="height:' + Math.max(3, Math.round(Math.abs(h.p) / mx * 100)) + '%"></i></div><div class="db-l">' + monthLabel(h.m).split(' ')[0] + '</div><div class="db-n">' + h.n + ' حجز</div></div>'; }).join('') + '</div>';
-  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + jq(r.id) + "')"); }).join('') || '<div class="empty">لا توجد حجوزات بعد</div>';
+  var mx = Math.max(1, Math.max.apply(null, H.map(function(h){ return Math.max(h.sales, Math.abs(h.prof)); })));
+  var bars = '<div class="cleg"><span><i class="l1"></i>المبيعات</span><span><i class="l2"></i>العمولة</span></div><div class="cbars">' + H.map(function(h){
+    return '<div class="cb"><div class="cb-c"><i class="s" style="height:' + Math.max(2, Math.round(Math.max(0, h.sales) / mx * 100)) + '%" title="مبيعات ' + money(h.sales) + '"></i><i class="p' + (h.prof < 0 ? ' neg' : '') + '" style="height:' + Math.max(2, Math.round(Math.abs(h.prof) / mx * 100)) + '%" title="عمولة ' + money(h.prof) + '"></i></div><div class="cb-l">' + monthLabel(h.m).split(' ')[0] + '</div><div class="cb-n">' + h.n + ' حجز</div></div>'; }).join('') + '</div>';
+  var dmap = {}, cut = new Date(); cut.setFullYear(cut.getFullYear() - 1); var cs = cut.toISOString().slice(0, 10);
+  act.forEach(function(r){ if (!r.destination || String(r.bookingDate || r.travelDate || '') < cs) return; var k = String(r.destination).trim(); dmap[k] = (dmap[k] || 0) + 1; });
+  var top = Object.keys(dmap).map(function(k){ return [k, dmap[k]]; }).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 5), tmx = top.length ? top[0][1] : 1;
+  var dests = top.length ? top.map(function(t){ return '<div class="tb"><span>' + esc(t[0]) + '</span><div class="tb-b"><i style="width:' + Math.round(t[1] / tmx * 100) + '%"></i></div><b>' + t[1] + '</b></div>'; }).join('') : '<div class="empty">لا بيانات بعد</div>';
+  var recent = data.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).slice(0, 5).map(function(r){ return dashRow(esc(r.name), esc(apCode(r.origin)) + ' ‏←‏ ' + esc(apCode(r.destination)) + ' · حُجز ' + fmtP(r.bookingDate), '<span class="badge b-' + r.status + '">' + STATUS[r.status] + '</span>', "openProfileB('" + jq(r.id) + "')"); }).join('') || '<div class="empty">لا حجوزات بعد</div>';
   var inq = inquiries.slice().sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); }).slice(0, 4).map(function(q){ return dashRow('🌐 ' + esc(q.name), esc(routeTxt(q.origin, q.destination)), '<button class="sm" onclick="event.stopPropagation();inqToLead(\'' + jq(q.id) + '\')">➕ مرجّح</button>', ''); }).join('');
-  box.innerHTML = '<div class="kpis">' + kpis + '</div><div class="dgrid">' +
+  box.innerHTML = '<div class="hero4">' + hero + '</div><div class="alrow">' + alerts + '</div><div class="dg2">' +
+    '<div class="dg-main">' + dashCard('📈 المبيعات والعمولة · آخر 6 أشهر', bars, '<button class="sec sm" onclick="showTab(\'s\')">التفاصيل</button>') +
     dashCard('✈️ رحلات الأسبوع القادم', wk, '<button class="sec sm" onclick="showTab(\'b\')">كل الحجوزات</button>') +
-    dashCard('🔔 تحتاج انتباهك', need || '<div class="empty">🎉 لا شيء عاجل الآن</div>', '<button class="sec sm" onclick="showTab(\'t\')">كل المهام</button>') +
-    dashCard('📈 العمولة آخر 6 أشهر', bars, '<button class="sec sm" onclick="showTab(\'s\')">التفاصيل</button>') +
-    dashCard('🆕 آخر الحجوزات', recent + (inq ? '<h4 class="dsub">طلبات جديدة من الصفحة</h4>' + inq : '')) + '</div>';
+    dashCard('🆕 آخر الحجوزات', recent + (inq ? '<h4 class="dsub">طلبات جديدة من الصفحة</h4>' + inq : '')) + '</div>' +
+    '<div class="dg-side">' + dashCard('🔔 تحتاج انتباهك', need || '<div class="empty">🎉 لا شيء عاجل الآن</div>') +
+    dashCard('🌍 أكثر الوجهات · آخر 12 شهرًا', dests) + '</div></div>';
 }
 
 /* ---------- ربط كل شيء ---------- */
@@ -3151,12 +3190,11 @@ function acDelete(key){
 
 
 /* ===== v12: صفحة العملاء المرجّحين (تنظيم جديد) ===== */
-var ldView = 'cards', ldLimit = 40;
+var ldLimit = 40;
 var L_STATUS = [['', 'الكل'], ['open', 'مفتوحة'], ['late', 'متأخرة / اليوم'], ['new', 'جديد'], ['contacted', 'تمت المتابعة'], ['noanswer', 'لم يرد'], ['converted', 'تحول لحجز'], ['lost', 'لم يكمل']];
 var L_DIR = {follow: 'asc', inquiry: 'desc', travel: 'asc', name: 'asc', price: 'desc', status: 'asc'};
 function ldStatusCount(k){ return k === '' ? leads.length : k === 'open' ? leads.filter(isOpen).length : k === 'late' ? leads.filter(isLate).length : leads.filter(function(l){ return l.status === k; }).length; }
 function ldSetStatus(k){ $('lfStatus').value = k; ldLimit = 40; render(); }
-function ldSetView(v){ ldView = v; try { localStorage.setItem('office_ldview', v); } catch (e) {} renderLeads(); }
 function ldClear(){ $('lq').value = ''; $('lfStatus').value = ''; ldLimit = 40; render(); }
 function ldHead(k){ if ($('lSort').value === k) sortFlip('l'); else { $('lSort').value = k; sortRev.l = false; try { localStorage.setItem('office_rev_l', '0'); } catch (e) {} sortRevUI(); render(); } }
 function ldSorted(list){
@@ -3184,39 +3222,21 @@ function ldChips(l){
   if (open && dT !== null) t = dT < 0 ? '<span class="chip c-gray">فات الموعد</span>' : dT === 0 ? '<span class="chip c-bad">اليوم</span>' : dT <= 30 ? '<span class="chip c-info">بعد ' + dT + ' يوم</span>' : '';
   return {f: f, t: t};
 }
-function ldCard(l){
-  var ch = ldChips(l), init = [].slice.call(String(l.name).trim())[0] || '؟', id = l.id;
-  var snooze = '<select class="lsnz" onchange="ldSnooze(\'' + jq(id) + '\',this.value);this.value=\'\'" title="تأجيل المتابعة"><option value="">⏰ تأجيل</option><option value="1">غدًا</option><option value="3">بعد 3 أيام</option><option value="7">بعد أسبوع</option><option value="14">بعد أسبوعين</option></select>';
-  var stSel = '<select class="lst" onchange="ldStatus(\'' + jq(id) + '\',this.value)">' + ['new', 'contacted', 'noanswer', 'lost', 'converted'].map(function(s){ return '<option value="' + s + '"' + (s === l.status ? ' selected' : '') + '>' + LSTATUS[s] + '</option>'; }).join('') + '</select>';
-  return '<div class="lcard st-' + l.status + (isLate(l) ? ' late' : '') + '"><div class="lc-h"><div class="avatar">' + esc(init) + '</div><div class="lc-id"><div class="c-name">' + esc(l.name) + ' <span class="badge b-' + l.status + '">' + LSTATUS[l.status] + '</span></div>' +
-    '' + phonesBlock(l.phone) + '</div>' +
-    (l.quotePrice ? '<div class="lc-q"><small>عرض السعر</small><b>' + money(l.quotePrice) + '</b></div>' : '') + '</div>' +
-    '<div class="lc-r"><span class="route">' + ap(l.orig) + '<span class="arr">←</span>' + ap(l.dest) + '</span>' + ((+l.pax || 1) > 1 ? ' <span class="chip c-gray">👥 ' + (+l.pax) + ' ركاب</span>' : '') + '</div>' +
-    '<div class="lc-d"><span>✈️ سفر: ' + (l.travel ? fmtDT(l) + ' ' + ch.t : '<i class="c-sub">غير محدد</i>') + '</span>' + (l.returnDate ? '<span>↩️ عودة: ' + fmtDR(l) + '</span>' : '') + '<span>📅 استفسار: ' + fmtD(l.inquiry) + '</span><span>⏰ متابعة: ' + (l.follow ? fmtD(l.follow) + ' ' + ch.f : '<i class="c-sub">—</i>') + '</span></div>' +
-    (l.quoteAirline ? '<div class="c-sub">🛫 ' + esc(l.quoteAirline) + (l.quoteUntil ? ' · العرض حتى ' + fmtD(l.quoteUntil) : '') + '</div>' : '') +
-    (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 110 ? l.notes.slice(0, 110) + '…' : l.notes) + '</div>' : '') +
-    '<div class="lc-a noprint">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + jq(id) + '\')">➕ تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + jq(id) + '\')">🧾 عرض سعر</button><button class="sec sm" onclick="leadMsg(\'' + jq(id) + '\')">💬 رسالة</button>' +
-    '<button class="sec sm" onclick="idcOpen(ckey(leads.find(function(x){return x.id===\'' + jq(id) + '\'})))">🪪</button><button class="sec sm" onclick="editLead(\'' + jq(id) + '\')">✏️ تعديل</button><button class="del sm" onclick="delLead(\'' + jq(id) + '\')">حذف</button></div>' +
-    '<div class="lc-f noprint">' + stSel + (isOpen(l) ? snooze : '') + '</div></div>';
-}
 function ldRow(l){
   var ch = ldChips(l);
   return '<tr class="' + (isLate(l) ? 'late' : '') + '"><td><div class="c-name">' + esc(l.name) + '</div>' + phonesBlock(l.phone) + '' +
     (l.notes ? '<div class="c-note lead">📝 ' + esc(l.notes.length > 80 ? l.notes.slice(0, 80) + '…' : l.notes) + '</div>' : '') + '</td><td><div class="route">' + ap(l.orig) + '<span class="arr">←</span>' + ap(l.dest) + '</div></td>' +
-    '<td>' + (l.travel ? '<div class="c-name">' + fmtDT(l) + '</div>' + ch.t : '<span class="c-sub">—</span>') + (l.returnDate ? '<div class="c-sub">↩️ ' + fmtDR(l) + '</div>' : '') + '</td><td>' + fmtD(l.inquiry) + '</td><td>' + (l.follow ? '<div class="c-name">' + fmtD(l.follow) + '</div>' + ch.f : '<span class="c-sub">—</span>') + '</td>' +
+    '<td>' + (l.travel ? '<div class="c-name">' + fmtDT(l) + '</div>' + ch.t : '<span class="c-sub">—</span>') + (l.returnDate ? '<div class="c-sub">↩️ عودة ' + fmtDR(l) + '</div>' : '') + '</td><td>' + fmtD(l.inquiry) + '</td><td>' + (l.follow ? '<div class="c-name">' + fmtD(l.follow) + '</div>' + ch.f : '<span class="c-sub">—</span>') + '</td>' +
     '<td>' + (l.quotePrice ? money(l.quotePrice) : '<span class="c-sub">—</span>') + '</td><td><span class="badge b-' + l.status + '">' + LSTATUS[l.status] + '</span></td>' +
-    '<td class="noprint"><div class="acts">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + jq(l.id) + '\')">تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="openQuote(\'' + jq(l.id) + '\')">🧾</button><button class="sec sm" onclick="leadMsg(\'' + jq(l.id) + '\')">💬</button><button class="sec sm" onclick="editLead(\'' + jq(l.id) + '\')">تعديل</button><button class="del sm" onclick="delLead(\'' + jq(l.id) + '\')">حذف</button></div></td></tr>';
+    '<td class="noprint"><div class="acts">' + (l.status !== 'converted' ? '<button class="sm" onclick="convertLead(\'' + jq(l.id) + '\')">تحويل لحجز</button>' : '') + '<button class="sec sm" onclick="leadMsg(\'' + jq(l.id) + '\')">💬</button><button class="sec sm" onclick="editLead(\'' + jq(l.id) + '\')">تعديل</button><button class="del sm" onclick="delLead(\'' + jq(l.id) + '\')">حذف</button></div></td></tr>';
 }
 function renderLeads(){
-  if (!$('ldBox')) return;
+  if (!$('ldTbl')) return;
   var openN = leads.filter(isOpen).length; $('leadCount').textContent = openN ? '(' + openN + ')' : '';
   var cur = $('lfStatus').value;
   $('ldKpis').innerHTML = L_STATUS.map(function(s){ var n = ldStatusCount(s[0]); return '<button type="button" class="lpill' + (cur === s[0] ? ' on' : '') + (s[0] === 'late' && n ? ' warn' : '') + '" onclick="ldSetStatus(\'' + jq(s[0]) + '\')">' + s[1] + ' <b>' + n + '</b></button>'; }).join('');
-  var list = ldSorted(ldFiltered()), shown = list.slice(0, ldLimit), tbl = ldView === 'table';
-  $('ldBox').style.display = tbl ? 'none' : ''; $('ldTbl').style.display = tbl ? '' : 'none';
-  $('ldView').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === ldView); });
-  if (tbl) $('lrows').innerHTML = shown.length ? shown.map(ldRow).join('') : '<tr><td class="empty" colspan="8">لا توجد نتائج</td></tr>';
-  else $('ldBox').innerHTML = shown.length ? '<div class="lgrid">' + shown.map(ldCard).join('') + '</div>' : '<div class="empty">' + (leads.length ? 'لا توجد نتائج مطابقة' : 'لا يوجد مرجّحون بعد. اضغط «➕ مرجّح جديد» لتسجيل أول عميل سأل عن رحلة.') + '</div>';
+  var list = ldSorted(ldFiltered()), shown = list.slice(0, ldLimit);
+  $('lrows').innerHTML = shown.length ? shown.map(ldRow).join('') : '<tr><td class="empty" colspan="8">' + (leads.length ? 'لا توجد نتائج مطابقة' : 'لا يوجد مرجّحون بعد. اضغط «➕ استفسار جديد» للبدء.') + '</td></tr>';
   $('ldMore').innerHTML = list.length > ldLimit ? '<button class="sec" onclick="ldLimit+=40;renderLeads()">عرض المزيد (' + (list.length - ldLimit) + ')</button>' : '';
   $('ldCount').textContent = list.length + ' من ' + leads.length;
   var pk = $('lSort').value; document.querySelectorAll('#ldTbl th[data-lk]').forEach(function(th){ th.classList.add('sortable'); th.classList.remove('sort-asc', 'sort-desc'); if (th.dataset.lk === pk) { var d = L_DIR[pk] || 'asc'; if (isRev('l')) d = d === 'asc' ? 'desc' : 'asc'; th.classList.add('sort-' + d); } });
@@ -3238,7 +3258,6 @@ function editLead(id){
   $('lid').value = l.id; $('leadFormTitle').textContent = 'تعديل: ' + l.name; $('lcancel').style.display = ''; lmOpen();
 }
 function saveLeads(){ syncList('leads', leads); if ($('lm') && $('lm').style.display !== 'none' && !$('lf').dataset.busy) { $('lm').style.display = 'none'; } }
-{ var _lv = ''; try { _lv = localStorage.getItem('office_ldview') || ''; } catch (e) {} if (_lv === 'table' || _lv === 'cards') ldView = _lv; }
 $('lSort').addEventListener('input', function(){ ldLimit = 40; render(); });
 
 
@@ -3316,7 +3335,7 @@ function remCard(){
   var _rd = renderDash;
   renderDash = function(){
     _rd.apply(this, arguments);
-    var g = document.querySelector('#dashBox .dgrid'); if (g) g.insertAdjacentHTML('afterbegin', remCard());
+    var g = document.querySelector('#dashBox .dg-side'); if (g) g.insertAdjacentHTML('afterbegin', remCard());
     try { var n = REMS.length, base = document.title.replace(/^\(\d+\)\s*/, ''); document.title = (n ? '(' + n + ') ' : '') + base; } catch (e) {}
   };
 }
@@ -3423,7 +3442,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-25 · 35';
+var APP_VERSION = '2026-11-26 · 36';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3616,7 +3635,7 @@ function odCard(){
   const _rd18 = renderDash;
   renderDash = function(){
     _rd18.apply(this, arguments);
-    const g = document.querySelector('#dashBox .dgrid'); if (g && g.firstElementChild) g.firstElementChild.insertAdjacentHTML('afterend', odCard());
+    const g = document.querySelector('#dashBox .dg-side'); if (g && g.firstElementChild) g.firstElementChild.insertAdjacentHTML('afterend', odCard());
     const box = $('dashBox'), last = +lsGet('office_last_backup', 0), days = last ? Math.floor((Date.now() - last) / 86400000) : null;
     if (box && data.length && (days === null || days >= 7)) box.insertAdjacentHTML('afterbegin', '<div class="debt noprint" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">💾 ' + (days === null ? 'لم تأخذ نسخة احتياطية من هذا الجهاز بعد.' : '⚠️ مضى ' + days + ' يومًا على آخر نسخة احتياطية.') + ' الخطة المجانية لا تحفظ نسخًا تلقائية. <button class="sm" onclick="backup()">تنزيل نسخة الآن</button></div>');
   };
@@ -3662,9 +3681,9 @@ function actsToMenu(root){
   });
 }
 (function(){
-  let q = 0; const run = () => { q = 0; ['grpBox', 'flatBox', 'ppRows', 'ldBox', 'ldTbl'].forEach(id => { const e = $(id); if (e) actsToMenu(e); }); };
+  let q = 0; const run = () => { q = 0; ['grpBox', 'flatBox', 'ppRows', 'ldTbl'].forEach(id => { const e = $(id); if (e) actsToMenu(e); }); };
   const mo = new MutationObserver(() => { if (!q) q = requestAnimationFrame(run); });
-  ['grpBox', 'flatBox', 'ppRows', 'ldBox', 'ldTbl'].forEach(id => { const e = $(id); if (e) mo.observe(e, {childList: true, subtree: true}); }); run();
+  ['grpBox', 'flatBox', 'ppRows', 'ldTbl'].forEach(id => { const e = $(id); if (e) mo.observe(e, {childList: true, subtree: true}); }); run();
 })();
 
 /* ---- 3) مهام اليوم: تصنيفات وعرض منسق ---- */
@@ -3776,63 +3795,10 @@ setTimeout(() => {
 
 /* ================= v26: مصروفات الشركة، الإلغاء والاسترداد، نسخة أسبوعية تلقائية ================= */
 
-/* ---------- مصروفات الشركة ---------- */
-const EXP_CATS = [['كهرباء', '💡'], ['مياه', '🚰'], ['غاز', '🔥'], ['إيجار', '🏢'], ['إنترنت وتليفون', '📶'], ['رواتب وأجور', '👥'], ['مواصلات', '🚗'], ['دعاية وإعلان', '📣'], ['صيانة ونظافة', '🧹'], ['ضرائب ورسوم', '🧾'], ['اشتراكات وبرامج', '💻'], ['أخرى', '📦']];
-const expIcon = c => (EXP_CATS.find(x => x[0] === c) || [0, '📦'])[1];
 function refundDueAll(){ return r2(data.reduce((s, b) => s + Math.max(0, cancelRefundDue(b)), 0)); }
 function netBlockHtml(m, t){
-  const cn = cancelNet(m), ex = expTotalM(m), net = r2(t.prof + cn - ex), c = esc(cur3());
-  return `<div class="pstats netb"><div><b>${money(t.prof)}</b>عمولة الحجوزات</div>${cn ? `<div class="${cn < 0 ? 'bad' : ''}"><b>${money(cn)}</b>صافي الإلغاءات (غرامات)</div>` : ''}<div class="${ex > 0 ? 'warn' : ''} clk" onclick="accTab='exp';renderAcc()"><b>${money(ex)}</b>مصروفات الشركة ›</div><div class="${net < 0 ? 'bad' : 'good'}"><b>${money(net)}</b>صافي ربح الشهر ${c}</div></div>`;
-}
-function accExpHtml(){
-  const months = accMonths(); if (!accMonth || !months.includes(accMonth)) accMonth = months[0];
-  const L = expForMonth(accMonth), tot = expTotalM(accMonth), c = esc(cur3());
-  const comm = r2(sumProfit(monthRows(accMonth)).prof + cancelNet(accMonth)), net = r2(comm - tot);
-  const by = new Map(); L.forEach(x => { const k = x.e.category || 'أخرى'; by.set(k, r2((by.get(k) || 0) + (+x.e.amount || 0))); });
-  const cats = [...by.entries()].sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...cats.map(x => x[1]));
-  const warn = window._noExp ? `<div class="debt">⚠ جدول المصروفات غير موجود في قاعدة البيانات بعد. افتح Supabase ‏←‏ SQL Editor ونفّذ ملف <b>upgrade_v26.sql</b> (راجع الشرح في README) ثم أعد تحميل الصفحة. لن يمكنك تسجيل مصروفات قبل ذلك.</div>` : '';
-  return `${warn}<div class="acc-bar"><select id="accMonth">${months.map(m => `<option value="${m}"${m === accMonth ? ' selected' : ''}>${monthLabel(m)}</option>`).join('')}</select><button class="sec sm" onclick="expCSV()">تصدير Excel</button></div>
-    <div class="pstats"><div class="${tot > 0 ? 'warn' : ''}"><b>${money(tot)}</b>مصروفات ${monthLabel(accMonth)} ${c}</div><div><b>${money(comm)}</b>عمولة وغرامات الشهر</div><div class="${net < 0 ? 'bad' : 'good'}"><b>${money(net)}</b>الصافي بعد المصروفات</div></div>
-    <div class="sgrp" id="expForm"><h3 id="exTitle">تسجيل مصروف</h3><input type="hidden" id="exId"><div class="grid">
-      <div><label>التاريخ</label><input type="date" id="exDate" value="${todayStr()}"></div>
-      <div><label>نوع المصروف *</label><input id="exCat" list="expCats" placeholder="مثال: كهرباء" autocomplete="off"><datalist id="expCats">${EXP_CATS.map(x => `<option value="${esc(x[0])}">`).join('')}</datalist></div>
-      <div><label>المبلغ *</label><input type="number" id="exAmt" min="0" step="any" inputmode="decimal"></div>
-      <div><label>ملاحظة (اختياري)</label><input id="exNote" placeholder="مثال: فاتورة أكتوبر"></div>
-      <div class="full exqk">${EXP_CATS.map(x => `<button type="button" class="sec sm" data-c="${esc(x[0])}" onclick="$('exCat').value=this.dataset.c">${x[1]} ${esc(x[0])}</button>`).join('')}</div>
-      <div class="full exrec"><label class="chk"><input type="checkbox" id="exRecur" onchange="$('exUntilBox').style.display=this.checked?'':'none'"> 🔁 مصروف شهري ثابت (يُحسب تلقائيًا كل شهر من تاريخه، مثل الإيجار والراتب)</label></div>
-      <div id="exUntilBox" style="display:none"><label>يتوقف بعد شهر (اختياري)</label><input type="date" id="exUntil"></div></div>
-      <div class="actions"><button onclick="expSave()">💾 حفظ المصروف</button><button class="sec" onclick="expReset()">مسح</button></div></div>
-    ${cats.length ? `<div class="sgrp"><h3>حسب النوع</h3><div class="bars">${cats.map(([k, v]) => `<div class="barrow"><span class="bl">${expIcon(k)} ${esc(k)}</span><span class="bt"><i style="width:${Math.round(v / mx * 100)}%"></i></span><b>${money(v)}</b></div>`).join('')}</div></div>` : ''}
-    <div class="sgrp"><h3>مصروفات ${monthLabel(accMonth)} (${L.length})</h3>${L.length ? `<table class="ptbl"><thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th></th></tr></thead><tbody>${L.map(x => `<tr><td>${fmtD(x.e.date)}</td><td>${expIcon(x.e.category)} ${esc(x.e.category)}${x.e.recur === 'monthly' ? ' <span class="chip c-info">🔁 شهري</span>' : ''}${x.e.note ? `<div class="c-sub">${esc(x.e.note)}</div>` : ''}</td><td><b>${money(x.e.amount)}</b></td><td class="noprint"><button class="sec sm" onclick="expEdit('${jq(x.e.id)}')">تعديل</button> <button class="del sm" onclick="expDel('${jq(x.e.id)}')">حذف</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">لا توجد مصروفات في هذا الشهر. سجّل الكهرباء والمياه والإيجار… ليظهر صافي ربحك الحقيقي.</div>'}</div>`;
-}
-function expReset(){ renderAcc(); }
-function expSave(){
-  if (window._noExp) { alert('جدول المصروفات غير موجود في قاعدة البيانات بعد.\nنفّذ ملف upgrade_v26.sql في Supabase ثم أعد تحميل الصفحة.'); return; }
-  const date = $('exDate').value || todayStr(), cat = $('exCat').value.trim(), amt = r2($('exAmt').value);
-  if (!cat) { alert('اختر نوع المصروف أو اكتبه.'); return; }
-  if (!(amt > 0)) { alert('اكتب المبلغ.'); return; }
-  const recur = $('exRecur').checked ? 'monthly' : '', until = recur ? $('exUntil').value : '';
-  if (until && until < date) { alert('تاريخ التوقف قبل تاريخ البداية.'); return; }
-  const id = $('exId').value, rec = {id: id || uid(), date, category: cat, amount: amt, note: $('exNote').value.trim(), recur, until};
-  const i = expenses.findIndex(x => x.id === rec.id); if (i >= 0) expenses[i] = rec; else expenses.push(rec);
-  syncList('expenses', expenses); accMonth = date.slice(0, 7); render(); renderAcc(); toast('✓ سُجّل المصروف', 'ok');
-}
-function expEdit(id){
-  const e = expenses.find(x => x.id === id); if (!e) return;
-  $('exId').value = e.id; $('exDate').value = e.date; $('exCat').value = e.category; $('exAmt').value = e.amount; $('exNote').value = e.note || '';
-  $('exRecur').checked = e.recur === 'monthly'; $('exUntilBox').style.display = $('exRecur').checked ? '' : 'none'; $('exUntil').value = e.until || '';
-  $('exTitle').textContent = 'تعديل مصروف'; $('expForm').scrollIntoView({block: 'center'});
-}
-function expDel(id){
-  const e = expenses.find(x => x.id === id); if (!e) return;
-  if (!confirm('حذف مصروف «' + e.category + '» بمبلغ ' + money(e.amount) + '؟' + (e.recur === 'monthly' ? '\nهذا مصروف شهري: سيُحذف من كل الأشهر. (لإيقافه من شهر معيّن عدّله وحدّد «يتوقف بعد شهر».)' : ''))) return;
-  expenses = expenses.filter(x => x.id !== id); syncList('expenses', expenses); render(); renderAcc(); toast('🗑 حُذف المصروف', 'ok');
-}
-function expCSV(){
-  const m = accMonth || todayStr().slice(0, 7), cell = csvCell;
-  const rows = expForMonth(m).map(x => [x.e.date, x.e.category, x.e.amount, x.e.recur === 'monthly' ? 'شهري' : '', x.e.note || ''].map(cell).join(','));
-  rows.push(['', 'الإجمالي', expTotalM(m), '', ''].map(cell).join(','));
-  download('مصروفات-' + m + '.csv', '﻿' + [['التاريخ', 'النوع', 'المبلغ', 'تكرار', 'ملاحظة'].map(cell).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
+  const cn = cancelNet(m), net = r2(t.prof + cn), c = esc(cur3());
+  return `<div class="pstats netb"><div><b>${money(t.prof)}</b>عمولة الحجوزات</div>${cn ? `<div class="${cn < 0 ? 'bad' : ''}"><b>${money(cn)}</b>صافي الإلغاءات (غرامات)</div>` : ''}<div class="${net < 0 ? 'bad' : 'good'}"><b>${money(net)}</b>صافي ربح الشهر ${c}</div></div>`;
 }
 
 /* ---------- الإلغاء والاسترداد ---------- */
@@ -3914,28 +3880,15 @@ function custDelete(key){
 acDelete = custDelete;
 
 /* v23: استفسارات — الطلبات الواردة من صفحة «اسأل» تظهر مع المتابعات في قسم واحد */
-function inqCard(q){
-  var init = [].slice.call(String(q.name).trim())[0] || '؟', id = q.id, n = +q.pax || 1;
-  return '<div class="lcard st-new inq"><div class="lc-h"><div class="avatar">' + esc(init) + '</div><div class="lc-id"><div class="c-name">' + esc(q.name) + ' <span class="badge b-new">🌐 من الصفحة</span></div>' + phonesBlock(q.phone) + '</div></div>' +
-    '<div class="lc-r"><span class="route">' + ap(q.origin) + '<span class="arr">←</span>' + ap(q.destination) + '</span>' + (n > 1 ? ' <span class="chip c-gray">👥 ' + n + ' ركاب</span>' : '') + '</div>' +
-    '<div class="lc-d"><span>✈️ سفر: ' + (q.travel ? fmtDT(q) : '<i class="c-sub">غير محدد</i>') + '</span><span>📅 وصل: ' + fmtD(String(q.at || '').slice(0, 10)) + '</span></div>' +
-    (q.notes ? '<div class="c-note lead">📝 ' + esc(q.notes.length > 110 ? q.notes.slice(0, 110) + '…' : q.notes) + '</div>' : '') +
-    '<div class="lc-a noprint"><button class="sm" onclick="inqToLead(\'' + jq(id) + '\')">➕ نقل للمتابعة</button><button class="sec sm" onclick="inqMsg(\'' + jq(id) + '\')">💬 رد</button><button class="del sm" onclick="inqDelete(\'' + jq(id) + '\')">حذف</button></div></div>';
-}
 {
   const f23 = renderLeads;
   renderLeads = function(){
     f23.apply(this, arguments);
-    if (!$('ldBox')) return;
+    if (!$('ldTbl')) return;
     const q = $('lq').value.trim().toLowerCase(), st = $('lfStatus').value;
     const list = (st === '' || st === 'open' || st === 'new') ? inquiries.filter(function(x){ return !q || (x.name + ' ' + x.phone + ' ' + (x.origin || '') + ' ' + (x.destination || '') + ' ' + (x.notes || '')).toLowerCase().includes(q); }) : [];
     if (!list.length) return;
-    if (ldView === 'table') {
       $('lrows').insertAdjacentHTML('afterbegin', list.map(function(x){ return '<tr class="inq"><td><div class="c-name">' + esc(x.name) + '</div>' + phonesBlock(x.phone) + '</td><td><div class="route">' + ap(x.origin) + '<span class="arr">←</span>' + ap(x.destination) + '</div></td><td>' + (x.travel ? fmtDT(x) : '—') + '</td><td>' + fmtD(String(x.at || '').slice(0, 10)) + '</td><td>—</td><td>—</td><td><span class="badge b-new">🌐 من الصفحة</span></td><td class="noprint"><div class="acts"><button class="sm" onclick="inqToLead(\'' + jq(x.id) + '\')">نقل للمتابعة</button><button class="sec sm" onclick="inqMsg(\'' + jq(x.id) + '\')">💬</button><button class="del sm" onclick="inqDelete(\'' + jq(x.id) + '\')">حذف</button></div></td></tr>'; }).join(''));
-    } else {
-      const has = $('ldBox').querySelector('.lgrid');
-      $('ldBox').innerHTML = '<div class="ld-sec">🌐 طلبات جديدة من صفحة «اسأل» (' + list.length + ')</div><div class="lgrid">' + list.map(inqCard).join('') + '</div>' + (has ? '<div class="ld-sec">المتابعات</div>' + has.outerHTML : '');
-    }
   };
 }
 
