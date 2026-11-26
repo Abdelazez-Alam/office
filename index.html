@@ -640,6 +640,34 @@ td b,td .c-sub b,.dr-m span b{unicode-bidi:isolate}
 form .grid,.mbox .grid{gap:14px 12px}
 .seg button{border-radius:10px}
 form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[type=time]{padding:0 8px;min-width:0}
+
+/* v37: أزرار الإضافة في الشريط العلوي + جداول جديدة */
+.hdr-add{display:flex;gap:6px;margin-inline-end:8px}
+.hdr-add button{background:rgba(255,255,255,.18);color:inherit;border:1px solid rgba(255,255,255,.35);padding:6px 12px;border-radius:10px;font-weight:800;font-size:.9rem;white-space:nowrap}
+.hdr-add button:first-child{background:#fff;color:var(--pri-d,#0e5a70);border-color:#fff}
+.hdr-add button:hover{filter:brightness(1.08)}
+@media(max-width:560px){.hdr-add{gap:4px;margin-inline-end:2px}.hdr-add button{padding:5px 8px;font-size:.78rem;border-radius:8px}header h1{font-size:.95rem!important}#syncState{display:none}}
+.pp-a,.bka{display:flex;gap:6px;flex-wrap:wrap}
+.pp-a button,.bka button{padding:5px 10px;font-size:.85em;white-space:nowrap}
+.sup-k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.sup-k>div{background:var(--surface);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;box-shadow:var(--cardsh);border-top:3px solid var(--pri)}
+.sup-k small{display:block;color:var(--mut);font-weight:700;font-size:.78rem}.sup-k b{display:block;font-size:1.3rem;font-variant-numeric:tabular-nums}.sup-k em{font-style:normal;color:var(--mut);font-size:.74rem}
+.sup-k .bad{border-top-color:var(--bad)}.sup-k .bad b{color:var(--bad)}.sup-k .good{border-top-color:var(--ok)}.sup-k .good b{color:var(--ok)}
+.sup-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 12px}.sup-h h3{margin:0;font-size:1.25rem}
+#tabAcc .toolbar{margin-bottom:10px}
+@media(max-width:700px){.sup-k{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* جدول الحجوزات على الموبايل: كل حجز كبطاقة مرصوصة بدل جدول عريض */
+@media(max-width:700px){
+  #bkTbl,#bkTbl tbody,#bkTbl tr,#bkTbl td{display:block;width:100%}
+  #bkTbl thead{display:none}
+  #bkTbl{border:0!important;box-shadow:none!important;background:transparent!important}
+  #bkTbl tbody tr{background:var(--surface);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;padding:6px 4px;box-shadow:var(--cardsh)}
+  #bkTbl tbody td{border:0!important;padding:6px 12px!important;background:transparent!important}
+  #bkTbl tbody td[data-l]::before{content:attr(data-l);display:block;color:var(--mut);font-size:.72rem;font-weight:800}
+  #bkTbl tbody tr:hover td:first-child{border-inline-start-color:transparent}
+  #bkTbl td.empty{text-align:center}
+}
+form input[type=time],.mbox input[type=time]{min-width:104px}
 </style>
 </head>
 <body>
@@ -678,7 +706,7 @@ form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[t
       <input id="pq" placeholder="بحث بالاسم أو الهاتف أو الوجهة...">
       <select id="pType"><option value="">كل العملاء</option><option value="booked">✅ لديهم حجوزات</option><option value="prospect">🔎 استفسروا ولم يحجزوا</option><option value="debt">💰 عليهم متبقي</option></select>
       <select id="pSort"><option value="recent">ترتيب: الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option><option value="trips">الأكثر حجوزات</option><option value="debt">الأكثر متبقيًا</option></select>
-      <button onclick="acOpen()">➕ إضافة عميل</button>
+
     </div>
     <div class="tbl"><table class="rec"><thead><tr><th data-pk="name">العميل</th><th data-pk="kind">الحالة</th><th data-pk="trips">التفاصيل</th><th data-pk="debt">المتبقي</th><th data-pk="recent">آخر نشاط</th><th class="noprint">إجراءات</th></tr></thead><tbody id="ppRows"></tbody></table></div>
   </div>
@@ -764,8 +792,8 @@ form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[t
         <option value="issued">تم الإصدار</option>
         <option value="cancelled">ملغي</option>
       </select>
-      <select id="fGroup" title="طريقة العرض"><option value="cust">👤 حسب العميل (بيانات كل عميل في مكان واحد)</option><option value="flat">📋 كل الحجوزات في جدول</option></select>
-      <select id="fSort" title="ترتيب العملاء"><option value="near">ترتيب: الأقرب سفرًا</option><option value="debt">الأكثر متبقيًا</option><option value="trips">الأكثر حجوزات</option><option value="recent">الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option></select>
+      <select id="fGroup" hidden><option value="flat" selected>flat</option></select>
+      <select id="fSort" hidden><option value="near">ترتيب: الأقرب سفرًا</option><option value="debt">الأكثر متبقيًا</option><option value="trips">الأكثر حجوزات</option><option value="recent">الأحدث نشاطًا</option><option value="name">الاسم (أ ‏←‏ ي)</option></select>
       <select id="fView">
         <option value="">كل الحجوزات</option>
         <option value="upcoming">السفر القادم فقط</option>
@@ -795,7 +823,7 @@ form input[type=date],form input[type=time],.mbox input[type=date],.mbox input[t
 <div id="tabLeads" style="display:none">
   <div class="card">
     <div class="ld-head"><div><h2>🔎 استفسارات</h2><div class="c-sub">من سأل عن رحلة ولم يحجز بعد (من صفحة «اسأل» أو سجّلته بنفسك) — تابعهم حتى يحجزوا. <b id="ldCount"></b></div></div>
-      <div class="ld-hact noprint"><button onclick="newLead()">➕ استفسار جديد</button></div></div>
+      <div class="ld-hact noprint"></div></div>
     <div class="ld-pills noprint" id="ldKpis"></div>
     <div class="toolbar noprint">
       <input id="lq" placeholder="بحث بالاسم أو الرقم أو الوجهة أو الملاحظات...">
@@ -3059,7 +3087,7 @@ function renderDash(){
   var week = act.filter(function(r){ var d = daysUntil(r.travelDate); return d >= 0 && d <= 7; }).sort(function(a, b){ return String(a.travelDate).localeCompare(String(b.travelDate)); });
   var dt = new Date().toLocaleDateString('ar-EG', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}), hr = new Date().getHours();
   $('dashHello').innerHTML = '<div class="dh2"><div><div class="dh-g">' + (hr < 12 ? 'صباح الخير' : 'مساء الخير') + '</div><h2>' + esc(office().name || 'مكتب حجز الطيران') + '</h2><div class="c-sub">' + dt + '</div></div>' +
-    '<div class="dh-a noprint"><button onclick="newBooking()">＋ حجز جديد</button><button class="sec" onclick="newLead()">＋ استفسار</button><button class="sec" onclick="acOpen()">＋ عميل</button></div></div>';
+    '</div>';
   var HK = function(l, v, sub, pc, vals, js, cls){ return '<div class="hk ' + (cls || '') + '" onclick="' + js + '"><div class="hk-t"><span>' + l + '</span>' + (pc ? '<em class="' + (pc.up ? 'up' : 'dn') + '">' + pc.t + '</em>' : '') + '</div><b>' + v + '</b><small>' + sub + '</small>' + dashSpark(vals) + '</div>'; };
   var hero = HK('حجوزات ' + monthLabel(m), sm.n, 'عن الشهر الماضي ' + pv.n, dashPct(cu.n, pv.n), H.map(function(h){ return h.n; }), "showTab('b')") +
     HK('المبيعات', money(sm.sales), c, dashPct(cu.sales, pv.sales), H.map(function(h){ return h.sales; }), "showTab('s')") +
@@ -3428,7 +3456,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-26 · 36';
+var APP_VERSION = '2026-11-26 · 37';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -3540,9 +3568,6 @@ function cfRow(l, v, ltr){ return (v === '' || v == null) ? '' : `<div class="cf
 (function(){
   const h = [...document.querySelectorAll('#tabBookings h2')].find(x => x.textContent.trim().indexOf('سجل ال') === 0); if (!h || h.parentNode.classList.contains('newbk')) return;
   const w = document.createElement('div'); w.className = 'newbk noprint'; h.parentNode.insertBefore(w, h); w.appendChild(h);
-  const b = document.createElement('button'); b.type = 'button'; b.id = 'newBkBtn'; b.textContent = '➕ حجز جديد';
-  b.onclick = () => newBooking();
-  w.appendChild(b);
 })();
 
 /* v17: علامة / بعد السيد والسيدة في القوالب */
@@ -3936,6 +3961,165 @@ function errLogShow(){
       render();
     }
   }; acDelete = custDelete; }
+
+/* ================= v37: أزرار الإضافة في الشريط العلوي، جدول حجوزات جديد، موردون، عملاء بلا قوائم ================= */
+
+/* ---------- 1) ثلاثة أزرار إضافة في الشريط العلوي (مكان واحد لكل الصفحات) ---------- */
+(function(){
+  const bar = document.querySelector('header .hbar'); if (!bar || $('hdrAdd')) return;
+  bar.insertAdjacentHTML('afterbegin', '<div id="hdrAdd" class="hdr-add noprint"><button type="button" id="hdrBk" onclick="newBooking()" title="حجز جديد">＋ حجز</button><button type="button" id="hdrLd" onclick="newLead()" title="استفسار جديد">＋ استفسار</button><button type="button" id="hdrSp" onclick="newSupplier()" title="مورد جديد">＋ مورد</button></div>');
+})();
+/* الاستفسار الجديد يفتح نافذته فوق الصفحة الحالية بدون تغيير الصفحة */
+newLead = function(){ sheetClose(); resetLeadForm(); lmOpen(); setTimeout(function(){ try { $('lname').focus(); } catch (e) {} }, 60); };
+
+/* ---------- 2) نافذة المورد الجديد / تعديل المورد ---------- */
+(function(){
+  if ($('supm')) return;
+  document.body.insertAdjacentHTML('beforeend', '<div id="supm" class="modal" style="display:none" onclick="if(event.target===this)supClose()"><div class="mbox"><h2 id="supTitle">🏢 مورد جديد</h2><input type="hidden" id="supId"><div class="grid">' +
+    '<div class="full"><label>اسم المورد / المكتب *</label><input id="supName" autocomplete="off"></div><div class="full"><label>الهاتف (اختياري)</label><input id="supPhone" dir="ltr" style="text-align:right" inputmode="tel"></div><div class="full"><label>ملاحظات</label><input id="supNotes"></div></div>' +
+    '<div class="actions"><button type="button" onclick="supSave()">حفظ المورد</button><button type="button" class="sec" onclick="supClose()">إغلاق</button></div></div></div>');
+})();
+function supClose(){ $('supm').style.display = 'none'; }
+function newSupplier(){ sheetClose(); $('supId').value = ''; $('supName').value = ''; $('supPhone').value = ''; $('supNotes').value = ''; $('supTitle').textContent = '🏢 مورد جديد'; $('supm').style.display = 'flex'; setTimeout(function(){ $('supName').focus(); }, 60); }
+supEdit = function(id){ const s = supById(id); if (!s) return; $('supId').value = s.id; $('supName').value = s.name || ''; $('supPhone').value = s.phone || ''; $('supNotes').value = s.notes || ''; $('supTitle').textContent = '✏️ تعديل المورد'; $('supm').style.display = 'flex'; };
+{ const f = supSave; supSave = function(){ const before = JSON.stringify(suppliers); f.apply(this, arguments); if (JSON.stringify(suppliers) !== before) { supClose(); toast('✓ تم حفظ المورد', 'ok'); } }; }
+
+/* ---------- 3) صفحة الموردين: جدول احترافي ---------- */
+var supQ = '';
+function supChip(st){ return st.owed > 0 ? '<span class="chip c-bad">باقٍ عليك ' + money(st.owed) + '</span>' : st.owed < 0 ? '<span class="chip c-info">رصيد لك ' + money(-st.owed) + '</span>' : '<span class="chip c-ok">✓ مسدد</span>'; }
+function supRowsHtml(){
+  const q = supQ.trim().toLowerCase();
+  const L = supSorted().filter(function(s){ return !q || (String(s.name) + ' ' + String(s.phone || '') + ' ' + String(s.notes || '')).toLowerCase().includes(q); });
+  if (!L.length) return '<tr><td class="empty" colspan="6">' + (suppliers.length ? 'لا توجد نتائج مطابقة' : 'لم تسجّل أي مورد بعد. اضغط «＋ مورد» في الشريط العلوي.') + '</td></tr>';
+  return L.map(function(s){ const st = supStats(s.id);
+    return '<tr><td><a class="plink" onclick="supSel=\'' + jq(jq(s.id)) + '\';renderAcc()"><b>' + esc(s.name) + '</b></a>' + (s.phone ? '<div class="c-sub" dir="ltr" style="text-align:right">' + esc(s.phone) + '</div>' : '') + (s.notes ? '<div class="c-note">📝 ' + esc(s.notes) + '</div>' : '') + '</td>' +
+      '<td>' + st.bks.length + '</td><td>' + money(st.bought) + '</td><td>' + money(st.paidOut) + '</td><td>' + supChip(st) + '</td>' +
+      '<td class="noprint"><div class="pp-a"><button class="sm" onclick="supSel=\'' + jq(jq(s.id)) + '\';renderAcc()">📒 كشف الحساب</button><button class="sec sm" onclick="supEdit(\'' + jq(jq(s.id)) + '\')">✏️ تعديل</button><button class="del sm" onclick="supDel(\'' + jq(jq(s.id)) + '\')">🗑 حذف</button></div></td></tr>'; }).join('');
+}
+function supFilter(v){ supQ = v; const b = $('supRows'); if (b) b.innerHTML = supRowsHtml(); }
+function supSortSet(v){ supSortKey = v; renderAcc(); }
+function accSupHtml(){
+  const c = esc(cur3());
+  if (supSel && supById(supSel)) {
+    const s = supById(supSel), st = supStats(s.id);
+    const outs = payments.filter(function(p){ return p.dir === 'out' && p.supplier === s.id; }).sort(function(a, b){ return String(b.at).localeCompare(String(a.at)); });
+    return '<div class="acc-bar"><button class="sec sm" onclick="supSel=null;renderAcc()">← كل الموردين</button><button class="sec sm" onclick="supEdit(\'' + jq(jq(s.id)) + '\')">✏️ تعديل المورد</button></div>' +
+      '<div class="sup-h"><h3>' + esc(s.name) + '</h3>' + (s.phone ? '<span class="c-sub" dir="ltr">' + esc(s.phone) + '</span>' : '') + '</div>' +
+      '<div class="sup-k"><div><small>إجمالي المشتريات</small><b>' + money(st.bought) + '</b><em>' + c + '</em></div><div><small>المسدد</small><b>' + money(st.paidOut) + '</b><em>' + c + '</em></div><div class="' + (st.owed > 0 ? 'bad' : 'good') + '"><small>' + (st.owed > 0 ? 'باقٍ عليك للمورد' : st.owed < 0 ? 'رصيد لك عنده' : 'الرصيد') + '</small><b>' + (st.owed === 0 ? '✓ مسدد' : money(Math.abs(st.owed))) + '</b><em>' + c + '</em></div><div><small>عدد الحجوزات</small><b>' + st.bks.length + '</b><em>' + (st.mine.length - st.bks.length ? (st.mine.length - st.bks.length) + ' ملغي' : '&nbsp;') + '</em></div></div>' +
+      '<div class="sgrp"><h3>الحجوزات</h3>' + (st.mine.length ? '<div class="tbl"><table class="rec"><thead><tr><th>التاريخ</th><th>العميل</th><th>الوجهة</th><th>الشراء</th><th>المسدد</th><th class="noprint"></th></tr></thead><tbody>' + st.mine.slice().sort(function(a, b){ return String(b.bookingDate).localeCompare(String(a.bookingDate)); }).map(function(b){
+        const po = payOut(b.id).reduce(function(x, p){ return x + p.amount; }, 0);
+        return '<tr class="' + (b.status === 'cancelled' ? 'cancelled' : '') + '"><td>' + fmtD(b.bookingDate) + '</td><td>' + esc(b.name) + '</td><td>' + esc(b.destination) + '</td><td>' + money(b.cost) + '</td><td>' + money(po) + '</td><td class="noprint"><button class="sec sm" onclick="openPay(\'' + jq(jq(b.id)) + '\')">💵 دفعات</button></td></tr>'; }).join('') + '</tbody></table></div>' : '<div class="c-sub">لا توجد حجوزات مرتبطة بهذا المورد.</div>') + '</div>' +
+      '<div class="sgrp"><h3>دفعات للمورد</h3>' + (outs.length ? '<div class="tbl"><table class="rec"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>الطريقة</th><th>البيان</th><th class="noprint"></th></tr></thead><tbody>' + outs.map(function(p){ const b = data.find(function(x){ return x.id === p.booking; });
+        return '<tr><td>' + fmtD(p.at) + '</td><td><b>' + money(p.amount) + '</b></td><td>' + esc(p.method) + '</td><td>' + (b ? esc(b.name) : '<span class="c-sub">دفعة عامة</span>') + ' ' + esc(p.note) + '</td><td class="noprint"><button class="del sm" onclick="delPay(\'' + jq(jq(p.id)) + '\')">🗑 حذف</button></td></tr>'; }).join('') + '</tbody></table></div>' : '<div class="c-sub">لا دفعات مسجّلة بعد.</div>') +
+      '<h4 class="dsub">تسجيل دفعة للمورد</h4><div class="grid payform"><div><label>المبلغ</label><input type="number" id="spAmt" min="0" step="any" value="' + (st.owed > 0 ? st.owed : '') + '"></div><div><label>التاريخ</label><input type="date" id="spAt" value="' + todayStr() + '"></div>' +
+      '<div><label>الطريقة</label><select id="spMethod">' + mOpts('تحويل بنكي') + '</select></div><div><label>ملاحظة</label><input id="spNote"></div></div><div class="actions"><button onclick="supPay(\'' + jq(jq(s.id)) + '\')">＋ تسجيل دفعة</button></div></div>';
+  }
+  const all = suppliers.map(function(s){ return supStats(s.id); });
+  const bought = all.reduce(function(a, x){ return a + x.bought; }, 0), paid = all.reduce(function(a, x){ return a + x.paidOut; }, 0), owing = all.filter(function(x){ return x.owed > 0; }).length;
+  return '<div class="sup-k"><div><small>عدد الموردين</small><b>' + suppliers.length + '</b><em>' + (owing ? owing + ' لهم مستحقات' : 'لا مستحقات') + '</em></div><div><small>إجمالي المشتريات</small><b>' + money(bought) + '</b><em>' + c + '</em></div><div><small>المسدد</small><b>' + money(paid) + '</b><em>' + c + '</em></div><div class="' + (totalOwed() > 0 ? 'bad' : 'good') + '"><small>المستحق عليك</small><b>' + money(totalOwed()) + '</b><em>' + c + '</em></div></div>' +
+    '<div class="toolbar noprint"><input id="supQ" placeholder="بحث باسم المورد أو هاتفه..." value="' + esc(supQ) + '" oninput="supFilter(this.value)">' +
+    '<select onchange="supSortSet(this.value)">' + [['owed', 'الأكثر مستحقًا عليك'], ['name', 'الاسم (أ ‏←‏ ي)'], ['bought', 'الأكثر مشتريات'], ['count', 'الأكثر حجوزات']].map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === supSortKey ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
+    '<button type="button" class="sec sm revbtn' + (isRev('s') ? ' on' : '') + '" data-rev="s" onclick="sortFlip(\'s\')">⇅ عكس الترتيب</button></div>' +
+    '<div class="tbl"><table class="rec"><thead><tr><th>المورد</th><th>الحجوزات</th><th>المشتريات</th><th>المسدد</th><th>الرصيد</th><th class="noprint">إجراءات</th></tr></thead><tbody id="supRows">' + supRowsHtml() + '</tbody></table></div>';
+}
+
+/* عنوان صفحة الحسابات يتبع القسم المفتوح (كان «الحسابات والأرباح» حتى في سلة المحذوفات) */
+{ const f = renderAcc; renderAcc = function(){ f.apply(this, arguments); const h = document.querySelector('#tabAcc h2'); if (h) h.textContent = accTab === 'trash' ? '🗑 سلة المحذوفات' : accTab === 'sup' ? '🏢 الموردون' : '💼 الأرباح والحسابات'; }; }
+
+/* ---------- 4) صفحة العملاء: الاسم يفتح البطاقة، والإجراءات «تعديل» و«حذف» فقط ---------- */
+{
+  const f = renderPeople;
+  renderPeople = function(){
+    f.apply(this, arguments);
+    const rows = document.querySelectorAll('#ppRows > tr');
+    rows.forEach(function(tr, i){
+      const p = peopleItems[i]; if (!p || !tr.cells || tr.cells.length < 6) return;
+      const nm = tr.cells[0].querySelector('.c-name');
+      if (nm) nm.innerHTML = '<a class="plink" onclick="idcOpen(peopleItems[' + i + '].key)">' + esc(p.name) + '</a>';
+      const K = 'peopleItems[' + i + '].key';
+      const edit = p.kind === 'booked' ? 'openProfile(' + K + ')' : p.kind === 'client' ? 'clientEdit(' + K + ')' : p.kind === 'lead' ? "showTab('l');editLead('" + jq(jq(p.lead.id)) + "')" : "inqToLead('" + jq(jq(p.inq.id)) + "')";
+      const del = p.kind === 'booked' ? 'custDelete(' + K + ')' : p.kind === 'client' ? 'acDelete(' + K + ')' : p.kind === 'lead' ? "delLead('" + jq(jq(p.lead.id)) + "')" : "inqDelete('" + jq(jq(p.inq.id)) + "')";
+      tr.cells[5].innerHTML = '<div class="pp-a"><button class="sm" onclick="' + edit + '">✏️ تعديل</button><button class="del sm" onclick="' + del + '">🗑 حذف</button></div>';
+    });
+  };
+}
+
+/* ---------- 5) صفحة الحجوزات: جدول مباشر (عميل · رحلة · تواريخ · إجراءات) ---------- */
+(function(){
+  const t = document.querySelector('#tabBookings table.rec'); if (!t) return;
+  t.id = 'bkTbl'; t.querySelector('thead').innerHTML = '<tr><th data-k="name">العميل</th><th data-k="origin">الرحلة</th><th data-k="travelDate">التواريخ</th><th class="noprint">إجراءات</th></tr>';
+  t.querySelectorAll('th[data-k]').forEach(function(th){ th.onclick = function(){ const k = th.dataset.k; sortDir = (sortKey === k) ? -sortDir : 1; sortKey = k; render(); }; });
+})();
+function bkRowsHtml(){
+  const list = filtered();
+  if (!list.length) return '<tr><td class="empty" colspan="4">لا توجد نتائج</td></tr>';
+  return list.map(function(r){
+    const d = daysUntil(r.travelDate), canc = r.status === 'cancelled', id = jq(r.id);
+    let chip = ''; if (!canc) { if (d === 0) chip = '<span class="chip c-bad">اليوم</span>'; else if (d > 0 && d <= 3) chip = '<span class="chip c-warn">بعد ' + d + ' ' + (d === 1 ? 'يوم' : 'أيام') + '</span>'; else if (d > 3 && d <= 30) chip = '<span class="chip c-info">بعد ' + d + ' يوم</span>'; else if (d < 0) chip = '<span class="chip c-gray">انتهى</span>'; } else { const rf = typeof cancelRefundDue === 'function' ? cancelRefundDue(r) : 0; chip = '<span class="badge b-cancelled">ملغي</span>' + (+r.cancelFee > 0 ? ' <span class="chip c-warn">غرامة ' + money(r.cancelFee) + '</span>' : '') + (rf > 0 ? ' <span class="chip c-bad">ردّ للعميل ' + money(rf) + '</span>' : ''); }
+    return '<tr class="' + (canc ? 'cancelled' : d === 0 ? 'today' : (d > 0 && d <= 3) ? 'soon' : '') + '"><td data-l="العميل"><div class="c-name"><a class="plink" onclick="idcOpen(ckey(data.find(function(x){return x.id===\'' + jq(id) + '\'})))">' + esc(r.name) + '</a></div>' +
+      phonesBlock(r.phone) + '</td>' +
+      '<td data-l="الرحلة"><div class="route">' + ap(r.origin) + '<span class="arr">←</span>' + ap(r.destination) + '</div></td>' +
+      '<td data-l="التواريخ"><div><small class="c-sub">السفر</small> <b>' + fmtDT(r) + '</b> ' + (fmtTm(r.departTime) || '') + ' ' + chip + '</div>' + (r.returnDate ? '<div class="c-sub">↩ عودة ' + fmtDR(r) + ' ' + (fmtTm(r.returnTime) || '') + '</div>' : '') + '<div><small class="c-sub">الحجز</small> ' + fmtD(r.bookingDate) + '</div></td>' +
+      '<td class="noprint"><div class="bka"><button class="sec sm" onclick="tdOpen(\'' + jq(id) + '\')">🛫 مستند السفر</button><button class="sec sm" onclick="edit(\'' + jq(id) + '\')">✏️ تعديل</button><button class="del sm" onclick="del(\'' + jq(id) + '\')">🗑 حذف</button><button class="sec sm" onclick="rcOpen(\'' + jq(id) + '\')">🧾 إيصال</button><button class="sec sm" onclick="bkMsg(\'' + jq(id) + '\')">💬 رسالة</button><button class="sec sm" onclick="openTickets(\'' + jq(id) + '\')">🎫 تذكرة <span class="tc" data-cid="' + id + '"></span></button><button class="sec sm" onclick="openPay(\'' + jq(id) + '\')">💵 دفعات</button></div></td></tr>';
+  }).join('');
+}
+{
+  const f = render;
+  render = function(){ f.apply(this, arguments); try { const b = $('rows'); if (b) b.innerHTML = bkRowsHtml(); updateCounts(); } catch (e) { errLogAdd('bkRows: ' + e.message); } };
+}
+
+/* ---------- 6) الاستفسار الجديد: البحث في العملاء الموجودين (بالاسم أو الهاتف) منعًا للتكرار ---------- */
+(function(){ const p = $('lphone'); if (!p || $('lnameSug')) return; p.parentElement.insertAdjacentHTML('afterend', '<div class="full" id="lnameSug" style="display:none"></div>'); })();
+function lsugList(){
+  const nm = $('lname').value.trim().toLowerCase(), ph = pkey($('lphone').value), out = [], seen = new Set();
+  const add = (k, name, phone, why) => { if (!k || seen.has(k)) return; seen.add(k); out.push({k: k, name: name, phone: phone || '', why: why}); };
+  if (nm.length >= 2) sugList(nm).forEach(x => add(x.k, x.name, x.phone, 'name'));
+  if (ph && ph.length >= 7) [].concat(custAll.map(c => ({k: c.key, name: c.name, phone: c.phone})), leads.map(l => ({k: ckey(l), name: l.name, phone: l.phone})), inquiries.map(q => ({k: ckey(q), name: q.name, phone: q.phone}))).forEach(x => { if (pkey(x.phone) === ph) add(x.k, x.name, x.phone, 'phone'); });
+  return out.slice(0, 5);
+}
+function lsugRender(){
+  const box = $('lnameSug'); if (!box) return; let html = '';
+  if (!$('lid').value) { const L = lsugList();
+    if (L.length) html = '<div class="dup info">💡 عملاء مسجّلون بنفس الاسم أو الهاتف — اختر الشخص بدل تسجيله من جديد:<div class="sugs">' + L.map(x => '<button type="button" class="sec sm" onclick="lsugUse(\'' + jq(jq(x.k)) + '\')">👤 ' + esc(x.name) + (x.phone ? ' · <span dir="ltr">' + esc(x.phone) + '</span>' : '') + (x.why === 'phone' ? ' · نفس الهاتف' : '') + '</button>').join('') + '</div></div>'; }
+  box.innerHTML = html; box.style.display = html ? '' : 'none';
+}
+function lsugUse(k){
+  const c = custAll.find(x => x.key === k), cl = CM.get(k) || {}, ld = leads.find(x => ckey(x) === k) || inquiries.find(x => ckey(x) === k) || {};
+  $('lname').value = (c && c.name) || cl.name || ld.name || ''; $('lphone').value = (c && c.phone) || cl.phone || ld.phone || '';
+  const g = cl.gender || ld.gender || ''; if ($('lgender') && (g === 'm' || g === 'f')) $('lgender').value = g;
+  lsugRender(); const o = $('lorig'); if (o) o.focus();
+}
+['lname', 'lphone'].forEach(id => $(id).addEventListener('input', lsugRender));
+{ const f = resetLeadForm; resetLeadForm = function(){ f.apply(this, arguments); try { lsugRender(); } catch (e) {} }; }
+
+/* تعديل بيانات عميل مسجّل قديمًا بدون حجز (إضافة عميل جديد بدون حجز أُلغيت، والتعديل يبقى) */
+var acEditKey = null;
+function clientEdit(key){
+  const cl = CM.get(key); if (!cl) return; $('acf').reset(); acSetKind('none'); acEditKey = key;
+  const set = (id, v) => { const e = $(id); if (e) e.value = v || ''; };
+  set('acName', cl.name); set('acPhone', cl.phone); set('acPhones', cl.phones); set('acGender', cl.gender); set('acId', cl.idNo); set('acBirth', cl.birthday); set('acPass', cl.passportExpiry);
+  set('acAirline', cl.prefAirline); set('acSeat', cl.prefSeat); set('acMeal', cl.prefMeal); set('acComp', cl.companions); set('acNotes', cl.notes);
+  const h = document.querySelector('#acm h2'); if (h) h.textContent = '✏️ تعديل بيانات العميل';
+  ['acKinds', 'acHint'].forEach(id => { const e = $(id); if (e) e.style.display = 'none'; });
+  $('acSaveBtn').textContent = 'حفظ التعديل'; $('acm').style.display = 'flex';
+}
+{ const f = acSave; acSave = function(e){
+    if (!acEditKey) return f.apply(this, arguments);
+    if (e) e.preventDefault(); const name = $('acName').value.trim(), phone = toLat($('acPhone').value.trim());
+    if (!name) { alert('اكتب اسم العميل.'); return false; }
+    const m = mergePhones(acEditKey, '', $('acPhones').value); if (m.rejected.length) alert(m.rejected.join('\n'));
+    patchClient(acEditKey, {name: name, phone: phone, gender: $('acGender').value, idNo: $('acId').value.trim(), birthday: $('acBirth').value, passportExpiry: $('acPass').value, prefAirline: $('acAirline').value.trim(),
+      prefSeat: $('acSeat').value.trim(), prefMeal: $('acMeal').value.trim(), companions: $('acComp').value.trim(), notes: $('acNotes').value.trim(), phones: m.text});
+    acClose(); render(); toast('✓ تم حفظ التعديل', 'ok'); return false; }; }
+{ const f = acClose; acClose = function(){ f.apply(this, arguments); acEditKey = null; }; }
+
+/* منع تكرار شخص مسجّل بلا حجز إذا كان له نفس الهاتف/الاسم بين الأشخاص الآخرين (حتى لو اختلف معرّف سجله) */
+{ const f = buildPeople; buildPeople = function(){
+    const L = f.apply(this, arguments), others = L.filter(p => p.kind !== 'client'), keys = new Set(others.map(p => p.key)), ph = new Set(others.map(p => pkey(p.phone)).filter(Boolean));
+    return L.filter(p => { if (p.kind !== 'client') return true; const k = pkey(p.phone); return !(keys.has(ckey({phone: p.phone, name: p.name})) || (k && ph.has(k))); });
+  }; }
+{ const f = sugList; sugList = function(nm){ const L = f.call(this, nm), seen = new Set(); return L.filter(x => { const k = pkey(x.phone) || x.k; if (seen.has(k)) return false; seen.add(k); return true; }); }; }
+{ const f = lsugList; lsugList = function(){ const L = f.apply(this, arguments), seen = new Set(); return L.filter(x => { const k = pkey(x.phone) || x.k; if (seen.has(k)) return false; seen.add(k); return true; }); }; }
 
 const _render = render;
 render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
