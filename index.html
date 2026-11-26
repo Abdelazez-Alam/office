@@ -743,7 +743,7 @@ html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
 <div><label>اسم العميل *</label><input id="name" required></div>
         <div class="phbox"><label>رقم الهاتف *</label><div class="phrow"><input id="phone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر للعميل" onclick="phxAdd('phones')">＋</button></div><div class="phx" id="phones_ui"></div></div>
         <textarea id="phones" hidden></textarea>
-        <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="gender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select><div id="genderHint" class="c-sub" style="margin-top:4px"></div></div>
+        <div><label>الجنس</label><select id="gender"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select><div id="genderHint" class="c-sub" style="margin-top:4px"></div></div>
         <div class="full" id="dupBox" style="display:none"></div>
         <div class="full" id="dupBk" style="display:none"></div>
         <div class="full fsec">✈️ الرحلة</div>
@@ -906,7 +906,7 @@ html[dir=rtl] .mbox.mdl>h2{padding:16px 20px 14px 56px}
       <div><label>اسم العميل *</label><input id="acName" required oninput="acSuggest()"></div>
       <div class="phbox"><label>رقم الهاتف / واتساب *</label><div class="phrow"><input id="acPhone" required inputmode="tel" dir="ltr" style="text-align:right"><button type="button" class="phplus" title="إضافة رقم آخر" onclick="phxAdd('acPhones')">＋</button></div><div class="phx" id="acPhones_ui"></div></div>
       <textarea id="acPhones" hidden></textarea>
-      <div><label>الجنس (يحدد صيغة الرسائل)</label><select id="acGender" onchange="acGenderTouched=true"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select></div>
+      <div><label>الجنس</label><select id="acGender" onchange="acGenderTouched=true"><option value="">— غير محدد —</option><option value="m">♂ ذكر</option><option value="f">♀ أنثى</option></select></div>
       <div><label>رقم الهوية / الجواز</label><input id="acId" dir="ltr" style="text-align:right"></div>
       <div><label>تاريخ الميلاد</label><input type="date" id="acBirth"></div>
       <div><label>انتهاء جواز السفر</label><input type="date" id="acPass"></div>
@@ -3471,7 +3471,7 @@ function phonesBlock(phone, o){
 }
 
 /* ---------- رقم الإصدار (للتأكد أن التحديث وصل) ---------- */
-var APP_VERSION = '2026-11-26 · 38';
+var APP_VERSION = '2026-11-26 · 39';
 {
   var _sb2 = sbBuild;
   sbBuild = function(){ _sb2.apply(this, arguments); var s = $('sidebar'); if (s && !s.querySelector('.sb-ver')) s.insertAdjacentHTML('beforeend', '<div class="sb-ver" onclick="location.reload()" title="اضغط لتحديث الصفحة">الإصدار ' + APP_VERSION + ' ↻</div>'); };
@@ -4151,6 +4151,26 @@ function bkOpen(){ sheetClose(); $('bkm').style.display = 'flex'; }
 $('cancelEdit').onclick = bkClose;
 $('f').addEventListener('submit', function(){ setTimeout(function(){ if ($('bkm').style.display !== 'none' && !$('id').value && !$('name').value) { $('bkm').style.display = 'none'; } }, 150); });
 document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { if ($('bkm').style.display !== 'none') bkClose(); } });
+
+/* ---------- 5) أرقام إضافية (＋) في نافذة الاستفسار ---------- */
+(function(){
+  const inp = $('lphone'); if (!inp || $('lphones')) return;
+  const box = inp.parentNode;
+  box.classList.add('phbox');
+  const row = document.createElement('div'); row.className = 'phrow'; box.insertBefore(row, inp); row.appendChild(inp);
+  row.insertAdjacentHTML('beforeend', '<button type="button" class="phplus" title="إضافة رقم آخر للعميل" onclick="phxAdd(\'lphones\')">＋</button>');
+  box.insertAdjacentHTML('beforeend', '<div class="phx" id="lphones_ui"></div><textarea id="lphones" hidden></textarea>');
+  phxInit('lphones');
+  $('lf').addEventListener('reset', function(){ setTimeout(function(){ phxRender('lphones'); }, 0); });
+})();
+function lphonesLoad(phone){ const c = CM.get(ckp(phone)); $('lphones').value = c ? (c.phones || '') : ''; }
+{ const f = editLead; editLead = function(id){ f.apply(this, arguments); const l = leads.find(x => x.id === id); if (l) lphonesLoad(l.phone); }; }
+$('lf').addEventListener('submit', function(){
+  const phone = $('lphone').value.trim(), extra = $('lphones').value.trim(), name = $('lname').value.trim();
+  if (!phone || !name) return;
+  const key = ckp(phone), c = CM.get(key);
+  setTimeout(function(){ if (extra !== ((c && c.phones) || '')) patchClient(key, {phones: extra}); }, 120);
+}, true);
 
 const _render = render;
 render = function(){ render3(); refreshLists(); refreshCustAll(); _render(); renderLeads(); renderGrouped(); renderPeople(); renderTasks(); updateCounts(); };
